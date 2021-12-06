@@ -1,8 +1,8 @@
-# 
-/node_modules
-/dist
-/client
-/src/db/base
-/src/db/json/diferidos.json
+node_modules
+static
 yarn.lock
-# /src/hook`
+package-lock.json
+ormconfig.json
+.env
+.vscode
+.gitlab-ci.yml

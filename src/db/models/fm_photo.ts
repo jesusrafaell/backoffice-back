@@ -4,31 +4,41 @@ import {
 	Entity,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
-	ManyToOne,
 	JoinColumn,
+	OneToMany,
+	OneToOne,
 } from 'typeorm';
-import fm_commerce from './fm_commerce';
+import fm_request from './fm_request';
+import fm_commerce_constitutive_act from './fm_commerce_constitutive_act';
 
 @Entity()
 export default class fm_photo {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
-	@Column()
+	@Column({ nullable: true })
 	path!: string;
 
-	@Column()
-	link!: string;
-
-	@Column()
+	@Column({ nullable: true })
 	name!: string;
 
-	@Column()
+	@Column({ nullable: true })
 	descript!: string;
 
-	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	@OneToMany(() => fm_request, (fm_request) => fm_request)
+	@JoinColumn()
+	requests?: fm_request;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@OneToOne(
+		() => fm_commerce_constitutive_act,
+		(fm_commerce_constitutive_act) => fm_commerce_constitutive_act.id_photo
+	)
+	@JoinColumn()
+	rc_constitutive_act?: fm_commerce_constitutive_act;
+
+	@CreateDateColumn({ select: false })
+	createdAt?: Date;
+
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

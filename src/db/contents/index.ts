@@ -10,26 +10,34 @@ import parroquia from './parroquia';
 import ciudad from './ciudad';
 import company from './company';
 import department from './department';
-import client from './client';
 import status_request from './status_request';
 import type_request from './type_request';
 import bank from './bank';
+import type_person from './type_person';
+import afiliados from './afiliados';
+import type_payment from './type_payment';
+import request_origin from './request_origin';
+import { createConnection } from 'typeorm';
+// init server
 
-export default async () => {
+createConnection().then(async () => {
 	await status_request();
 	await type_request();
 	await ident_type();
 	await roles();
 	await payment_method();
+	await type_payment();
 	await company();
 	await department();
 	await worker();
-	await client();
-	await activity();
 	await Product();
 	await estado();
 	await municipio();
 	await parroquia();
 	await ciudad();
 	await bank();
-};
+	await type_person();
+	await afiliados();
+	await activity();
+	await request_origin();
+});

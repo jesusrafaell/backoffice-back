@@ -14,7 +14,7 @@ export default class fm_payment_method {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
-	@Column()
+	@Column({ nullable: true })
 	name!: string;
 
 	@OneToMany(() => fm_request, (fm_request) => fm_request.id_commerce)
@@ -22,8 +22,8 @@ export default class fm_payment_method {
 	requests?: fm_request[];
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

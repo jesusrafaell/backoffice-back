@@ -14,7 +14,7 @@ export default class fm_company {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
-	@Column()
+	@Column({ nullable: true })
 	name!: string;
 
 	@ManyToOne(() => fm_worker, (fm_worker) => fm_worker.id_company)
@@ -22,8 +22,8 @@ export default class fm_company {
 	workers?: fm_worker[];
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

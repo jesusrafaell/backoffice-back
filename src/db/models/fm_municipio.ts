@@ -32,12 +32,12 @@ export default class fm_municipio {
 	@JoinColumn({ name: 'locations' })
 	locations?: fm_location[];
 
-	@Column()
+	@Column({ nullable: true })
 	municipio!: string;
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

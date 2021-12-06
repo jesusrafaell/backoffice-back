@@ -24,12 +24,12 @@ export default class fm_parroquia {
 	@JoinColumn({ name: 'locations' })
 	locations?: fm_location[];
 
-	@Column()
+	@Column({ nullable: true })
 	parroquia!: string;
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

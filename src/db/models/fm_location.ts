@@ -50,18 +50,18 @@ export default class fm_location {
 	@JoinColumn({ name: 'clients' })
 	clients?: fm_client[];
 
-	@Column()
+	@Column({ nullable: true })
 	sector!: string;
 
-	@Column()
+	@Column({ nullable: true })
 	calle!: string;
 
-	@Column()
+	@Column({ nullable: true })
 	local!: string;
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

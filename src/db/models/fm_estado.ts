@@ -17,10 +17,10 @@ export default class fm_estado {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
-	@Column()
+	@Column({ nullable: true })
 	estado!: string;
 
-	@Column()
+	@Column({ nullable: true })
 	iso_3166!: string;
 
 	@OneToMany(() => fm_ciudad, (fm_Ciudad) => fm_Ciudad.id_estado)
@@ -36,8 +36,8 @@ export default class fm_estado {
 	locations?: fm_location[];
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

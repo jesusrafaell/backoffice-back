@@ -19,21 +19,24 @@ export default class fm_ciudad {
 
 	@ManyToOne(() => fm_estado, (fm_estado) => fm_estado.ciudades)
 	@JoinColumn({ name: 'id_estado' })
-	id_estado!: number;
+	id_estado!: number | fm_estado;
+
+	@Column({ nullable: true })
+	ciudad!: string;
+
+	@Column({ nullable: true })
+	area_code!: string;
+
+	@Column({ nullable: true })
+	postal_code!: string;
 
 	@OneToMany(() => fm_location, (fm_location) => fm_location.id_municipio)
 	@JoinColumn({ name: 'locations' })
 	locations?: fm_location[];
 
-	@Column()
-	ciudad!: string;
-
-	@Column()
-	capital!: boolean;
-
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
-	updatedAt?: number;
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

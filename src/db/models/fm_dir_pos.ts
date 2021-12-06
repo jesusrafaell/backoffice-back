@@ -27,7 +27,7 @@ export default class fm_dir_pos {
 	@JoinColumn({ name: 'id_commerce' })
 	id_commerce!: number;
 
-	@ManyToOne(() => fm_request, (fm_request) => fm_request.dir_pos)
+	@OneToOne(() => fm_request, (fm_request) => fm_request.dir_pos)
 	@JoinColumn({ name: 'id_request' })
 	id_request!: number;
 
@@ -36,8 +36,8 @@ export default class fm_dir_pos {
 	id_product!: number;
 
 	@CreateDateColumn({ select: false })
-	createdAt?: string;
+	createdAt?: Date;
 
-	@UpdateDateColumn({ type: 'timestamp', select: false })
+	@UpdateDateColumn({ select: false })
 	updatedAt!: number;
 }

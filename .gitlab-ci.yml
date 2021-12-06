@@ -1,3 +1,4 @@
+
 before_script:
   - apt-get update -qq
   - apt-get install -qq git dos2unix
@@ -22,16 +23,8 @@ before_script:
 deploy_qa:
   stage: deploy
   script:
-    - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT/ && sudo git checkout qa-back-aprobacion && sudo git pull "
+    - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT/ && sudo git checkout qa && sudo git pull "
     - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT/ && sudo yarn "
-    - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT && sudo pm2 restart backoffice  "
+    - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT && sudo pm2 restart backoffice "
   only:
-    - qa-back-aprobacion
-#deploy_produccion:
-#  stage: deploy
-#  script:
-
-#    - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEPRO " cd $DOCUMENT_ROOT/ && sudo yarn "
-#    - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEPRO " cd $DOCUMENT_ROOT && sudo pm2 restart backoffice  "
-#  only:
-#    - master
+    - qa
