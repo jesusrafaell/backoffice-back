@@ -17,8 +17,8 @@ deploy_qa:
     - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT/ && sudo
       git checkout qa && sudo git pull "
     - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT/ && sudo
-      yarn "
+      yarn --ignore-platform "
     - ssh  -i ~/.ssh/key.pem $USUARIO@$IP_REMOTEQA " cd $DOCUMENT_ROOT && sudo
-      pm2 restart socket "
+      pm2 restart backoffice "
   only:
     - qa
