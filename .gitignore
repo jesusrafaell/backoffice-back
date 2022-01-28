@@ -1,4 +1,7 @@
-# 
-/node_modules
-/dist
-/client
+node_modules
+static
+yarn.lock
+package-lock.json
+ormconfig.json
+.env
+.vscode

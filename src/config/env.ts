@@ -1,0 +1,10 @@
+// config.js
+import dotenv from 'dotenv';
+
+export default dotenv.config();
+
+// export default {
+// 	NODE_ENV: process.env.NODE_ENV || 'development',
+// 	HOST: process.env.HOST || '127.0.0.1',
+// 	PORT: process.env.PORT || 3000,
+// };

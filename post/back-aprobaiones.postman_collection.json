@@ -1,0 +1,1384 @@
+{
+	"info": {
+		"_postman_id": "18e6bca3-7d98-44d9-a367-dbfb99ac96c7",
+		"name": "back-aprobaiones",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "kndnlks",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"test\",\r\n    \"last_name\":\"test\",\r\n    \"password\":\"Test123.\",\r\n    \"id_ident_type\":3,\r\n    \"ident_num\":\"122314548\",\r\n    \"email\":\"test1@gmail.com\",\r\n    \"phone\":\"+5841811161\",\r\n    \"id_department\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validar email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"dimasmerida15@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/auth/register/valid/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"auth",
+								"register",
+								"valid",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register documento de identidad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_ident_type\" : \"1\",\r\n    \"ident_num\" : \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/auth/register/valid/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"auth",
+								"register",
+								"valid",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"Test123.\",\r\n    \"email\":\"test1@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "passMail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"dimasmerida15@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/auth/passMail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"auth",
+								"passMail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editPass",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjI5MjMxNzQ1LCJleHAiOjE2MjkzMTgxNDV9.f1mLotFiWuOYhVKHZ2mK2PdEv1x4s26NXGPKlRhzSQI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"test2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/auth/log/editPass",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"auth",
+								"log",
+								"editPass"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "worker",
+			"item": [
+				{
+					"name": "worker usuario ya logeado",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidHlwZSI6MiwiaWF0IjoxNjMxMDI2MTAzLCJleHAiOjE2MzEwMjc5MDN9.5lsGl1Hf60Sb3ANoRMfC1XsqHDmWH4FrQa8Pkkzmplc",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5051/worker",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"worker"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker all usar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM0OTMyOTc3LCJleHAiOjE2MzQ5MzQ3Nzd9.wfz0mTnHSnTQld7XuDh-mRtfKy9bBuoixbG_NoTbaKE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.68.21:5051/worker/all",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"68",
+								"21"
+							],
+							"port": "5051",
+							"path": [
+								"worker",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker por roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM0OTI0NDE3LCJleHAiOjE2MzQ5MjYyMTd9.01EV5S3pz7q9EP8xHig4rblt3ZjQL8taOsv0Cgo_628",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5051/roles/:id/worker",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"roles",
+								":id",
+								"worker"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker user by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjMxMTMwNjIzLCJleHAiOjE2MzExMzI0MjN9.pZo_p6yWJSolcdt6TKUn8Hbkf-d7p2FgqtsQgZswtEo",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5051/worker/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"worker",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "roles",
+			"item": [
+				{
+					"name": "roles all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZXMiOlt7ImlkIjoyLCJuYW1lIjoid29ya2VyIn1dLCJpYXQiOjE2MzM1MjY4NDMsImV4cCI6MTYzMzUyODY0M30.Lqw4j68JXKxTeeflbvVxSwImmZ28TQGTRgcYFmSQwsI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.73.15:5051/roles/all",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"73",
+								"15"
+							],
+							"port": "5051",
+							"path": [
+								"roles",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rolesedit by worker",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM2MzE2ODQzLCJleHAiOjE2MzYzMTg2NDN9.XuriPCeZI4Po3EZcmcYHYuh8OSGeczt7LtdYeQ9RtbQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roles\":[\r\n        {\"id\":1,\"name\":\"aa\"}\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/roles/worker/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"roles",
+								"worker",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "roles  By Worker",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6eyJ0b2tlbiI6eyJpZCI6NCwidHlwZSI6MiwiaWF0IjoxNjMxMDMwMDY4LCJleHAiOjE2MzEwMzE4Njh9LCJ1c2VyLWFnZW50IjoiUG9zdG1hblJ1bnRpbWUvNy4yOC40IiwiYWNjZXB0IjoiKi8qIiwiY2FjaGUtY29udHJvbCI6Im5vLWNhY2hlIiwicG9zdG1hbi10b2tlbiI6IjQ1NzU0Y2UxLTk4OTgtNDdjMy04ZWYzLTcxMjVhYjk2ZTk3ZSIsImhvc3QiOiJsb2NhbGhvc3Q6NTA1MSIsImFjY2VwdC1lbmNvZGluZyI6Imd6aXAsIGRlZmxhdGUsIGJyIiwiY29ubmVjdGlvbiI6ImtlZXAtYWxpdmUiLCJpYXQiOjE2MzEwMzAwODAsImV4cCI6MTYzMTAzMzY4MH0sInVzZXItYWdlbnQiOiJQb3N0bWFuUnVudGltZS83LjI4LjQiLCJhY2NlcHQiOiIqLyoiLCJjYWNoZS1jb250cm9sIjoibm8tY2FjaGUiLCJwb3N0bWFuLXRva2VuIjoiZDZkZmFlY2QtMjg0MS00MzJkLTlmMWUtYWU5YzM3Y2M2MjY5IiwiaG9zdCI6ImxvY2FsaG9zdDo1MDUxIiwiYWNjZXB0LWVuY29kaW5nIjoiZ3ppcCwgZGVmbGF0ZSwgYnIiLCJjb25uZWN0aW9uIjoia2VlcC1hbGl2ZSIsImlhdCI6MTYzMTAzMTI0OCwiZXhwIjoxNjMxMDM0ODQ4fQ.F1waIadi3qMhZpryQjMSQBvClJcSj7ZfBY6rn6xlYTM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5051/roles/:id/worker",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"roles",
+								":id",
+								"worker"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "payment all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZXMiOlt7ImlkIjoyLCJuYW1lIjoid29ya2VyIn1dLCJpYXQiOjE2MzM1MjY4NDMsImV4cCI6MTYzMzUyODY0M30.Lqw4j68JXKxTeeflbvVxSwImmZ28TQGTRgcYFmSQwsI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.73.15:5051/payment/all",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"73",
+								"15"
+							],
+							"port": "5051",
+							"path": [
+								"payment",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "type payment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0MzMzNTExLCJleHAiOjE2MzQzMzUzMTF9.rzLbGeH_kSbmu0rWLXzbWL98ZITX1NVBxgVnzRyMnWg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.68.21:5051/payment/types",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"68",
+								"21"
+							],
+							"port": "5051",
+							"path": [
+								"payment",
+								"types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Location",
+			"item": [
+				{
+					"name": "estados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZXMiOlt7ImlkIjoyLCJuYW1lIjoid29ya2VyIn1dLCJpYXQiOjE2MzM1MjY4NDMsImV4cCI6MTYzMzUyODY0M30.Lqw4j68JXKxTeeflbvVxSwImmZ28TQGTRgcYFmSQwsI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.73.15:5051/Location/estado",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"73",
+								"15"
+							],
+							"port": "5051",
+							"path": [
+								"Location",
+								"estado"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "municipios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZXMiOlt7ImlkIjoyLCJuYW1lIjoid29ya2VyIn1dLCJpYXQiOjE2MzM1MjY4NDMsImV4cCI6MTYzMzUyODY0M30.Lqw4j68JXKxTeeflbvVxSwImmZ28TQGTRgcYFmSQwsI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.73.15:5051/Location/:id_estado/municipio",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"73",
+								"15"
+							],
+							"port": "5051",
+							"path": [
+								"Location",
+								":id_estado",
+								"municipio"
+							],
+							"variable": [
+								{
+									"key": "id_estado",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "parroquias",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjMzNTI3MDA3LCJleHAiOjE2MzM1MzA2MDd9.IR0VFJtI-1RnP7UMrm1xkzQR1TxiMz3J857JaHGh2xw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.73.15:5051/Location/:id_municipio/parroquia",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"73",
+								"15"
+							],
+							"port": "5051",
+							"path": [
+								"Location",
+								":id_municipio",
+								"parroquia"
+							],
+							"variable": [
+								{
+									"key": "id_municipio",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ciudad",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjMxMTIzNDAwLCJleHAiOjE2MzExMjUyMDB9.pKH1BkHM73B1tQIss7b7WayjoGve49IruPJdD-d1PrA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5051/Location/:id_estado/ciudad",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"Location",
+								":id_estado",
+								"ciudad"
+							],
+							"variable": [
+								{
+									"key": "id_estado",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FM",
+			"item": [
+				{
+					"name": "FM RC",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0NjYxNDA0LCJleHAiOjE2MzQ2NjMyMDR9.HMtTstBmuac8STEyBWIi54vUpM7tWf3O1GccDas-TAU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email\n",
+									"value": "test@test.com\n",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "images\n",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_property_document",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_service_document",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_special_contributor",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_ref_bank",
+									"value": "4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_ref_perso",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_account_number",
+									"value": "6",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_front_local",
+									"value": "7",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_in_local",
+									"value": "8",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_rif",
+									"value": "9",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_ident_card",
+									"value": "10",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FM origin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0NTY3MDE0LCJleHAiOjE2MzQ1Njg4MTR9.ub-TUHAH-zi7Q3xQi1MXl7Mk4iTicgK_0a2ohaNkfnw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email\n",
+									"value": "test@test.com\n",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "images\n",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_property_document",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_service_document",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_special_contributor",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_ref_bank",
+									"value": "4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_ref_perso",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_account_number",
+									"value": "6",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_front_local",
+									"value": "7",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_in_local",
+									"value": "8",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_rif",
+									"value": "9",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "rc_ident_card",
+									"value": "10",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://10.198.68.21:5051/FM/origins",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"68",
+								"21"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								"origins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FM_RC_IMAGENES",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0ODQxNDU4LCJleHAiOjE2MzQ4NDMyNTh9.ciojAu9vz6vrXo6LM7KhQedyUcuohlftCIP69x-i8Fw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_client",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "id_commerce",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/C:/Users/dmerida/Pictures/fm/rc_comp_dep.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_constitutive_act.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_front_local.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_ident_card.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_in_local.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_property_document.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_ref_bank.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_ref_perso.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_rif.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_service_document.png",
+										"/C:/Users/dmerida/Pictures/fm/rc_special_contributor.png"
+									],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:6060/1000pagosRC/RC",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6060",
+							"path": [
+								"1000pagosRC",
+								"RC"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edir FM_RC_IMAGENES",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0ODQxNDU4LCJleHAiOjE2MzQ4NDMyNTh9.ciojAu9vz6vrXo6LM7KhQedyUcuohlftCIP69x-i8Fw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/C:/Users/amendoza/Pictures/1000pago/Logo-1000Pagos-Horizontal.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:6060/1000pagosRC/RC/admition/:id_request/diferidos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6060",
+							"path": [
+								"1000pagosRC",
+								"RC",
+								"admition",
+								":id_request",
+								"diferidos"
+							],
+							"variable": [
+								{
+									"key": "id_request",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM0OTI5NDU4LCJleHAiOjE2MzQ5MzEyNTh9.Ev3HGJWKtIb8DFzGbp9xdOGdEpPKENS6WIk2THE3rUw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"test\",\r\n    \"last_name\":\"test\",\r\n    \"id_ident_type\":1,\r\n    \"ident_num\":\"111111121\",\r\n    \"email\":\"aldrin2@gmail.com\",\r\n    \"phone1\":\"+5841811161\",\r\n    \"phone2\":\"+5815151891\",\r\n    \"pero\":\"dskjnak\",\r\n    \"location\":{\"id_estado\":1,\"id_municipio\":1,\"id_parroquia\":1,\"id_ciudad\":1,\"sector\":\"aaa\",\"calle\":\"aa\",\"local\":\"aa\"}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM/client",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								"client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "valid bank",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjMzMTEwODA2LCJleHAiOjE2MzMxMTI2MDZ9.Jv3lEakXkfJiRrTb0xkDBc14M5SaYoTJUHa9iVOyqHI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"jbkb@co44reo.com\",\r\n    \"bank_account_num\":\"01021565144404344444\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://10.198.68.21:5051/FM/bank/valid",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"68",
+								"21"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								"bank",
+								"valid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "valid existen client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0NjYyMzM5LCJleHAiOjE2MzQ2NjQxMzl9.3tNKxAeT5PsVA2AvXhjxBkG1sci0nSkNEKERGyNej-Q",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_ident_type\":1,\r\n    \"ident_num\":\"111111121\",\r\n    \"email\":\"aldrin2@gmail.com\"\r\n} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM/client/valid",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								"client",
+								"valid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "valid existen commerce",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0ODIwNzgxLCJleHAiOjE2MzQ4MjI1ODF9.AWmXJEeMTN2N-OmQP-lENgwA9ksGUoocyLlzMSE4yMY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"id_ident_type\":2, \r\n    \"ident_num\":\"14521442243154\"\r\n} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM/:id_client/commerce/valid",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								":id_client",
+								"commerce",
+								"valid"
+							],
+							"variable": [
+								{
+									"key": "id_client",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create commerce",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM0OTI5NDU4LCJleHAiOjE2MzQ5MzEyNTh9.Ev3HGJWKtIb8DFzGbp9xdOGdEpPKENS6WIk2THE3rUw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"id_ident_type\":2, \r\n    \"ident_num\":\"14521442243154\", \r\n    \"special_contributor\":0, \r\n    \"location\":{\"id_estado\":1,\"id_municipio\":1,\"id_parroquia\":1,\"id_ciudad\":1,\"sector\":\"aaa\",\"calle\":\"aa\",\"local\":\"aa\"}, \r\n    \"name\":\"aaa\", \r\n    \"bank_account_num\":\"01021234567891234567\",\r\n    \"id_activity\":742\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM/:id_client/commerce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								":id_client",
+								"commerce"
+							],
+							"variable": [
+								{
+									"key": "id_client",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crear FM",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM0OTI5NDU4LCJleHAiOjE2MzQ5MzEyNTh9.Ev3HGJWKtIb8DFzGbp9xdOGdEpPKENS6WIk2THE3rUw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{        \"rc_ident_card\": 18,\r\n        \"rc_rif\": 15,\r\n        \"rc_special_contributor\": 17,\r\n        \"rc_ref_bank\": 16,\r\n        \"rc_constitutive_act\": 13,\r\n        \"rc_comp_dep\": 14,\r\n    \"number_post\":6,\r\n\t\"bank_account_num\":\"01021234567891234567\",\r\n\t\"id_payment_method\":2,\r\n\t\"id_client\":1,\r\n\t\"id_commerce\":1,\r\n    \"dir_pos\":{\"id_estado\":1,\"id_municipio\":1,\"id_parroquia\":1,\"id_ciudad\":1,\"sector\":\"aaa\",\"calle\":\"aa\",\"local\":\"aa\"},\r\n    \"id_request_origin\":1,\r\n\t\"id_type_payment\":1,\r\n\t\"ci_referred\":\"65848468\",\r\n    \"id_product\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM0OTMzNzg1LCJleHAiOjE2MzQ5MzU1ODV9.86x4REB0eZrqsnX6vKceJshYEAvZo7zC-Ai24HCJwiA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_status_request\":4,\r\n    \"valids\":{        \r\n        \"valid_constitutive_act\": \"\",\r\n        \"valid_special_contributor\": \"\",\r\n        \"valid_ref_bank\": \"\",\r\n        \"valid_comp_dep\": \"\",\r\n        \"valid_rif\": \"\",\r\n        \"valid_ident_card\": \"\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5051/FM/:id_FM/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"FM",
+								":id_FM",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id_FM",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ident_types",
+			"item": [
+				{
+					"name": "get All tipos de identidad",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjMzMTE2ODQ1LCJleHAiOjE2MzMxMjA0NDV9.N6elAxKvQKMirG7ojPYGhfftP4d6I8ct0cp3zEu_HEs",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.68.21:5051/ident_type",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"68",
+								"21"
+							],
+							"port": "5051",
+							"path": [
+								"ident_type"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "client",
+			"item": []
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "get all products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidHlwZSI6MiwiaWF0IjoxNjMzMDE2NzIyLCJleHAiOjE2MzMwMTg1MjJ9.d1D7tUU6_MgN6OnPeXNMuFMLgykumF9uKrLnFTY5pnU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5051/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "actividad comercial",
+			"item": [
+				{
+					"name": "global",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6MiwiaWF0IjoxNjM0NTcxMjUxLCJleHAiOjE2MzQ1NzMwNTF9.0Fs3YMAjbrDOp7EuSpmABcx0lhu8_YHUbZ3SpikROi0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://10.198.68.21:5051/activity",
+							"protocol": "http",
+							"host": [
+								"10",
+								"198",
+								"68",
+								"21"
+							],
+							"port": "5051",
+							"path": [
+								"activity"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "deparments",
+			"item": [
+				{
+					"name": "admicion",
+					"item": [
+						{
+							"name": "diferidos de admicion",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6MiwiaWF0IjoxNjM1Mjc1ODU5LCJleHAiOjE2MzUyNzc2NTl9.FBMndtr9g9Ajdg6w3HFr2CRNrUYBMPm2afpQBKmiRGY",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5051/deparment/amition/diferidos",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5051",
+									"path": [
+										"deparment",
+										"amition",
+										"diferidos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

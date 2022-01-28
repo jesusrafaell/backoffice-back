@@ -1,10 +1,43 @@
-import idenDoc from './models/idenDoc';
-import roles from './models/roles';
-export default async () => {
-	try {
-		await idenDoc();
-		await roles();
-	} catch (err) {
-		console.log(err);
-	}
-};
+import ident_type from './ident_type';
+import payment_method from './payment_method';
+import roles from './roles';
+import worker from './worker';
+import activity from './activity';
+import Product from './product';
+import estado from './estado';
+import municipio from './municipio';
+import parroquia from './parroquia';
+import ciudad from './ciudad';
+import company from './company';
+import department from './department';
+import status_request from './status_request';
+import type_request from './type_request';
+import bank from './bank';
+import type_person from './type_person';
+import afiliados from './afiliados';
+import type_payment from './type_payment';
+import request_origin from './request_origin';
+import { createConnection } from 'typeorm';
+// init server
+
+createConnection().then(async () => {
+	await status_request();
+	await type_request();
+	await ident_type();
+	await roles();
+	await payment_method();
+	await type_payment();
+	await company();
+	await department();
+	await worker();
+	await Product();
+	await estado();
+	await municipio();
+	await parroquia();
+	await ciudad();
+	await bank();
+	await type_person();
+	await afiliados();
+	await activity();
+	await request_origin();
+});

@@ -1,3 +1,5 @@
-export const prod = process.argv[0] === '/root/.nvm/versions/node/v14.15.0/bin/node';
+export const prod: boolean = process.env.NODE_ENV === 'development';
 
-export const host = prod ? 'http://localhost:5000/' : 'http://localhost:5000/';
+export const host: string = prod
+	? `http://localhost:${process.env.PORT}/`
+	: `http://localhost:${process.env.PORT}/`;
