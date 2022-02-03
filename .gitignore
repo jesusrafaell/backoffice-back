@@ -1,6 +1,6 @@
 node_modules
 /static/
-!/static/*
+!static/*
 yarn.lock
 package-lock.json
 #ormconfig.json
