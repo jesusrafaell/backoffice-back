@@ -19,7 +19,7 @@ createConnection()
 		const { app, key } = sv;
 
 		app.listen(app.get('port'), () => {
-			console.log(`${key} corriendo en el puerto http://localhost:${app.get('port')} leoM   `);
+			console.log(`${key} Run in http://localhost:${app.get('port')}`);
 			console.log('╔═══╗ ♪');
 			console.log('║███║ ♫');
 			console.log('║ (●) ♫');
