@@ -20,21 +20,11 @@ createConnection()
 
 		app.listen(app.get('port'), () => {
 			console.log(`${key}`);
-			console.log('            ________');
-			console.log('    o      |   __   |');
-			console.log(`      \_ O |  |__|  |`);
-			console.log('    ____/  |___WW___|');
-			console.log('   __/   /     || ');
-			console.log('               || ');
-			console.log('               || ');
-			console.log('_______________||________________ ');
+			console.log('   ╔═══╗ ♪');
+			console.log('   ║███║ ♫');
+			console.log('   ║ (●) ♫');
+			console.log('   ╚═══╝♪♪');
 			console.log(`Run in http://localhost:${app.get('port')}`);
 		});
 	})
 	.catch((err) => console.log('DB ERR', err));
-/*
-	console.log('   ╔═══╗ ♪');
-	console.log('   ║███║ ♫');
-	console.log('   ║ (●) ♫');
-	console.log('   ╚═══╝♪♪');
-	*/
