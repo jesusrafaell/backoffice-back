@@ -169,6 +169,52 @@ export const valid_existin_client = async (
 	}
 };
 
+// validar que el cliente existe
+export const valid_existin_clientAndCommerce = async (
+	req: Request<any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		validationResult(req).throw();
+
+		const { id_ident_type, ident_num, id_ident_type_commerce, ident_num_commerce } = req.body;
+
+		let resp: Api.Resp = { message: ``, info: { matsh: false } };
+
+		// validar existencia de la clave cumpuesta
+		const validClient = await getRepository(fm_client).findOne({ id_ident_type, ident_num });
+		if (!validClient) {
+			throw { message: 'El cliente no existe' };
+		}
+		console.log('bug1, cliente', validClient);
+
+		const validCommerce = await getRepository(fm_commerce).findOne({
+			id_ident_type: id_ident_type_commerce,
+			ident_num: ident_num_commerce,
+			id_client: validClient.id,
+		});
+		if (!validCommerce) {
+			throw { message: 'El comercio no existe o no esta afiliado a ese cliente' };
+		}
+		console.log('bug2, commerce', validCommerce);
+
+		resp = {
+			message: 'Ids del cliente y el comercio',
+			info: {
+				idClient: validClient.id,
+				emailClient: validClient.email,
+				nameClient: validClient.name + ' ' + validClient.last_name,
+				idCommerce: validCommerce.id,
+				nameCommerce: validCommerce.name,
+			},
+		};
+		Resp(req, res, resp);
+	} catch (err) {
+		next(err);
+	}
+};
+
 interface commerce extends fm_commerce {
 	location: fm_location;
 }
@@ -456,6 +502,163 @@ export const FM_create = async (
 
 		const statusData = getRepository(fm_status).create(status);
 		await getRepository(fm_status).save(statusData);
+
+		res.status(200).json({ message: 'FM creada', info: { id: FM_save.id } });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const FM_extraPos = async (
+	req: Request<any, Api.Resp, fm_request>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		// validacion de data
+		validationResult(req).throw();
+
+		const {
+			number_post,
+			rc_constitutive_act,
+			rc_special_contributor,
+			rc_ref_bank,
+			rc_comp_dep,
+			rc_rif,
+			rc_ident_card,
+			id_payment_method,
+			id_client,
+			id_commerce,
+			bank_account_num,
+			id_request_origin,
+			id_type_payment, //tipo de pago
+			ci_referred,
+			id_product,
+			discount,
+			nro_comp_dep,
+			pagadero,
+		}: any = req.body;
+
+		console.log('Entre extraPos', req.body);
+
+		await getRepository(fm_client).update(id_client, { rc_ident_card });
+
+		await getRepository(fm_commerce).update(id_commerce, { rc_special_contributor, rc_rif });
+
+		const constitutive_act = rc_constitutive_act.map((id_photo: any) => ({ id_commerce, id_photo }));
+		await getRepository(fm_commerce_constitutive_act).save(constitutive_act);
+
+		const product = await getRepository(fm_product).findOne(id_product);
+		if (!product) throw { message: 'el producto no existe suministrado' };
+
+		const bank: any = await getRepository(fm_bank).findOne({ code: bank_account_num.slice(0, 4) });
+		if (!bank) throw { message: 'el banco no existe' };
+
+		const valid_bank_commerce = await getRepository(fm_bank_commerce).count({
+			id_client: Not(id_client),
+			bank_account_num,
+		});
+
+		if (valid_bank_commerce) throw { message: 'El numero de cuenta esta asociado a otro cliente' };
+		else {
+			await getRepository(fm_bank_commerce).save({ bank_account_num, id_commerce, id_bank: bank.id, id_client });
+		}
+
+		const valids = await getRepository(fm_valid_request).save({
+			valid_constitutive_act: '',
+			valid_special_contributor: '',
+			valid_ref_bank: '',
+			valid_comp_dep: '',
+			valid_rif: '',
+			valid_ident_card: '',
+		});
+
+		const initial = ((): number => {
+			if (id_type_payment === 2) {
+				const { initial }: any = req.body;
+				return initial;
+			} else {
+				return product.price * number_post;
+			}
+		})();
+
+		const quotas_total = ((): number => {
+			if (id_type_payment === 2) {
+				const monto = product.price * number_post;
+				return (monto - 50) / product.quota;
+			} else {
+				return 1;
+			}
+		})();
+
+		const quotas_to_pay = ((): number => {
+			if (id_type_payment === 2) {
+				const monto = product.price * number_post;
+				const { initial }: any = req.body;
+
+				return (monto - (discount ? 50 : 0) - initial) / product.quota;
+			} else {
+				return 0;
+			}
+		})();
+
+		const quotas = await getRepository(fm_quotas_calculated).save({
+			id_type_payment,
+			initial,
+			quotas_total,
+			quotas_to_pay,
+		});
+
+		const FM_save = await getRepository(fm_request).save({
+			number_post,
+			bank_account_num,
+			rc_comp_dep,
+			rc_rif,
+			rc_ref_bank,
+			id_payment_method,
+			id_client,
+			id_commerce,
+			id_type_request: 1,
+			id_request_origin,
+			id_type_payment,
+			ci_referred,
+			id_valid_request: valids.id,
+			id_product,
+			discount,
+			nro_comp_dep,
+			pagadero,
+			id_quotas_calculat: quotas.id,
+		});
+
+		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
+
+		const id_request = FM_save.id;
+
+		const extraPos = await getRepository(fm_request).update(
+			{ id: FM_save.id },
+			{ code: 'E' + id_client + id_commerce + 'F' + FM_save.id }
+		);
+
+		const statusFm: any = [
+			4, //Admision
+			5, //Cobranza
+			6, //Activacion
+			7, //Administracion
+		];
+
+		const status = statusFm.map((dep: number) => {
+			const id_request = FM_save.id;
+			const id_department = dep;
+			const id_status_request = 1;
+			//
+			return { id_request, id_department, id_status_request };
+		});
+
+		const statusData = getRepository(fm_status).create(status);
+		await getRepository(fm_status).save(statusData);
+
+		console.log('fm extra pos creada');
+		console.log(extraPos);
 
 		res.status(200).json({ message: 'FM creada', info: { id: FM_save.id } });
 	} catch (err) {
