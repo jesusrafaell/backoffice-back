@@ -19,12 +19,24 @@ createConnection()
 		const { app, key } = sv;
 
 		app.listen(app.get('port'), () => {
-			console.log(`${key}`);
+			console.log('____________________________________________________________________________');
+			console.log('');
+			console.log('██████╗  █████╗  ██████╗██╗  ██╗ ██████╗ ███████╗███████╗██╗ ██████╗███████╗');
+			console.log('██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔═══██╗██╔════╝██╔════╝██║██╔════╝██╔════╝');
+			console.log('██████╔╝███████║██║     █████╔╝ ██║   ██║█████╗  █████╗  ██║██║     █████╗  ');
+			console.log('██╔══██╗██╔══██║██║     ██╔═██╗ ██║   ██║██╔══╝  ██╔══╝  ██║██║     ██╔══╝');
+			console.log('██████╔╝██║  ██║╚██████╗██║  ██╗╚██████╔╝██║     ██║     ██║╚██████╗███████╗');
+			console.log('╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝     ╚═╝ ╚═════╝╚══════╝ ');
+			console.log(`Run "${key}" in Port:${app.get('port')}`);
+			console.log('____________________________________________________________________________');
+		});
+	})
+	.catch((err) => console.log('DB ERR', err));
+
+/*
 			console.log('   ╔═══╗ ♪');
 			console.log('   ║███║ ♫');
 			console.log('   ║ (●) ♫');
 			console.log('   ╚═══╝♪♪');
-			console.log(`Run in http://localhost:${app.get('port')}`);
-		});
-	})
-	.catch((err) => console.log('DB ERR', err));
+			console.log(`Run "${key}" in http://localhost:${app.get('port')}`);
+	*/
