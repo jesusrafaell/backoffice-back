@@ -188,7 +188,6 @@ export const valid_existin_clientAndCommerce = async (
 		if (!validClient) {
 			throw { message: 'El cliente no existe' };
 		}
-		console.log('bug1, cliente', validClient);
 
 		const validCommerce = await getRepository(fm_commerce).findOne({
 			id_ident_type: id_ident_type_commerce,
@@ -198,7 +197,6 @@ export const valid_existin_clientAndCommerce = async (
 		if (!validCommerce) {
 			throw { message: 'El comercio no existe o no esta afiliado a ese cliente' };
 		}
-		console.log('bug2, commerce', validCommerce);
 
 		resp = {
 			message: 'Ids del cliente y el comercio',
@@ -364,6 +362,7 @@ export const FM_create = async (
 
 		const {
 			number_post,
+			planilla,
 			rc_constitutive_act,
 			rc_special_contributor,
 			rc_ref_bank,
@@ -473,6 +472,9 @@ export const FM_create = async (
 			id_quotas_calculat: quotas.id,
 		});
 
+		const rc_planilla = planilla.map((id_photo: number) => ({ id_request: FM_save.id, id_photo }));
+		await getRepository(fm_planilla).save(rc_planilla);
+
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
 
 		const validlocation = await getRepository(fm_location).findOne(dir_pos);
@@ -540,8 +542,6 @@ export const FM_extraPos = async (
 			nro_comp_dep,
 			pagadero,
 		}: any = req.body;
-
-		console.log('Entre extraPos', req.body);
 
 		await getRepository(fm_client).update(id_client, { rc_ident_card });
 
@@ -661,9 +661,6 @@ export const FM_extraPos = async (
 
 		const statusData = getRepository(fm_status).create(status);
 		await getRepository(fm_status).save(statusData);
-
-		console.log('fm extra pos creada');
-		console.log(extraPos);
 
 		res.status(200).json({ message: 'FM creada', info: { id: FM_save.id } });
 	} catch (err) {
