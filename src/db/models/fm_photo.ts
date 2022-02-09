@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import fm_request from './fm_request';
 import fm_commerce_constitutive_act from './fm_commerce_constitutive_act';
+import fm_planilla from './fm_planilla';
 
 @Entity()
 export default class fm_photo {
@@ -35,6 +36,10 @@ export default class fm_photo {
 	)
 	@JoinColumn()
 	rc_constitutive_act?: fm_commerce_constitutive_act;
+
+	@OneToOne(() => fm_planilla, (fm_planilla) => fm_planilla.id_photo)
+	@JoinColumn()
+	rc_planilla?: fm_planilla;
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;

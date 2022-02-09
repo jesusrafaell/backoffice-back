@@ -22,6 +22,7 @@ import fm_type_payment from './fm_type_payment';
 import fm_valid_request from './fm_valid_request';
 import fm_quotas_calculat from './fm_quotas_calculated';
 import Aliados from './Aliados';
+import fm_planilla from './fm_planilla';
 
 @Entity()
 export default class fm_request {
@@ -111,6 +112,10 @@ export default class fm_request {
 	@OneToMany(() => fm_status, (fm_status) => fm_status.id_request)
 	@JoinColumn({ name: 'status' })
 	status?: fm_status[];
+
+	@OneToMany(() => fm_planilla, (fm_planilla) => fm_planilla.id_request)
+	@JoinColumn({ name: 'rc_planilla' })
+	rc_planilla?: fm_planilla[]; //planilla fm
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;
