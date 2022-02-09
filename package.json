@@ -25,7 +25,7 @@
 		"migration:revert": "yarn typeorm migration:revert",
 		"migration:show": "yarn typeorm migration:show"
 	},
-	"author": "Dimas, Jesus, Aldrin, Carlos",
+	"author": "Dimas, Jesus, Aldrin, Carlos, Armando",
 	"license": "ISC",
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.0",

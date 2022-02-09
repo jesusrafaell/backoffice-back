@@ -21,6 +21,7 @@ import fm_valid_request from '../../../../db/models/fm_valid_request';
 import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
 import fm_product from '../../../../db/models/fm_product';
 import fm_commerce_constitutive_act from '../../../../db/models/fm_commerce_constitutive_act';
+import fm_planilla from '../../../../db/models/fm_planilla';
 import axios from 'axios';
 const { HOST, PORT_PROVIDERS } = process.env;
 
@@ -520,6 +521,7 @@ export const FM_extraPos = async (
 
 		const {
 			number_post,
+			planilla,
 			rc_constitutive_act,
 			rc_special_contributor,
 			rc_ref_bank,
@@ -629,6 +631,9 @@ export const FM_extraPos = async (
 			pagadero,
 			id_quotas_calculat: quotas.id,
 		});
+
+		const rc_planilla = planilla.map((id_photo: number) => ({ id_request: FM_save.id, id_photo }));
+		await getRepository(fm_planilla).save(rc_planilla);
 
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
 

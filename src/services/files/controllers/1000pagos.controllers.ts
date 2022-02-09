@@ -35,8 +35,6 @@ export const upFilesRecaudos = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		// console.log('files', req.files);
-
 		const files: any = req.files;
 		let info: any = {};
 
@@ -73,15 +71,18 @@ export const upFilesRecaudos = async (
 					rc_special_contributor: rc_special_contributor && rc_special_contributor.id,
 					rc_ref_bank: rc_ref_bank && rc_ref_bank.id,
 					rc_constitutive_act: rc_constitutive_act ? rc_constitutive_act.map((item: any) => item.id) : [],
+					planilla: [],
 				};
 			} else {
 				info = {
 					rc_ident_card: rc_ident_card && rc_ident_card.id,
+					planilla: [],
 				};
 			}
 		} else {
 			info = {
 				rc_constitutive_act: [],
+				planilla: [],
 			};
 		}
 
@@ -100,10 +101,16 @@ export const upFilesRecaudos = async (
 			await fs.mkdir(`${base}/${id_client}/${id_commerce}/constitutive_act`);
 		}
 
+		if (files.planilla) {
+			if (!existsSync(`${base}/${id_client}/${id_commerce}/planilla`)) {
+				await fs.mkdir(`${base}/${id_client}/${id_commerce}/planilla`);
+			}
+		}
+
 		const stop: Promise<void>[] = files.images
 			.filter((file: Express.Multer.File) => {
 				const valid: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
-				// console.log(' description.includes(val`id)', description.includes(valid));
+				//console.log(' description.includes(val`id)', description.includes(valid));
 
 				return description.includes(valid);
 			})
@@ -123,6 +130,24 @@ export const upFilesRecaudos = async (
 				info[descript] = save.id;
 			});
 		await Promise.all(stop);
+
+		if (files.planilla) {
+			const stop2 = files.planilla.map(async (file: Express.Multer.File, i: number): Promise<void> => {
+				await Doc.Move(file.filename, `${id_client}/${id_commerce}/planilla`);
+				const path = `static/${id_client}/${id_commerce}/planilla/${file.filename}`;
+
+				const data = getRepository(fm_photo).create({
+					name: file.filename,
+					path,
+					descript: 'planilla',
+				});
+				const save = await getRepository(fm_photo).save(data);
+
+				info.planilla.push(save.id);
+			});
+
+			await Promise.all(stop2);
+		}
 
 		if (files.constitutive_act) {
 			const stop2 = files.constitutive_act.map(async (file: Express.Multer.File, i: number): Promise<void> => {
