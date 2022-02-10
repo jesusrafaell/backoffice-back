@@ -9,6 +9,7 @@ import fm_status_request from '../../../../db/models/fm_status_request';
 import fm_company from '../../../../db/models/fm_company';
 import fm_department from '../../../../db/models/fm_department';
 import fm_type_request from '../../../../db/models/fm_type_request';
+import Cartera from '../../../../db/models/Cartera';
 
 export const getAllIdent_type = async (
 	req: Request<any, any, Api.Resp>,
@@ -80,11 +81,16 @@ export const getAllTypeSolicts = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const info = await getRepository(fm_type_request).find();
+		console.log('entre');
+		//const info = await getRepository(fm_type_request).find();
+		console.log('entre2');
+
+		//const info2 = await getRepository(Cartera).find();
+		//console.log('info2', info2);
 
 		const message: string = Msg('type_solict').getAll;
 
-		res.status(200).json({ message, info });
+		res.status(200).json({ message, info: [] });
 	} catch (err) {
 		next(err);
 	}
@@ -99,6 +105,23 @@ export const getAllDeparments = async (
 		const info = await getRepository(fm_department).find();
 
 		const message: string = Msg('departamento').getAll;
+
+		Resp(req, res, { message, info });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getAllTiposDeCarteras = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		console.log('Cartera.....');
+		const info = await getRepository(Cartera).find();
+
+		const message: string = Msg('Carteras').getAll;
 
 		Resp(req, res, { message, info });
 	} catch (err) {

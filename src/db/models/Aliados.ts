@@ -1,4 +1,3 @@
-import fm_request from './fm_request';
 import fm_commerce from './fm_commerce';
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany } from 'typeorm';
 
