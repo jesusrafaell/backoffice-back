@@ -81,16 +81,11 @@ export const getAllTypeSolicts = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		console.log('entre');
-		//const info = await getRepository(fm_type_request).find();
-		console.log('entre2');
-
-		//const info2 = await getRepository(Cartera).find();
-		//console.log('info2', info2);
+		const info = await getRepository(fm_type_request).find();
 
 		const message: string = Msg('type_solict').getAll;
 
-		res.status(200).json({ message, info: [] });
+		res.status(200).json({ message, info });
 	} catch (err) {
 		next(err);
 	}
@@ -118,7 +113,6 @@ export const getAllTiposDeCarteras = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		console.log('Cartera.....');
 		const info = await getRepository(Cartera).find();
 
 		const message: string = Msg('Carteras').getAll;
