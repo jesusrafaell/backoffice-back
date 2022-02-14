@@ -47,6 +47,17 @@ const worker = async (): Promise<void> => {
 			id_company: 1,
 			id_department: 8,
 		},
+		{
+			name: 'Glenda',
+			last_name: 'Vielma',
+			password: '$2b$10$D5OjXn/pk4Z23OMMarCh0ePIF1ox6m9XVGXCAoXu9m.W7p7iYkiDS',
+			id_ident_type: 1,
+			ident_num: '6670156',
+			email: 'gvielma@1000pagos.com',
+			phone: '+584141126131',
+			id_company: 2,
+			id_department: 8,
+		},
 	];
 
 	//
