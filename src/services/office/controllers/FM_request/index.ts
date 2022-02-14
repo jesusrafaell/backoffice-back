@@ -361,6 +361,7 @@ export const FM_create = async (
 		validationResult(req).throw();
 
 		const {
+			id_type_request,
 			number_post,
 			planilla,
 			rc_constitutive_act,
@@ -452,6 +453,7 @@ export const FM_create = async (
 		});
 
 		const FM_save = await getRepository(fm_request).save({
+			id_type_request,
 			number_post,
 			bank_account_num,
 			rc_comp_dep,
@@ -522,6 +524,7 @@ export const FM_extraPos = async (
 		validationResult(req).throw();
 
 		const {
+			id_type_request,
 			number_post,
 			planilla,
 			rc_constitutive_act,
@@ -612,6 +615,7 @@ export const FM_extraPos = async (
 		});
 
 		const FM_save = await getRepository(fm_request).save({
+			id_type_request,
 			number_post,
 			bank_account_num,
 			rc_comp_dep,
