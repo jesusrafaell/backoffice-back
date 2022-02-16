@@ -1,8 +1,7 @@
 node_modules
-static
+/static/
 yarn.lock
 package-lock.json
-ormconfig.json
-.env
+#ormconfig.json
+#.env
 .vscode
-.gitlab-ci.yml

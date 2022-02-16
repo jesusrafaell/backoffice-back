@@ -6,6 +6,8 @@ import {
 	FM_create,
 	getFm,
 	editStatusByIdAdmision,
+	valid_existin_clientAndCommerce,
+	FM_extraPos,
 } from '../../controllers/FM_request/index';
 
 import { getFmAdministration, editStatusByIdAdministration } from '../../controllers/adminitration/index';
@@ -26,9 +28,13 @@ FM.route('/FM/:id/commerce').post(validCommerceData, fm_create_commerce);
 //
 FM.route('/FM').post(validFmData, FM_create);
 //
+FM.route('/FM/extraPos').post(validFmData, FM_extraPos);
+//
 FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
 //
 FM.route('/FM/:id/commerce/valid').post(valid_exitin_commerce);
+//
+FM.route('/FM/valid/extrapos').post(valid_existin_clientAndCommerce);
 //
 FM.route('/FM/bank/valid').post(validBankAccount, valid_bank_account);
 //

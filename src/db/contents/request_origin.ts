@@ -7,16 +7,19 @@ const request_origin = async (): Promise<void> => {
 			name: 'Referido',
 		},
 		{
-			name: 'ASI',
+			name: 'ACI',
+		},
+		{
+			name: 'Call Center',
+		},
+		{
+			name: 'Feria',
+		},
+		{
+			name: 'Pagina WEB',
 		},
 		{
 			name: 'Banco',
-		},
-		{
-			name: 'Call center',
-		},
-		{
-			name: 'Pagina publica',
 		},
 	];
 	//

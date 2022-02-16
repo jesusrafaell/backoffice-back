@@ -13,7 +13,7 @@ export const createCommerce = async (
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
-	try {		
+	try {
 		const fmData = await getRepository(fm_request).findOne({
 			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
 			order: { id: 'ASC' },
@@ -47,7 +47,7 @@ export const createCommerce = async (
 				//
 			],
 		});
-		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };		
+		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
 		const { id_commerce, id_client, bank_account_num, id_product, dir_pos, number_post }: any = fmData;
 
@@ -56,7 +56,7 @@ export const createCommerce = async (
 			comerTipoPer: [3, 4].includes(id_commerce.id_ident_type.id) ? 2 : 1,
 			comerCodigoBanco: bank_account_num.slice(0, 4),
 			comerCuentaBanco: bank_account_num,
-			comerPagaIva: 'SI',			
+			comerPagaIva: 'SI',
 			comerCodUsuario: null,
 			comerCodPadre: 0,
 			comerRif: id_commerce.id_ident_type.name + id_commerce.ident_num,
@@ -107,27 +107,30 @@ export const createCommerce = async (
 
 		const comercioSave = await getRepository(Comercios).save(commerce);
 
-		//Dimas Modifca el tlf para que use el de la lista phones porfaplis, 
+		//Dimas Modifca el tlf para que use el de la lista phones porfaplis,
 		//ya la query esta aqui phonesClient
 
-		const contacto: any ={
+		const contacto: any = {
 			contCodComer: comercioSave.comerCod,
 			contCodUsuario: null,
 			contNombres: id_client.name,
 			contApellidos: id_client.last_name,
 			contTelefLoc: id_client.phones[0].phone.slice(3, id_client.phones[0].phone.length),
-			contTelefMov:  id_client.phones[1].phone.slice(3, id_client.phones[1].phone.length),
+			contTelefMov: id_client.phones[1].phone.slice(3, id_client.phones[1].phone.length),
 			contMail: id_client.email,
-			contFreg: null
+			contFreg: null,
 		};
 
 		const contactoSave = await getRepository(Contactos).save(contacto); //new
 
 		const cxaCodAfi = `${id_commerce.id_activity.id_afiliado.id}`.split('');
 
-		while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');		
+		while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');
 
-		await getRepository(ComerciosXafiliado).save({ cxaCodAfi: cxaCodAfi.join(''), cxaCodComer: comercioSave.comerCod });
+		await getRepository(ComerciosXafiliado).save({
+			cxaCodAfi: cxaCodAfi.join(''),
+			cxaCodComer: comercioSave.comerCod,
+		});
 
 		res.status(200).json({ message: 'comercio creado' });
 	} catch (err) {
