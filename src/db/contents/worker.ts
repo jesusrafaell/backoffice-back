@@ -56,7 +56,7 @@ const worker = async (): Promise<void> => {
 			email: 'gvielma@1000pagos.com',
 			phone: '+584141126131',
 			id_company: 2,
-			id_department: 8,
+			id_department: 4,
 		},
 	];
 
