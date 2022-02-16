@@ -1,7 +1,11 @@
 import { Router } from 'express';
-import { getAllIdent_type, getAllActivity } from '../../controllers/global';
+import {
+	getAllIdent_type,
+	getAllActivity,
+	getAllTypeSolicts,
+	getAllTiposDeCarteras,
+} from '../../controllers/global';
 import { getAllStatus, getAllCompanys } from '../../controllers/global/index';
-import { getAllProcusts } from '../../controllers/products/index';
 const global: Router = Router();
 
 // controllers
@@ -21,6 +25,14 @@ global.route('/status').get(getAllStatus);
 // ? company
 //
 global.route('/company').get(getAllCompanys);
+
+// ? type_solict
+//
+global.route('/types_solict').get(getAllTypeSolicts);
+
+// ? tipo_de_carteras
+//
+global.route('/tipo_de_carteras').get(getAllTiposDeCarteras);
 
 // ?
 //

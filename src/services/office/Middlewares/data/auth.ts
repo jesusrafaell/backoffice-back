@@ -52,6 +52,29 @@ export const validExistingClient: ValidationChain[] = [
 		.custom(NoSQL),
 ];
 
+export const validExistingClientAndCommerce: ValidationChain[] = [
+	check('id_ident_type', 'el tipo de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isNumeric()
+		.custom(NoSQL),
+
+	check('ident_num', 'el numero de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isLength({ min: 6, max: 20 })
+		.isNumeric()
+		.custom(NoSQL),
+
+	check('id_ident_type_commerce', 'el tipo de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isNumeric({ no_symbols: true })
+		.custom(NoSQL),
+
+	check('ident_num_commerce', 'numero de identidad invalido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isString()
+		.custom(NoSQL),
+];
+
 export const validBankAccount: ValidationChain[] = [
 	check('email', 'el correo no es valido')
 		.exists({ checkFalsy: true, checkNull: true })

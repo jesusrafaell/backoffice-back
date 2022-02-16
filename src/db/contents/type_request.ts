@@ -1,12 +1,19 @@
-import fm_roles from '../models/fm_roles';
 import { getRepository } from 'typeorm';
-import fm_status_request from '../models/fm_status_request';
 import fm_type_request from '../models/fm_type_request';
 
 const type_request = async (): Promise<void> => {
 	const data: fm_type_request[] = [
 		{
-			name: 'solicitud',
+			name: 'Persona Natural',
+		},
+		{
+			name: 'Persona Juridica',
+		},
+		{
+			name: 'Firma Personal',
+		},
+		{
+			name: 'Pos Extra',
 		},
 	];
 	//
