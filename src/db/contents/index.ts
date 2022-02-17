@@ -17,7 +17,9 @@ import type_person from './type_person';
 import afiliados from './afiliados';
 import type_payment from './type_payment';
 import request_origin from './request_origin';
+import telemercadeo from './telemercadeo';
 import { createConnection } from 'typeorm';
+import type_telemarket from './type_telemarket';
 // init server
 
 createConnection().then(async () => {
@@ -40,4 +42,6 @@ createConnection().then(async () => {
 	await afiliados();
 	await activity();
 	await request_origin();
+	await type_telemarket();
+	await telemercadeo();
 });
