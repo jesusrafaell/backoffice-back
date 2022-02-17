@@ -23,13 +23,12 @@ import fm_product from '../../../../db/models/fm_product';
 import fm_commerce_constitutive_act from '../../../../db/models/fm_commerce_constitutive_act';
 import fm_planilla from '../../../../db/models/fm_planilla';
 import axios from 'axios';
-const { HOST, PORT_PROVIDERS } = process.env;
+//import dotenv from '../../../../config/env';
+//const { HOST, PORT_PROVIDERS } = dotenv;
 
-const urlApi: string = 'http://10.198.68.21'; //aldrin
-//const urlApi: string = 'http://10.198.73.15'; //qa
-const portApi: string = '8000';
+const HOST = 'http://localhost';
+const PORT_PROVIDERS = 8000;
 
-//
 export const requestOrigin = async (
 	req: Request<any, Api.Resp>,
 	res: Response<Api.Resp>,
@@ -637,13 +636,27 @@ export const FM_extraPos = async (
 		const rc_planilla = planilla.map((id_photo: number) => ({ id_request: FM_save.id, id_photo }));
 		await getRepository(fm_planilla).save(rc_planilla);
 
-		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
+		//const validClient = await getRepository(fm_client).findOne({ id_ident_type, ident_num });
+
+		const preDirPos: any = await getRepository(fm_dir_pos).find({
+			where: { id_commerce: req.body.id_commerce },
+			order: {
+				id: 'DESC',
+			},
+			relations: ['id_location'],
+		});
+
+		const idLocationDirPos = preDirPos[0].id_location.id;
 
 		const id_request = FM_save.id;
 
-		const extraPos = await getRepository(fm_request).update(
+		await getRepository(fm_dir_pos).save({ id_location: idLocationDirPos, id_commerce, id_request, id_product });
+
+		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request });
+
+		await getRepository(fm_request).update(
 			{ id: FM_save.id },
-			{ code: 'E' + id_client + id_commerce + 'F' + FM_save.id }
+			{ code: 'E' + id_client + id_commerce + 'F' + id_request }
 		);
 
 		const statusFm: any = [
@@ -758,6 +771,7 @@ export const editStatusByIdAdmision = async (
 
 			if (pagadero) {
 				if (id_product.id === 1) {
+					console.log('Comenzar en Tms7', HOST, PORT_PROVIDERS);
 					await axios.post(
 						`${HOST}:${PORT_PROVIDERS}/auth/login`,
 						{
@@ -768,27 +782,40 @@ export const editStatusByIdAdmision = async (
 						{ headers: { token: req.headers.token_text } }
 					);
 
+					console.log('loged in tms7');
+
 					await axios.post(
 						`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
 						{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
 						{ headers: { token: req.headers.token_text } }
 					);
 
+					console.log('comercio creado tms7');
+
 					await axios.post(
 						`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
 						{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
 						{ headers: { token: req.headers.token_text } }
 					);
+
+					console.log('comercio creado 1000pagos');
 				} else if (id_product.id === 2) {
 					//
+
+					console.log('Comenzando solo en 1000pagos');
+
 					await axios.post(
 						`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
 						{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
 						{ headers: { token: req.headers.token_text } }
 					);
+
+					console.log('comercio creado 1000pagos');
 				}
 			}
 		}
+
+		console.log('bugFinal');
 
 		const message: string = Msg('Status del FM').edit;
 

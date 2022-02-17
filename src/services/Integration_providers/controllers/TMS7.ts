@@ -33,8 +33,6 @@ export const Login = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		console.log('body', req.body);
-
 		const bodyTMS7 = new URLSearchParams();
 
 		const { body }: any = req;
@@ -108,6 +106,7 @@ const validarRif_tms7 = async (rif: string, access_token: string): Promise<boole
 };
 
 const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean> => {
+	console.log('Comercio en TMS7', commerce);
 	try {
 		await axios.post('http://10.198.72.86/TMS7API/v1/Merchant', commerce, {
 			headers: {
@@ -163,7 +162,7 @@ export const createCommerce = async (
 				'id_commerce.id_location.id_parroquia',
 			],
 		});
-		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };		
+		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
 		const { id_commerce, id_client, dir_pos, id }: any = fmData;
 		const { name, id_ident_type, ident_num, id_activity }: any = id_commerce;
@@ -181,9 +180,7 @@ export const createCommerce = async (
 			.filter((item) => item)[0];
 
 		const address_line2 = Object.keys(dir_pos[0].id_location)
-			.map((key) => 
-				dir_pos[0].id_location[key][key.replace('id_', '')]
-			)
+			.map((key) => dir_pos[0].id_location[key][key.replace('id_', '')])
 			.filter((item) => item)[0];
 
 		const merchantId = `7${id_activity.id_afiliado.id}${11000 + (id + 777)}`;
@@ -205,7 +202,7 @@ export const createCommerce = async (
 			postalcode: id_ciudad.postal_code,
 			group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
 			partner: null,
-		};		
+		};
 
 		// const commerce = {
 		// 	net_id: 2,
@@ -226,7 +223,7 @@ export const createCommerce = async (
 		// 	partner: null,
 		// };
 
-		await createCommerceTMS7(commerce, usar.access_token);		
+		await createCommerceTMS7(commerce, usar.access_token);
 
 		res.status(200).json({ message: 'comercio creado', info: commerce });
 	} catch (err) {
