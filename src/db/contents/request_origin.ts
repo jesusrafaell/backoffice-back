@@ -10,7 +10,7 @@ const request_origin = async (): Promise<void> => {
 			name: 'ACI',
 		},
 		{
-			name: 'Call Center',
+			name: 'Telemercadeo',
 		},
 		{
 			name: 'Feria',

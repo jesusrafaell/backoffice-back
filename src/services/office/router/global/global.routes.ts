@@ -4,6 +4,7 @@ import {
 	getAllActivity,
 	getAllTypeSolicts,
 	getAllTiposDeCarteras,
+	getAllTeleMarket,
 } from '../../controllers/global';
 import { getAllStatus, getAllCompanys } from '../../controllers/global/index';
 const global: Router = Router();
@@ -33,6 +34,10 @@ global.route('/types_solict').get(getAllTypeSolicts);
 // ? tipo_de_carteras
 //
 global.route('/tipo_de_carteras').get(getAllTiposDeCarteras);
+
+// ? telemark
+//
+global.route('/telemarket').get(getAllTeleMarket);
 
 // ?
 //

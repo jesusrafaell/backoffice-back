@@ -10,6 +10,7 @@ import fm_company from '../../../../db/models/fm_company';
 import fm_department from '../../../../db/models/fm_department';
 import fm_type_request from '../../../../db/models/fm_type_request';
 import Cartera from '../../../../db/models/Cartera';
+import fm_telemercadeo from '../../../../db/models/fm_telemercadeo';
 
 export const getAllIdent_type = async (
 	req: Request<any, any, Api.Resp>,
@@ -116,6 +117,22 @@ export const getAllTiposDeCarteras = async (
 		const info = await getRepository(Cartera).find();
 
 		const message: string = Msg('Carteras').getAll;
+
+		Resp(req, res, { message, info });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getAllTeleMarket = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const info = await getRepository(fm_telemercadeo).find();
+
+		const message: string = Msg('telemercadeo').getAll;
 
 		Resp(req, res, { message, info });
 	} catch (err) {
