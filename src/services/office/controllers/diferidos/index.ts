@@ -1,3 +1,4 @@
+import { getConnection } from 'typeorm';
 import fm_request from '../../../../db/models/fm_request';
 
 export const getAllDiferidos = async (): Promise<void> => {
