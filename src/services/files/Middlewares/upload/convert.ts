@@ -8,7 +8,7 @@ const convert = async (req: Request, res: Response, next: NextFunction) => {
 		const stop: Promise<void>[] = files.images.map(async (file: any, i: number) => {
 			const from: string = file.mimetype.split('/').pop();
 
-			if (['pdf','png'].includes(from)) {
+			if (['pdf', 'png'].includes(from)) {
 				//
 				await Doc.Convert(file.filename, 'jpg');
 
