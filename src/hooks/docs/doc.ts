@@ -8,8 +8,8 @@ import path from 'path';
 import { host } from '../host';
 import { v4 as uuidv4 } from 'uuid';
 
-// @ts-expect-error
-import { default as pdfConverter } from 'pdf-poppler';
+//// @ts-expect-error
+//import { default as pdfConverter } from 'pdf-poppler';
 
 import Jimp from 'jimp';
 import { existsSync } from 'fs';
@@ -200,32 +200,27 @@ export const Convert = async (file: any, to: string): Promise<void> => {
 	try {
 		const from: string = file.split('.')[file.split('.').length - 1];
 		const filePath: string = path.join(base, file);
-	
 
 		let remove: boolean = false;
 
 		if (from === 'pdf') {
-
 			const out_prefix = path.basename(filePath, path.extname(filePath));
 			let option = {
 				format: to,
 				out_dir: base,
-				out_prefix, 
+				out_prefix,
 				page: 1,
 			};
 
-			await pdfConverter.convert(filePath, option);
+			//[error]await pdfConverter.convert(filePath, option);
 
-			if(existsSync(path.join(base,out_prefix+'-01.jpg'))){
+			if (existsSync(path.join(base, out_prefix + '-01.jpg'))) {
 				//
-				await fs.rename( path.join(base,out_prefix+'-01.jpg'), path.join(base,out_prefix+'.jpg'));
-
-			} else if(existsSync(path.join(base,out_prefix+'-1.jpg'))) {
+				await fs.rename(path.join(base, out_prefix + '-01.jpg'), path.join(base, out_prefix + '.jpg'));
+			} else if (existsSync(path.join(base, out_prefix + '-1.jpg'))) {
 				//
-				await fs.rename( path.join(base,out_prefix+'-1.jpg'), path.join(base,out_prefix+'.jpg'));
-
+				await fs.rename(path.join(base, out_prefix + '-1.jpg'), path.join(base, out_prefix + '.jpg'));
 			}
-			
 
 			remove = true;
 		} else if (from === 'png') {
@@ -236,7 +231,6 @@ export const Convert = async (file: any, to: string): Promise<void> => {
 				.quality(60) // set JPEG quality
 				.greyscale() // set greyscale
 				.write(filePath.replace('.png', '.' + to)); // save
-			
 			remove = true;
 		} else if (from === 'jpeg') {
 			// open a file called "lenna.png"

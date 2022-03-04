@@ -28,6 +28,26 @@ app.set('port', process.env.PORT_PROVIDERS || 8000);
 
 createConnection().then(() => {
 	app.listen(app.get('port'), () => {
+<<<<<<< HEAD
+		console.log('');
+
+		console.log('████████╗███╗   ███╗███████╗███████╗   ');
+		console.log('╚══██╔══╝████╗ ████║██╔════╝╚════██║   ');
+		console.log('   ██║   ██╔████╔██║███████╗    ██╔╝   ');
+		console.log('   ██║   ██║╚██╔╝██║╚════██║   ██╔╝    ');
+		console.log('   ██║   ██║ ╚═╝ ██║███████║   ██║     ');
+		console.log('   ╚═╝   ╚═╝     ╚═╝╚══════╝   ╚═╝     ');
+		console.log('                                       ');
+		console.log(' ██╗ ██████╗  ██████╗  ██████╗ ██████╗ ');
+		console.log('███║██╔═████╗██╔═████╗██╔═████╗██╔══██╗');
+		console.log('╚██║██║██╔██║██║██╔██║██║██╔██║██████╔╝');
+		console.log(' ██║████╔╝██║████╔╝██║████╔╝██║██╔═══╝ ');
+		console.log(' ██║╚██████╔╝╚██████╔╝╚██████╔╝██║     ');
+		console.log(' ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝     ');
+
+		console.log('');
+		console.log(`TMS7 y Api1000P corriendo en el puerto ${app.get('port')}`);
+=======
 		console.log(`TMS7 corriendo en el puerto http://localhost:${app.get('port')} leoM   `);
 		console.log('_________');
 		console.log('|       |');
@@ -37,5 +57,6 @@ createConnection().then(() => {
 		console.log('|_______|');
 		console.log('| DB OK |');
 		console.log('|_______|');
+>>>>>>> e49ac2ff50e4c1c9b101ffc672736c574636bcaa
 	});
 });
