@@ -231,7 +231,6 @@ export const Convert = async (file: any, to: string): Promise<void> => {
 				.quality(60) // set JPEG quality
 				.greyscale() // set greyscale
 				.write(filePath.replace('.png', '.' + to)); // save
-
 			remove = true;
 		} else if (from === 'jpeg') {
 			// open a file called "lenna.png"
