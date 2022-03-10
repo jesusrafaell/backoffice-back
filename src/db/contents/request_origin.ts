@@ -16,10 +16,13 @@ const request_origin = async (): Promise<void> => {
 			name: 'Feria',
 		},
 		{
-			name: 'Pagina WEB',
+			name: 'Banco',
 		},
 		{
-			name: 'Banco',
+			name: 'Empleado',
+		},
+		{
+			name: 'Pagina WEB',
 		},
 	];
 	//
