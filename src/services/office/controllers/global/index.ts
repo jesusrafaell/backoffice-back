@@ -11,6 +11,8 @@ import fm_department from '../../../../db/models/fm_department';
 import fm_type_request from '../../../../db/models/fm_type_request';
 import Cartera from '../../../../db/models/Cartera';
 import fm_telemercadeo from '../../../../db/models/fm_telemercadeo';
+import fm_type_payment from '../../../../db/models/fm_type_payment';
+import fm_request_origin from '../../../../db/models/fm_request_origin';
 
 export const getAllIdent_type = async (
 	req: Request<any, any, Api.Resp>,
@@ -133,6 +135,38 @@ export const getAllTeleMarket = async (
 		const info = await getRepository(fm_telemercadeo).find();
 
 		const message: string = Msg('telemercadeo').getAll;
+
+		Resp(req, res, { message, info });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getAllTypePayment = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const info = await getRepository(fm_type_payment).find();
+
+		const message: string = Msg('type_payment').getAll;
+
+		Resp(req, res, { message, info });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getAllRequestSource = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const info = await getRepository(fm_request_origin).find();
+
+		const message: string = Msg('request_source').getAll;
 
 		Resp(req, res, { message, info });
 	} catch (err) {
