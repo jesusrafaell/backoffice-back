@@ -14,6 +14,8 @@ const list: string[] = [
 	'payment',
 	'tipo_de_carteras',
 	'telemarket',
+	'type_Pay',
+	'request_source',
 ];
 
 export default list;
