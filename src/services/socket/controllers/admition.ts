@@ -37,73 +37,86 @@ export const oneDIferido = async (id_request: any) => {
 	// 	/*sql*/ `SELECT * FROM [MilPagos].[dbo].[fm_status] where id_department = 1 and id_status_request = 1`
 	// );
 	// if (diferido.length <= 5) {
-	const query = await getRepository(fm_status).findOne({
-		where: { id_request },
-		relations: [
-			'id_request',
-			'id_request.id_client',
-			'id_request.id_client.id_ident_type',
-			'id_request.id_client.rc_ident_card',
-			'id_request.id_commerce',
-			'id_request.id_commerce.rc_constitutive_act',
-			'id_request.id_commerce.rc_constitutive_act.id_photo',
-			'id_request.id_commerce.rc_special_contributor',
-			'id_request.id_commerce.rc_rif',
-			'id_request.id_commerce.id_aci',
-			'id_request.rc_ref_bank',
-			'id_request.id_valid_request',
-			'id_request.rc_comp_dep',
-		],
-	});
+	if (allSolic == 0) throw { message: 'no existen solicitudes en espera', code: 400 };
+	else {
+		let ids = [
+			...solictudes.map((solictude) => solictude.id),
+			...solictudesTrabajando.map((solictude) => solictude.id),
+		];
 
-	if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+		const query = await getRepository(fm_status).findOne({
+			where: { id_request, id: Not(In(ids)) },
+			relations: [
+				'id_request',
+				'id_request.id_client',
+				'id_request.id_client.id_ident_type',
+				'id_request.id_client.rc_ident_card',
+				'id_request.id_commerce',
+				'id_request.id_commerce.rc_constitutive_act',
+				'id_request.id_commerce.rc_constitutive_act.id_photo',
+				'id_request.id_commerce.rc_special_contributor',
+				'id_request.id_commerce.rc_rif',
+				'id_request.id_commerce.id_aci',
+				'id_request.rc_ref_bank',
+				'id_request.id_valid_request',
+				'id_request.rc_comp_dep',
+			],
+		});
 
-	diferidoTranbajando.push(query.id_request);
+		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
 
-	return diferidoTranbajando;
+		diferidoTranbajando.push(query.id_request);
+
+		return diferidoTranbajando;
+	}
+
 	// }
 };
 
 export const listSolicWorking = async (id_conectado: any, user: any) => {
-	if (solictudes.length < 1) await listDiferido();
-	if (solictudes.length !== 0) {
+	try {
+		await listSolic();
 		const obj = solictudesTrabajando.find((items) => {
-			// console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
-
-			return items.id_conectado === id_conectado || items.ident_num === user.ident_num;
+			return items.id_conectado === id_conectado && items.ident_num === user.ident_num;
 		});
-		// if (obj) return obj;
-		if (obj) return { message: 'El tiene un FM trabajando', code: 400, status: true };
 
-		// console.log('solictudes.length', solictudes.length);
+		if (obj) return solictudesTrabajando.find((items) => items.ident_num === user.ident_num);
 
-		const working = solictudes.shift();
+		if (solictudes.length === 0 || allSolic === 0)
+			return { message: 'no existen solicitudes en espera', code: 400 };
 
-		// console.log('solictudes pos', solictudes[0]);
+		const itemNew: any = solictudes
+			.filter((value) => solictudesTrabajando.filter((item) => item.code === value.code).length < 1)
+			.shift();
 
-		// solictudesTrabajando.unshift(working);
-		solictudesTrabajando.unshift({ id_conectado, ...user, ...working });
-		// const obj2 = solictudesTrabajando.find((items) => items.id_conectado === id_conectado);
-		console.log('Jisus este es el que pao', solictudesTrabajando);
-		return working;
+		if (!itemNew) return { message: 'no existen solicitudes en espera', code: 400 };
+
+		solictudesTrabajando.unshift({ id_conectado, ...user, ...itemNew });
+
+		return itemNew;
+	} catch (err) {
+		console.log(err);
 	}
-	return (solictudes = []);
 };
 
 export const listDiferidoWorking = async (id_conectado: any, user: any, id_dife: any) => {
 	console.log('diferido pre', diferido);
+	// console.log('Id_Sockect ', id_conectado);
+	// console.log('User ', user);
+	// console.log('Id ', id_dife);
 
-	if (diferido.length !== 0) {
-		const obj = diferidoTranbajando.find((items) => {
-			// console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
+	const obj = diferidoTranbajando.find((items) => {
+		// console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
 
-			return items.id_conectado === id_conectado || items.id === user.id;
-		});
-		if (obj) return obj;
-
+		return items.id_conectado === id_conectado || items.id === user.id;
+	});
+	// console.log('Obj', obj);
+	if (obj) return obj;
+	if (diferido.length > 0) {
 		const i = diferido.findIndex((item) => {
-			return item.id === id_dife;
+			return item.id == id_dife;
 		});
+		// console.log('Valor I', i);
 		if (i == -1) {
 			return; // // console.log('MENOL NO EXISTE');
 		}
@@ -111,10 +124,9 @@ export const listDiferidoWorking = async (id_conectado: any, user: any, id_dife:
 		// 	return item.id === id_dife;
 		// });
 
-		// console.log('Valor I', i);
 		const resp = diferido[i];
 
-		//// // console.log('DIferido', resp);
+		// console.log('DIferido pos', resp);
 
 		diferido.splice(i, 1);
 
@@ -124,31 +136,48 @@ export const listDiferidoWorking = async (id_conectado: any, user: any, id_dife:
 		diferidoTranbajando.unshift({ id_conectado, ...user, ...resp });
 
 		// console.log('diferido pos', diferido);
-
+		// console.log('diferido pos', diferidoTranbajando);
+		//
 		return resp;
 	}
 };
 
-export const disconect = (id_sockect: any) => {
-	solictudesTrabajando = solictudesTrabajando.filter((item) => {
-		if (item.id_conectado != id_sockect) return true;
+export const disconect = async (id_sockect: any) => {
+	// console.log('id_Socket del disconec ', id_sockect);
 
-		const { id_conectado, email, last_name, name, ...working } = item;
+	// console.log('Solicitudes Trabajando ', solictudesTrabajando);
+	try {
+		solictudesTrabajando = solictudesTrabajando.filter((item) => {
+			if (item.id_conectado != id_sockect) return true;
 
-		solictudes.unshift(working);
+			const { id_conectado, email, last_name, name, ...working } = item;
 
-		return false;
-	});
+			solictudes.filter((items) => {
+				if (items.id == working.id) {
+					solictudes.shift();
+				}
+				return false;
+			});
+			console.log('Disconec linpia', working);
+			solictudes.unshift(working);
 
-	diferidoTranbajando = diferidoTranbajando.filter((item) => {
-		if (item.id_conectado != id_sockect) return true;
+			return false;
+		});
 
-		const { id_conectado, email, last_name, name, ...working } = item;
+		diferidoTranbajando = diferidoTranbajando.filter((item) => {
+			if (item.id_conectado != id_sockect) return true;
 
-		diferido.unshift(working);
+			const { id_conectado, email, last_name, name, ...working } = item;
 
-		return false;
-	});
+			diferido.unshift(working);
+
+			return false;
+		});
+	} catch (err) {
+		console.log(err);
+	}
+
+	// console.log('Solicitudes Activas ', solictudes);
 
 	// console.log('soy trabajando ', diferido);
 };
@@ -163,8 +192,8 @@ export const listSolic = async () => {
 	// const query = await getConnection().query(
 	// 	/*sql*/ `SELECT * FROM [MilPagos].[dbo].[fm_status] where id_department = 1 and id_status_request = 1`
 	// );
-	const countdata = solictudes.length - solictudesTrabajando.length;
-	if (countdata < 5) {
+	const countdata = solictudes.length; //- solictudesTrabajando.length;
+	if (countdata == 0) {
 		let ids = [
 			...solictudes.map((solictude) => solictude.id),
 			...solictudesTrabajando.map((solictude) => solictude.id),
@@ -172,7 +201,7 @@ export const listSolic = async () => {
 
 		const query = await getRepository(fm_status).find({
 			where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
-			take: 100,
+			take: 50,
 			order: {
 				id: 'ASC',
 			},
@@ -221,6 +250,8 @@ export const listSolic = async () => {
 			],
 		});
 
+		console.log('Query para SOlicitud', query);
+
 		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
 
 		const info: any = query.map((item) => item.id_request);
@@ -228,8 +259,6 @@ export const listSolic = async () => {
 		solictudes = info;
 		// diferidos = query.map((item) => item.id_request);
 
-		return solictudes;
-	} else {
 		return solictudes;
 	}
 };
@@ -358,10 +387,10 @@ export const colearOneSolic = async (key: any) => {
 		});
 		if (!client) throw { message: 'la cedula suministrada no existe', code: 400 };
 
-		console.log('client', client);
+		// console.log('client', client);
 
 		const ids_request = client.requests ? client.requests.map((id_request: any) => id_request.id) : [];
-		console.log('ids_request', ids_request);
+		// console.log('ids_request', ids_request);
 
 		const query = await getRepository(fm_status).find({
 			where: { id_status_request: 1, id_department: 4, id_request: In(ids_request) },

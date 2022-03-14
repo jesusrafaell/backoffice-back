@@ -9,6 +9,7 @@ import {
 	listSolic,
 	listSolicWorking,
 	solictudesTrabajando,
+	diferidoTranbajando,
 	getDash,
 	solictudes,
 	All_Info,
@@ -19,14 +20,15 @@ import {
 	OneSolic,
 } from '../controllers/admition';
 
-let notes: any[] = [];
-
 const admitions = (io: any) => {
 	io.on('connection', (socket: any) => {
 		//// // console.log(socket.handshake.url);
-		// console.log('nuevo socket connectado:', socket.id);
+		console.log(`nuevo socket connectado: ${socket.id} `);
 
+		io.emit('server:solicitudes', solictudes);
+		// io.emit('server:solictudesTrabajando', solictudesTrabajando);
 		io.emit('server:loadDiferidos', diferido);
+		io.emit('server:dashdata', getDash());
 
 		socket.on('client:prueba', async () => {
 			console.log('Prueba de emision');
@@ -35,22 +37,19 @@ const admitions = (io: any) => {
 			io.emit('server:prueba', data);
 		});
 
-		socket.on('Trabanjando_Solic', async (user: any) => {
-			// console.log('DIferidos-Solic');
-			//// // console.log(solictudesTrabajando.length);
+		socket.on('client:atrabajar', async (user: any) => {
+			const solic = await listSolicWorking(socket.id, user);
 
-			socket.emit('server:Trabanjando_Solic', await listSolicWorking(socket.id, user));
-			const todo = await All_Info();
-			const todos = getDash();
+			socket.emit('server:atrabajar', solic);
 
-			io.emit('server:loadDiferidos', diferido);
-			io.emit('server:dashdata', todos);
-			io.emit('server:todos', todo);
+			io.emit('server:solicitudes', solictudes);
+			io.emit('server:dashdata', await getDash());
+			io.emit('server:solictudesTrabajando', solictudesTrabajando);
 		});
 
 		socket.on('cliente:loadDiferidos', async () => {
 			//// // console.log('Dimas es gayyyyy');
-			if (diferido.length < 1) await listDiferido();
+			await listDiferido();
 			io.emit('server:loadDiferidos', diferido);
 		});
 
@@ -63,64 +62,46 @@ const admitions = (io: any) => {
 			//// // console.log('Toy aqui probando', todos);
 		});
 
-		socket.on('client:newnote', (newNote: any) => {
-			const note = { ...newNote, id: uuid() };
-			notes.push(note);
-			io.emit('server:newnote', note);
-		});
-
-		socket.on('client:deletenote', (noteId: any) => {
-			//// // console.log(noteId);
-			notes = notes.filter((note) => note.id !== noteId);
-			io.emit('server:loadnotes', notes);
-		});
-
-		socket.on('client:getnote', (noteId: any) => {
-			const note = notes.find((note) => note.id === noteId);
-			socket.emit('server:selectednote', note);
-		});
-
-		socket.on('client:updatenote', (updatedNote: any) => {
-			notes = notes.map((note) => {
-				if (note.id === updatedNote.id) {
-					note.title = updatedNote.title;
-					note.description = updatedNote.description;
-				}
-				return note;
-			});
-			io.emit('server:loadnotes', notes);
-		});
-
 		socket.on('cliente:disconnect', async () => {
 			// console.log(socket.id, 'disconnected');
-			// console.log('');
-
+			// console.log('Disconnect');
 			disconect(socket.id);
+			disconectsolic(socket.id);
+			io.emit('server:solicitudes', solictudes);
+			io.emit('server:solictudesTrabajando', solictudesTrabajando);
+			io.emit('server:diferidoTranbajando', diferidoTranbajando);
+			// socket.emit('server:atrabajar', []);
+			// socket.emit('server:diferidostomado', null);
+			// disconect(socket.id);
+			// // disconectsolic(socket.id);
 			const todos = getDash();
 			const todo = await All_Info();
-			if (diferido.length < 1) await listDiferido();
-			await listSolic();
 			io.emit('server:loadDiferidos', diferido);
 			io.emit('server:dashdata', todos);
 			io.emit('server:todos', todo);
 		});
 
-		socket.on('cliente:cleansolic', async () => {
-			disconectsolic(socket.id);
-			await listSolic();
-			const todo = await All_Info();
-			if (diferido.length < 1) await listDiferido();
-			const todos = getDash();
-			io.emit('server:loadDiferidos', diferido);
-			io.emit('server:dashdata', todos);
-			io.emit('server:todos', todo);
-		});
+		// socket.on('cliente:cleansolic', async () => {
+		// 	// console.log('Disconex limpieza');
+		// 	disconect(socket.id);
+		// 	// disconectsolic(socket.id);
+		// 	const todos = getDash();
+		// 	const todo = await All_Info();
+		// 	await listSolic();
+		// 	await listDiferido();
+		// 	io.emit('server:loadDiferidos', diferido);
+		// 	io.emit('server:dashdata', todos);
+		// 	io.emit('server:todos', todo);
+		// });
 
 		socket.on('disconnect', async () => {
-			// console.log(socket.id, 'disconnected');
-			// console.log('FUera');
+			// console.log('Disconnect');
+			// await listSolic();
+			await listDiferido();
 			await listSolic();
+			// console.log('Carlos aqui');
 			disconect(socket.id);
+			disconectsolic(socket.id);
 		});
 
 		socket.on('Editar_diferido', async (id_request: number, callback: any) => {
@@ -130,28 +111,34 @@ const admitions = (io: any) => {
 
 		socket.on('cliente:dashdata', async (callback: any) => {
 			await listSolic();
-			if (diferido.length < 1) await listDiferido();
+			await listDiferido();
 			const dash = getDash();
 			callback(dash);
 		});
 
 		socket.on('cliente:dashdatasiempre', async () => {
-			if (diferido.length < 1) await listDiferido();
+			await listDiferido();
 			const todos = getDash();
 			io.emit('server:dashdata', todos);
 		});
 
+		//Modificado en casa para traer diferido
 		socket.on('cliente:trabanjandoDiferido', async (user: any, id: any) => {
-			console.log('diferidos trabajando');
-			console.log('');
+			const id_s = socket.id;
+			const use = user;
+			const id_d = id;
 
-			await listDiferidoWorking(socket.id, user, id);
+			const difTrabajando = await listDiferidoWorking(id_s, use, id_d);
+			// console.log('Diftraba', difTrabajando);
+
+			socket.emit('server:diferidostomado', difTrabajando);
+			io.emit('server:diferidoTranbajando', diferidoTranbajando);
+			io.emit('server:loadDiferidos', diferido);
 
 			const todos = getDash();
 			const todo = await All_Info();
-			if (diferido.length < 1) await listDiferido();
+			await listDiferido();
 
-			io.emit('server:loadDiferidos', diferido);
 			io.emit('server:dashdata', todos);
 			io.emit('server:todos', todo);
 		});

@@ -36,12 +36,55 @@ const updateNote = (id, title, description) => {
 
 socket.on('server:loadnotes', renderNotes);
 
-socket.on('server:UserMu', UserMu);
+//Solicitude
+socket.on('server:solicitudes', renderSolic);
 
-socket.on('server:newnote', appendNote);
+//Solicitud Trabajando
+socket.on('server:atrabajar', renderSolicTrabajando);
+
+//Solicitudes Trabajando incluso con Diferidos
+socket.on('server:solictudesTrabajando', renderSolicitudesTrabajando);
+socket.on('server:diferidoTranbajando', renderSolicitudesDIferidasTrabajando);
+
+//DashData
+socket.on('server:dashdata', renderDashData);
+
+//Diferidos
+socket.on('server:loadDiferidos', renderDiferido);
+
+//Diferidos Trabajando
+socket.on('server:diferidostomado', renderDiferidoTrabajando);
+
+//Pedir uno
+const Pide = () => {
+	socket.emit('client:atrabajar', {
+		name: 'Aldrin ',
+		last_name: 'Mendoza',
+		cedula: '20489083',
+	});
+};
+
+//Tomar diferido
+const Toma = (id) => {
+	socket.emit(
+		'cliente:trabanjandoDiferido',
+		{
+			user: 'Aldrin Mendoza',
+			cedula: '20489083',
+		},
+		id
+	);
+};
+
+//Disconect
+const disconect = () => {
+	socket.emit('cliente:disconnect');
+};
+
+// socket.on('server:newnote', appendNote);
 
 socket.on('server:selectednote', (note) => {
-	const title = document.getElementById('title');
+	const title = document.getElementById('id');
 	const description = document.getElementById('description');
 
 	title.value = note.title;
@@ -49,3 +92,13 @@ socket.on('server:selectednote', (note) => {
 
 	savedId = note.id;
 });
+
+// socket.on('server:solicitudes', (solictudes) => {
+// 	const title = document.getElementById('id');
+// 	const description = document.getElementById('description');
+
+// 	title.value = solictudes.title;
+// 	description.value = note.description;
+
+// 	savedId = note.id;
+// });
