@@ -216,6 +216,8 @@ export const listSolic = async () => {
 				'id_request.id_client.rc_ident_card',
 				'id_request.id_client.id_ident_type',
 				//
+				'id_request.rc_planilla',
+				'id_request.rc_planilla.id_photo',
 				'id_request.id_valid_request',
 				'id_request.dir_pos',
 				'id_request.dir_pos.id_location',
