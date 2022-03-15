@@ -272,6 +272,8 @@ export const getDiferido = async (id_request: number) => {
 			'id_request',
 			'id_request.id_valid_request',
 			'id_request.id_commerce',
+			'id_request.rc_planilla',
+			'id_request.rc_planilla.id_photo',
 			'id_request.id_commerce.rc_constitutive_act',
 			'id_request.id_commerce.rc_constitutive_act.id_photo',
 			'id_request.id_commerce.rc_rif',
@@ -295,7 +297,7 @@ export const getDiferido = async (id_request: number) => {
 		})
 		.forEach((key) => (id_valid_request[key] = query.id_request.id_valid_request[key]));
 
-	const { id_commerce, id_client, rc_ref_bank, rc_comp_dep }: any = query.id_request;
+	const { id_commerce, id_client, rc_ref_bank, rc_comp_dep, rc_planilla }: any = query.id_request;
 	// console.log('id_commerce', id_commerce);
 
 	const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = id_commerce;
@@ -304,6 +306,7 @@ export const getDiferido = async (id_request: number) => {
 	let imgs: any = {};
 
 	const data: any = {
+		rc_planilla,
 		rc_special_contributor,
 		rc_constitutive_act,
 		rc_rif,
