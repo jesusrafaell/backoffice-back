@@ -411,6 +411,7 @@ export const FM_create = async (
 			valid_special_contributor: '',
 			valid_ref_bank: '',
 			valid_comp_dep: '',
+			valid_planilla: '',
 			valid_rif: '',
 			valid_ident_card: '',
 		});
