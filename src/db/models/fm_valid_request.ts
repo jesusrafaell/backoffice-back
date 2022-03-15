@@ -1,5 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
-import fm_request from './fm_request';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export default class fm_valid_request {
@@ -14,6 +13,9 @@ export default class fm_valid_request {
 
 	@Column({ name: 'valid_ref_bank' })
 	valid_ref_bank!: string;
+
+	@Column({ name: 'valid_planilla' })
+	valid_planilla!: string;
 
 	@Column({ name: 'valid_comp_dep' })
 	valid_comp_dep!: string;

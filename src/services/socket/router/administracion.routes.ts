@@ -11,7 +11,7 @@ import {
 const administra = (io: any) => {
 	io.on('connection', (socket: any) => {
 		socket.emit('PruebaAdmin', administracion);
-		socket.emit('server:loadAdministracion', administracion);
+		io.emit('server:loadAdministracion', administracion);
 
 		//Devuelve
 		socket.on('cliente:administrWorking', async (user: any, id: any) => {
@@ -21,13 +21,13 @@ const administra = (io: any) => {
 		});
 
 		socket.on('cliente:loadAdministracion', async () => {
-			console.log('Toy llegando aqui');
+			// console.log('Toy llegando aqui');
 
 			socket.emit('server:loadAdministracion', administracion);
 			// console.log(administracion);
 		});
 		socket.on('cliente:loadAdministracionTodos', async () => {
-			console.log('Toy llegando aqui');
+			// console.log('Toy llegando aqui');
 
 			await getFmAdministration();
 			io.emit('server:loadAdministracion', administracion);
@@ -35,8 +35,8 @@ const administra = (io: any) => {
 		});
 
 		socket.on('cliente:trabajandoAdministra', async (user: any, id: any) => {
-			console.log('administra trabajando');
-			console.log('');
+			// console.log('administra trabajando');
+			// console.log('');
 
 			await listAdminisWorking(socket.id, user, id);
 
