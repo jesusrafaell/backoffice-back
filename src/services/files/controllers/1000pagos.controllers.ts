@@ -181,7 +181,7 @@ export const editRcByFm = async (
 ): Promise<void> => {
 	try {
 		const constitutive_act_ids = req.body.constitutive_act_ids.split(',');
-		console.log('constitutive_act_ids', constitutive_act_ids);
+		//console.log('constitutive_act_ids', constitutive_act_ids);
 
 		const { id_request } = req.params;
 		const files: any = req.files;
@@ -205,7 +205,7 @@ export const editRcByFm = async (
 		});
 		if (!fm) throw { message: 'el FM suministrado no existe', code: 400 };
 
-		console.log('--------|>');
+		//console.log('--------|>');
 
 		const { id_client, id_commerce } = fm;
 
@@ -222,7 +222,7 @@ export const editRcByFm = async (
 
 		let valids: any = {};
 
-		console.log('--------|> info');
+		//console.log('--------|> info');
 
 		let info: any = {
 			rc_ident_card: id_client.rc_ident_card,
@@ -232,7 +232,7 @@ export const editRcByFm = async (
 			rc_constitutive_act: id_commerce.rc_constitutive_act,
 		};
 
-		console.log('--------|> constitutive_act');
+		//console.log('--------|> constitutive_act');
 
 		if (files.images) {
 			const stop: Promise<void>[] = files.images
@@ -253,12 +253,14 @@ export const editRcByFm = async (
 							const path = `static/${route_ids}/${file.filename}`;
 
 							// console.log('path', path);
+							/*
 							console.log('');
 							console.log('--------|> constitutive_act');
 							console.log('descript', descript);
 							console.log('id_client[descript].id', id_client[descript].id);
 
 							console.log(' { path, name: file.filename }', { path, name: file.filename });
+							*/
 
 							await getRepository(fm_photo).update(id_client[descript].id, { path, name: file.filename });
 
@@ -270,11 +272,13 @@ export const editRcByFm = async (
 
 							const path = `static/${route_ids}/${file.filename}`;
 
+							/*
 							// console.log('path', path);
-							console.log('');
-							console.log('--------|> constitutive_act');
+							//console.log('');
+							//console.log('--------|> constitutive_act');
 							console.log('descript', descript);
 							console.log('id_commerce[descript].id', id_commerce[descript].id);
+							*/
 
 							await getRepository(fm_photo).update(id_commerce[descript].id, { path });
 
@@ -287,12 +291,12 @@ export const editRcByFm = async (
 		}
 
 		if (files.constitutive_act) {
-			console.log('--------|> constitutive_act');
+			//console.log('--------|> constitutive_act');
 
-			console.log('files.constitutive_act', files.constitutive_act);
+			//console.log('files.constitutive_act', files.constitutive_act);
 
 			const stop2 = files.constitutive_act.map(async (file: Express.Multer.File, i: number): Promise<void> => {
-				console.log('file', file);
+				//console.log('file', file);
 
 				await Doc.Move(file.filename, `${id_client}/${id_commerce}/constitutive_act`);
 				const path = `static/${id_client}/${id_commerce}/constitutive_act/${file.filename}`;
@@ -303,11 +307,11 @@ export const editRcByFm = async (
 					descript: 'rc_constitutive_act',
 				});
 
-				console.log('data', data);
+				//console.log('data', data);
 
 				const save = await getRepository(fm_photo).save(data);
 
-				console.log('save', save);
+				//console.log('save', save);
 
 				info.rc_constitutive_act.push(save.id);
 			});
@@ -315,7 +319,7 @@ export const editRcByFm = async (
 			await Promise.all(stop2);
 		}
 
-		console.log('--------|> constitutive_act_ids');
+		//console.log('--------|> constitutive_act_ids');
 
 		if (req.body.constitutive_act_ids) {
 			const imgs = await getRepository(fm_photo).findByIds(constitutive_act_ids);

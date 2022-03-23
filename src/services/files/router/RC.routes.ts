@@ -8,7 +8,7 @@ const RC: Router = Router();
 // RC
 // RC.route('/RC').post(upload, upFileRecaudos);
 //
-RC.route('/RC').post(uploads, convert, upFilesRecaudos);
+RC.route('/RC').post(uploads, upFilesRecaudos);
 //
 RC.route('/RC/admition/:id_request/diferidos').put(uploads, convert, editRcByFm);
 //

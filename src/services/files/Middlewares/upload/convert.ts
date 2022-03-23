@@ -7,10 +7,14 @@ const convert = async (req: Request, res: Response, next: NextFunction) => {
 	if (files.images) {
 		const stop: Promise<void>[] = files.images.map(async (file: any, i: number) => {
 			const from: string = file.mimetype.split('/').pop();
+			//console.log(file.filename);
 
+			/*
 			if (['pdf', 'png'].includes(from)) {
+				console.log(file.filename);
 				//
-				await Doc.Convert(file.filename, 'jpg');
+				//Aqui llama al Conver [Code:412]
+				//await Doc.Convert(file.filename, 'jpg');
 
 				let filename = file.filename.split('.');
 				filename.pop();
@@ -24,6 +28,7 @@ const convert = async (req: Request, res: Response, next: NextFunction) => {
 
 				file.mimetype = file.mimetype.replace(from, 'jpg');
 			}
+			*/
 		});
 
 		await Promise.all(stop);
