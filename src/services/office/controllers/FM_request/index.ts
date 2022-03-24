@@ -416,6 +416,8 @@ export const FM_create = async (
 			valid_ident_card: '',
 		});
 
+		console.log('saved');
+
 		const initial = ((): number => {
 			if (id_type_payment === 2) {
 				const { initial }: any = req.body;
@@ -573,6 +575,7 @@ export const FM_extraPos = async (
 			valid_special_contributor: '',
 			valid_ref_bank: '',
 			valid_comp_dep: '',
+			valid_planilla: '',
 			valid_rif: '',
 			valid_ident_card: '',
 		});
