@@ -7,6 +7,7 @@ import {
 	getAllTeleMarket,
 	getAllTypePayment,
 	getAllRequestSource,
+	getAlldistribuidores,
 } from '../../controllers/global';
 import { getAllStatus, getAllCompanys } from '../../controllers/global/index';
 const global: Router = Router();
@@ -40,6 +41,10 @@ global.route('/tipo_de_carteras').get(getAllTiposDeCarteras);
 // ? telemark
 //
 global.route('/telemarket').get(getAllTeleMarket);
+
+// ? distribuidores
+//
+global.route('/distribuidores').get(getAlldistribuidores);
 
 // ? typePayment
 //

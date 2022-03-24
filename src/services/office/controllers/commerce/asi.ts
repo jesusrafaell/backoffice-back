@@ -11,7 +11,12 @@ export const getAllAliados = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const info = await getRepository(Aliados).find({ order: { id: 'DESC' } });
+		const info = await getRepository(Aliados).find({
+			where: {
+				aliIdUsuario: 1,
+			},
+			order: { id: 'DESC' },
+		});
 
 		const message: string = Msg('Aliado').getAll;
 
