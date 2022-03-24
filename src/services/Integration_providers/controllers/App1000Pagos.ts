@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 import Comercios from '../../../db/models/Comercios';
 import Contactos from '../../../db/models/Contactos';
 import { Api } from '../../../interfaces';
-import ComerciosXafiliado from '../../../db/models/CategoriasXafiliado';
+import ComerciosXafiliado from '../../../db/models/ComerciosXafliado';
 
 export const createCommerce = async (
 	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,

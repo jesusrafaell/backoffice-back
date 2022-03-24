@@ -1,12 +1,14 @@
 import fm_commerce from './fm_commerce';
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
+import TarifaAliado from './TarifaAliado';
 
 @Entity({ synchronize: false })
 export default class Aliados {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
-	@Column()
+	@ManyToOne(() => TarifaAliado, (TarifaAliado) => TarifaAliado.aliados)
+	@JoinColumn({ name: 'aliIdUsuario' })
 	aliIdUsuario!: number;
 
 	@Column()
