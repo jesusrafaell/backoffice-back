@@ -24,6 +24,9 @@ const request_origin = async (): Promise<void> => {
 		{
 			name: 'Pagina WEB',
 		},
+		{
+			name: 'Distribuidor',
+		},
 	];
 	//
 	const valid = await getRepository(fm_request_origin).find({ where: data });
