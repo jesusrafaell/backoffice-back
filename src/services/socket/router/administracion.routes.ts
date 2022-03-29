@@ -1,4 +1,3 @@
-import { emit } from 'process';
 import {
 	administracion,
 	administracionTrabajndo,
@@ -45,11 +44,12 @@ const administra = (io: any) => {
 			// console.log('Administra desp: ', administracion);
 		});
 
-		socket.on('disconnect', () => {
+		socket.on('disconnect', async () => {
 			// console.log(socket.id, 'disconnected');
 			// console.log('FUera');
 
 			disconectAdminis(socket.id);
+			await getFmAdministration();
 			io.emit('server:loadAdministracion', administracion);
 		});
 
@@ -57,10 +57,12 @@ const administra = (io: any) => {
 			// console.log(socket.id, 'disconnected');
 			// console.log('');
 			disconectAdminis(socket.id);
+			await getFmAdministration();
 			io.emit('server:loadAdministracion', administracion);
 		});
 
 		socket.on('cliente:cleansolicadminis', async () => {
+			await getFmAdministration();
 			disconectsolicAdministra(socket.id);
 		});
 	});

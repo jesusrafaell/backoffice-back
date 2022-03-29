@@ -203,11 +203,16 @@ const renderSolic = (solictudes) => {
 
 //Solicitud Trabajndo
 const renderSolicTrabajando = (solictudes) => {
-	savedId = '';
-	notesList2.innerHTML = '';
-	// console.log(solictudes);
+	if (solictudes.code !== 400) {
+		savedId = '';
+		notesList2.innerHTML = '';
+		console.log(solictudes.code);
 
-	notesList2.append(solicTrabajandoUI(solictudes));
+		notesList2.append(solicTrabajandoUI(solictudes));
+	} else {
+		// console.log('No hay Solicitudes');
+		alert('No hay Solicitudes');
+	}
 };
 
 //Solicitudes Trabajndo
