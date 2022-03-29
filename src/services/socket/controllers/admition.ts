@@ -100,7 +100,7 @@ export const listSolicWorking = async (id_conectado: any, user: any) => {
 };
 
 export const listDiferidoWorking = async (id_conectado: any, user: any, id_dife: any) => {
-	console.log('diferido pre', diferido);
+	// console.log('diferido pre', diferido);
 	// console.log('Id_Sockect ', id_conectado);
 	// console.log('User ', user);
 	// console.log('Id ', id_dife);
@@ -158,7 +158,7 @@ export const disconect = async (id_sockect: any) => {
 				}
 				return false;
 			});
-			console.log('Disconec linpia', working);
+			// console.log('Disconec linpia', working);
 			solictudes.unshift(working);
 
 			return false;
@@ -192,77 +192,77 @@ export const listSolic = async () => {
 	// const query = await getConnection().query(
 	// 	/*sql*/ `SELECT * FROM [MilPagos].[dbo].[fm_status] where id_department = 1 and id_status_request = 1`
 	// );
-	const countdata = solictudes.length; //- solictudesTrabajando.length;
-	if (countdata == 0) {
-		let ids = [
-			...solictudes.map((solictude) => solictude.id),
-			...solictudesTrabajando.map((solictude) => solictude.id),
-		];
 
-		const query = await getRepository(fm_status).find({
-			where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
-			take: 50,
-			order: {
-				id: 'ASC',
-			},
-			relations: [
-				'id_request',
-				'id_request.id_client',
-				'id_request.id_client.id_location',
-				'id_request.id_client.id_location.id_estado',
-				'id_request.id_client.id_location.id_municipio',
-				'id_request.id_client.id_location.id_ciudad',
-				'id_request.id_client.id_location.id_parroquia',
-				'id_request.id_client.rc_ident_card',
-				'id_request.id_client.id_ident_type',
-				//
-				'id_request.rc_planilla',
-				'id_request.rc_planilla.id_photo',
-				'id_request.id_valid_request',
-				'id_request.dir_pos',
-				'id_request.dir_pos.id_location',
-				'id_request.dir_pos.id_location.id_estado',
-				'id_request.dir_pos.id_location.id_municipio',
-				'id_request.dir_pos.id_location.id_ciudad',
-				'id_request.dir_pos.id_location.id_parroquia',
-				//
-				'id_request.id_commerce',
-				'id_request.id_commerce.id_ident_type',
-				'id_request.id_commerce.id_activity',
-				'id_request.id_commerce.id_location',
-				'id_request.id_commerce.id_location.id_estado',
-				'id_request.id_commerce.id_location.id_municipio',
-				'id_request.id_commerce.id_location.id_ciudad',
-				'id_request.id_commerce.id_location.id_parroquia',
-				'id_request.id_commerce.banks',
-				'id_request.id_commerce.rc_constitutive_act',
-				'id_request.id_commerce.rc_constitutive_act.id_photo',
-				'id_request.id_commerce.rc_rif',
-				'id_request.id_commerce.rc_special_contributor',
-				'id_request.id_commerce.id_aci',
-				//
-				'id_request.id_product',
-				'id_request.id_type_request',
-				'id_request.id_request_origin',
-				//
-				'id_request.rc_ref_bank',
-				'id_request.rc_comp_dep',
-				'id_request.id_payment_method',
-				'id_request.id_type_payment',
-			],
-		});
+	let ids = [
+		...solictudes.map((solictude) => solictude.id),
+		...solictudesTrabajando.map((solictude) => solictude.id),
+	];
 
-		console.log('Query para SOlicitud', query);
+	const query = await getRepository(fm_status).find({
+		where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
+		take: 5,
+		order: {
+			id: 'ASC',
+		},
+		relations: [
+			'id_request',
+			'id_request.id_client',
+			'id_request.id_client.id_location',
+			'id_request.id_client.id_location.id_estado',
+			'id_request.id_client.id_location.id_municipio',
+			'id_request.id_client.id_location.id_ciudad',
+			'id_request.id_client.id_location.id_parroquia',
+			'id_request.id_client.rc_ident_card',
+			'id_request.id_client.id_ident_type',
+			//
+			'id_request.rc_planilla',
+			'id_request.rc_planilla.id_photo',
+			'id_request.id_valid_request',
+			'id_request.dir_pos',
+			'id_request.dir_pos.id_location',
+			'id_request.dir_pos.id_location.id_estado',
+			'id_request.dir_pos.id_location.id_municipio',
+			'id_request.dir_pos.id_location.id_ciudad',
+			'id_request.dir_pos.id_location.id_parroquia',
+			//
+			'id_request.id_commerce',
+			'id_request.id_commerce.id_ident_type',
+			'id_request.id_commerce.id_activity',
+			'id_request.id_commerce.id_location',
+			'id_request.id_commerce.id_location.id_estado',
+			'id_request.id_commerce.id_location.id_municipio',
+			'id_request.id_commerce.id_location.id_ciudad',
+			'id_request.id_commerce.id_location.id_parroquia',
+			'id_request.id_commerce.banks',
+			'id_request.id_commerce.rc_constitutive_act',
+			'id_request.id_commerce.rc_constitutive_act.id_photo',
+			'id_request.id_commerce.rc_rif',
+			'id_request.id_commerce.rc_special_contributor',
+			'id_request.id_commerce.id_aci',
+			//
+			'id_request.id_product',
+			'id_request.id_type_request',
+			'id_request.id_request_origin',
+			//
+			'id_request.rc_ref_bank',
+			'id_request.rc_comp_dep',
+			'id_request.id_payment_method',
+			'id_request.id_type_payment',
+		],
+	});
 
-		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+	// console.log('Query para SOlicitud', query);
 
-		const info: any = query.map((item) => item.id_request);
+	if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
 
-		solictudes = info;
-		// diferidos = query.map((item) => item.id_request);
+	const info: any = query.map((item) => item.id_request);
 
-		return solictudes;
-	}
+	solictudes = info;
+	// diferidos = query.map((item) => item.id_request);
+
+	// console.log('Lista de solicitudes', solictudes);
+
+	return solictudes;
 };
 
 export const getDiferido = async (id_request: number) => {

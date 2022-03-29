@@ -69,7 +69,8 @@ const Toma = (id) => {
 	socket.emit(
 		'cliente:trabanjandoDiferido',
 		{
-			user: 'Aldrin Mendoza',
+			name: 'Aldrin ',
+			last_name: 'Mendoza',
 			cedula: '20489083',
 		},
 		id
