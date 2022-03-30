@@ -100,7 +100,7 @@ export const listSolicWorking = async (id_conectado: any, user: any) => {
 };
 
 export const listDiferidoWorking = async (id_conectado: any, user: any, id_dife: any) => {
-	console.log('diferido pre', diferido);
+	// console.log('diferido pre', diferido);
 	// console.log('Id_Sockect ', id_conectado);
 	// console.log('User ', user);
 	// console.log('Id ', id_dife);
@@ -158,7 +158,7 @@ export const disconect = async (id_sockect: any) => {
 				}
 				return false;
 			});
-			console.log('Disconec linpia', working);
+			// console.log('Disconec linpia', working);
 			solictudes.unshift(working);
 
 			return false;
@@ -192,12 +192,6 @@ export const listSolic = async () => {
 	// const query = await getConnection().query(
 	// 	/*sql*/ `SELECT * FROM [MilPagos].[dbo].[fm_status] where id_department = 1 and id_status_request = 1`
 	// );
-	const countdata = solictudes.length; //- solictudesTrabajando.length;
-	if (countdata == 0) {
-		let ids = [
-			...solictudes.map((solictude) => solictude.id),
-			...solictudesTrabajando.map((solictude) => solictude.id),
-		];
 
 		const query = await getRepository(fm_status).find({
 			where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
@@ -252,17 +246,18 @@ export const listSolic = async () => {
 			],
 		});
 
-		console.log('Query para SOlicitud', query);
+	// console.log('Query para SOlicitud', query);
 
-		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+	if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
 
-		const info: any = query.map((item) => item.id_request);
+	const info: any = query.map((item) => item.id_request);
 
-		solictudes = info;
-		// diferidos = query.map((item) => item.id_request);
+	solictudes = info;
+	// diferidos = query.map((item) => item.id_request);
 
-		return solictudes;
-	}
+	// console.log('Lista de solicitudes', solictudes);
+
+	return solictudes;
 };
 
 export const getDiferido = async (id_request: number) => {
