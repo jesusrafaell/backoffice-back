@@ -15,7 +15,7 @@ import fm_bank_commerce from '../../../../db/models/fm_bank_commerce';
 import fm_department from '../../../../db/models/fm_department';
 import fm_request from '../../../../db/models/fm_request';
 import fm_status from '../../../../db/models/fm_status';
-import fm_dir_pos from '../../../../db/models/fm_dir_pos';
+import fm_posXcommerce from '../../../../db/models/fm_posXcommerce';
 import fm_request_origin from '../../../../db/models/fm_request_origin';
 import fm_valid_request from '../../../../db/models/fm_valid_request';
 import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
@@ -372,7 +372,7 @@ export const FM_create = async (
 			id_payment_method,
 			id_client,
 			id_commerce,
-			dir_pos,
+			pos,
 			bank_account_num,
 			id_request_origin,
 			id_type_payment, //tipo de pago
@@ -480,11 +480,16 @@ export const FM_create = async (
 
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
 
-		const validlocation = await getRepository(fm_location).findOne(dir_pos);
-		const location = validlocation ? validlocation : await getRepository(fm_location).save(dir_pos);
+		const validlocation = await getRepository(fm_location).findOne(pos);
+		const location = validlocation ? validlocation : await getRepository(fm_location).save(pos);
 		const id_request = FM_save.id;
 
-		await getRepository(fm_dir_pos).save({ id_location: location.id, id_commerce, id_request, id_product });
+		await getRepository(fm_posXcommerce).save({
+			id_location: location.id,
+			id_commerce,
+			id_request,
+			id_product,
+		});
 
 		await getRepository(fm_request).update(
 			{ id: FM_save.id },
@@ -642,7 +647,7 @@ export const FM_extraPos = async (
 
 		//const validClient = await getRepository(fm_client).findOne({ id_ident_type, ident_num });
 
-		const preDirPos: any = await getRepository(fm_dir_pos).find({
+		const preDirPos: any = await getRepository(fm_posXcommerce).find({
 			where: { id_commerce: req.body.id_commerce },
 			order: {
 				id: 'DESC',
@@ -654,7 +659,12 @@ export const FM_extraPos = async (
 
 		const id_request = FM_save.id;
 
-		await getRepository(fm_dir_pos).save({ id_location: idLocationDirPos, id_commerce, id_request, id_product });
+		await getRepository(fm_posXcommerce).save({
+			id_location: idLocationDirPos,
+			id_commerce,
+			id_request,
+			id_product,
+		});
 
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request });
 
@@ -709,8 +719,8 @@ export const getFm = async (
 				'id_request.id_client.id_location.id_parroquia',
 				'id_request.id_client.id_ident_type',
 				'id_request.id_valid_request',
-				'id_request.dir_pos',
-				'id_request.dir_pos.id_location',
+				'id_request.pos',
+				'id_request.pos.id_location',
 				'id_request.rc_constitutive_act',
 				'id_request.rc_special_contributor',
 				'id_request.rc_ref_bank',

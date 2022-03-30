@@ -8,6 +8,7 @@ import {
 	getAllTypePayment,
 	getAllRequestSource,
 	getAlldistribuidores,
+	getAllTypesDiferidos,
 } from '../../controllers/global';
 import { getAllStatus, getAllCompanys } from '../../controllers/global/index';
 const global: Router = Router();
@@ -53,6 +54,10 @@ global.route('/type_Pay').get(getAllTypePayment);
 // ? requestSource
 //
 global.route('/request_source').get(getAllRequestSource);
+
+// ? type_diferido
+//
+global.route('/type_diferido').get(getAllTypesDiferidos);
 
 // ?
 //

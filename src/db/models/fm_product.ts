@@ -10,9 +10,9 @@ import {
 	JoinTable,
 } from 'typeorm';
 import fm_photo from './fm_photo';
-import fm_dir_pos from './fm_dir_pos';
 import fm_request from './fm_request';
 import fm_payment_method from './fm_payment_method';
+import fm_posXcommerce from './fm_posXcommerce';
 
 @Entity()
 export default class fm_product {
@@ -35,9 +35,9 @@ export default class fm_product {
 	@Column({ name: 'quota', default: 50 })
 	quota!: number;
 
-	@OneToMany(() => fm_dir_pos, (fm_dir_pos) => fm_dir_pos.id_product)
-	@JoinColumn({ name: 'dir_pos' })
-	dir_pos?: number;
+	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_product)
+	@JoinColumn({ name: 'pos' })
+	pos?: number;
 
 	@OneToMany(() => fm_request, (fm_request) => fm_request.id_commerce)
 	@JoinColumn({ name: 'requests' })

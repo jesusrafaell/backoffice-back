@@ -17,10 +17,10 @@ import fm_bank_commerce from './fm_bank_commerce';
 import fm_request from './fm_request';
 import fm_photo from './fm_photo';
 import fm_location from './fm_location';
-import fm_dir_pos from './fm_dir_pos';
 import fm_ident_type from './fm_ident_type';
 import fm_commerce_constitutive_act from './fm_commerce_constitutive_act';
 import Aliados from './Aliados';
+import fm_posXcommerce from './fm_posXcommerce';
 
 @Entity()
 export default class fm_commerce {
@@ -80,9 +80,9 @@ export default class fm_commerce {
 	@JoinColumn({ name: 'banks' })
 	banks?: fm_bank_commerce[];
 
-	@OneToMany(() => fm_dir_pos, (fm_dir_pos) => fm_dir_pos.id_commerce)
-	@JoinColumn({ name: 'dir_pos' })
-	dir_pos?: number;
+	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_commerce)
+	@JoinColumn({ name: 'pos' })
+	pos?: fm_posXcommerce[];
 
 	@OneToMany(() => fm_request, (fm_request) => fm_request.id_commerce)
 	@JoinColumn({ name: 'requests' })

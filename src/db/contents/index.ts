@@ -15,6 +15,7 @@ import request_origin from './request_origin';
 import roles from './roles';
 import status_request from './status_request';
 import telemercadeo from './telemercadeo';
+import type_diferido from './type_diferido';
 import type_payment from './type_payment';
 import type_person from './type_person';
 import type_request from './type_request';
@@ -44,4 +45,5 @@ createConnection().then(async () => {
 	await request_origin();
 	await type_telemarket();
 	await telemercadeo();
+	await type_diferido();
 });

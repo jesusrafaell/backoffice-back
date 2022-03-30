@@ -14,6 +14,7 @@ import fm_telemercadeo from '../../../../db/models/fm_telemercadeo';
 import fm_type_payment from '../../../../db/models/fm_type_payment';
 import fm_request_origin from '../../../../db/models/fm_request_origin';
 import Aliados from '../../../../db/models/Aliados';
+import fm_type_diferido from '../../../../db/models/fm_type_diferido';
 
 export const getAllIdent_type = async (
 	req: Request<any, any, Api.Resp>,
@@ -188,6 +189,26 @@ export const getAlldistribuidores = async (
 		});
 
 		const message: string = Msg('request_source').getAll;
+
+		Resp(req, res, { message, info });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getAllTypesDiferidos = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const info = await getRepository(fm_type_diferido).find({
+			where: {
+				aliIdUsuario: 2,
+			},
+		});
+
+		const message: string = Msg('type_diferidos').getAll;
 
 		Resp(req, res, { message, info });
 	} catch (err) {

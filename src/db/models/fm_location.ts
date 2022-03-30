@@ -13,9 +13,9 @@ import fm_estado from './fm_estado';
 import fm_municipio from './fm_municipio';
 import fm_ciudad from './fm_ciudad';
 import fm_parroquia from './fm_parroquia';
-import fm_dir_pos from './fm_dir_pos';
 import fm_client from './fm_client';
 import fm_commerce from './fm_commerce';
+import fm_posXcommerce from './fm_posXcommerce';
 
 @Entity()
 export default class fm_location {
@@ -38,9 +38,9 @@ export default class fm_location {
 	@JoinColumn({ name: 'id_parroquia' })
 	id_parroquia!: number;
 
-	@OneToMany(() => fm_dir_pos, (fm_dir_pos) => fm_dir_pos.id_location)
-	@JoinColumn({ name: 'dir_pos' })
-	dir_pos?: fm_dir_pos[];
+	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_location)
+	@JoinColumn({ name: 'pos' })
+	pos?: fm_posXcommerce[];
 
 	@OneToMany(() => fm_commerce, (fm_commerce) => fm_commerce.id_location)
 	@JoinColumn({ name: 'commerces' })

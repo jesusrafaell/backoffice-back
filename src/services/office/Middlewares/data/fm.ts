@@ -20,7 +20,7 @@ export const validFmData: ValidationChain[] = [
 	//
 	check('id_commerce', 'id_commerce es requerido').isNumeric().custom(NoSQL),
 	//
-	check('dir_pos', 'la dir_pos es obligatoria').isObject().custom(NoSQL),
+	check('pos', 'la pos es obligatoria').isObject().custom(NoSQL),
 	//
 	check('id_type_payment', 'id_type_payment es requerido').isNumeric().custom(NoSQL),
 	//

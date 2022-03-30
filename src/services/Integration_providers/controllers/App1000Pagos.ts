@@ -27,13 +27,13 @@ export const createCommerce = async (
 				'id_client.id_location.id_parroquia',
 				'id_client.id_ident_type',
 				'id_client.phones',
-				// dir_pos
-				'dir_pos',
-				'dir_pos.id_location',
-				'dir_pos.id_location.id_estado',
-				'dir_pos.id_location.id_municipio',
-				'dir_pos.id_location.id_ciudad',
-				'dir_pos.id_location.id_parroquia',
+				//pos
+				'pos',
+				'pos.id_location',
+				'pos.id_location.id_estado',
+				'pos.id_location.id_municipio',
+				'pos.id_location.id_ciudad',
+				'pos.id_location.id_parroquia',
 				// commerce
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -49,7 +49,7 @@ export const createCommerce = async (
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const { id_commerce, id_client, bank_account_num, id_product, dir_pos, number_post }: any = fmData;
+		const { id_commerce, id_client, bank_account_num, id_product, pos, number_post }: any = fmData;
 
 		const commerce: any = {
 			comerDesc: id_commerce.name,
@@ -95,9 +95,9 @@ export const createCommerce = async (
 				.filter((item) => item)
 				.join(', '),
 			//
-			comerDireccionPos: Object.keys(dir_pos[0].id_location)
+			comerDireccionPos: Object.keys(pos[0].id_location)
 				.map((key) => {
-					return dir_pos[0].id_location[key][key.replace('id_', '')];
+					return pos[0].id_location[key][key.replace('id_', '')];
 				})
 				.filter((item) => item)[0],
 			//

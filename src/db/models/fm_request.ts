@@ -12,7 +12,6 @@ import {
 import fm_commerce from './fm_commerce';
 import fm_type_request from './fm_type_request';
 import fm_photo from './fm_photo';
-import fm_dir_pos from './fm_dir_pos';
 import fm_client from './fm_client';
 import fm_payment_method from './fm_payment_method';
 import fm_product from './fm_product';
@@ -21,8 +20,8 @@ import fm_status from './fm_status';
 import fm_type_payment from './fm_type_payment';
 import fm_valid_request from './fm_valid_request';
 import fm_quotas_calculat from './fm_quotas_calculated';
-import Aliados from './Aliados';
 import fm_planilla from './fm_planilla';
+import fm_posXcommerce from './fm_posXcommerce';
 
 @Entity()
 export default class fm_request {
@@ -95,10 +94,6 @@ export default class fm_request {
 	@JoinColumn({ name: 'id_valid_request' })
 	id_valid_request!: number | fm_valid_request;
 
-	@OneToMany(() => fm_dir_pos, (fm_dir_pos) => fm_dir_pos.id_request)
-	@JoinColumn({ name: 'dir_pos' })
-	dir_pos?: fm_dir_pos[];
-
 	@Column({ nullable: true })
 	@ManyToOne(() => fm_photo, (fm_photo) => fm_photo.requests)
 	@JoinColumn({ name: 'rc_comp_dep' }) // foto del  numero de cuenta
@@ -116,6 +111,16 @@ export default class fm_request {
 	@OneToMany(() => fm_planilla, (fm_planilla) => fm_planilla.id_request)
 	@JoinColumn({ name: 'rc_planilla' })
 	rc_planilla?: fm_planilla[]; //planilla fm
+
+	/*
+	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_request)
+	@JoinColumn({ name: 'pos' })
+	pos?: number;
+	*/
+
+	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_request)
+	@JoinColumn({ name: 'pos' })
+	pos?: fm_posXcommerce[];
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;
