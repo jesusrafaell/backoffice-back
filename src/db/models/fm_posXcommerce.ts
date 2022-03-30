@@ -32,10 +32,10 @@ export default class fm_posXcommerce {
 	@JoinColumn({ name: 'id_request' })
 	id_request?: number;
 
-	@Column({ nullable: true, unique: true, default: null })
+	@Column({ nullable: true, default: null })
 	aboTerminal?: string;
 
-	@Column({ nullable: true, unique: true, default: null })
+	@Column({ nullable: true, default: null })
 	serial?: string;
 
 	@Column({ nullable: true })
