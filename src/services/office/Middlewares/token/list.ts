@@ -16,6 +16,9 @@ const list: string[] = [
 	'telemarket',
 	'type_Pay',
 	'request_source',
+	'type_diferido',
+	'distribuidores',
+	'types_solict',
 ];
 
 export default list;
