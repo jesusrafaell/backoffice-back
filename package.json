@@ -4,6 +4,9 @@
 	"description": "",
 	"main": "dist/app.ts",
 	"scripts": {
+		"kill:office": "sudo kill -9 $(sudo lsof -t -i:5051)",
+		"kill:files": "sudo kill -9 $(sudo lsof -t -i:6060)",
+		"kill:socket": "sudo kill -9 $(sudo lsof -t -i:777)",
 		"start:office": "ts-node src/app.ts",
 		"serve:office": "nodemon src/app.ts",
 		"qa:office": "ts-node cli/qa",

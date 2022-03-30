@@ -202,11 +202,7 @@ export const getAllTypesDiferidos = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const info = await getRepository(fm_type_diferido).find({
-			where: {
-				aliIdUsuario: 2,
-			},
-		});
+		const info = await getRepository(fm_type_diferido).find();
 
 		const message: string = Msg('type_diferidos').getAll;
 
