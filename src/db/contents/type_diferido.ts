@@ -7,7 +7,7 @@ const type_diferido = async (): Promise<void> => {
 			name: 'Error Interno',
 		},
 		{
-			name: 'Recuado',
+			name: 'Recaudo',
 		},
 	];
 	//
