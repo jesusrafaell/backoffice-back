@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class POos1648657147817 implements MigrationInterface {
-    name = 'POos1648657147817'
+export class VersionA1650292748930 implements MigrationInterface {
+    name = 'VersionA1650292748930'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "fm_type_request" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_997f9cd296f703cf8a30433561f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ead8c3227a188cc1ed07635d03d" DEFAULT getdate(), CONSTRAINT "PK_d7b52c340b7fa1d9ad9836bec84" PRIMARY KEY ("id"))`);
@@ -52,9 +52,9 @@ export class POos1648657147817 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "fm_afiliados" ("id" int NOT NULL IDENTITY(1,1), "bank_account_number" nvarchar(255), "name" nvarchar(255), "id_type_person" int, "id_bank" int, CONSTRAINT "PK_55acf88ee90f3000ae4f6548978" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_activity" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_f0f2d182af4656a5ab349056461" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_7f721b3c3629fdf2e8b4c43157f" DEFAULT getdate(), "id_afiliado" int, CONSTRAINT "PK_0388a73e1372de300962e6be970" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_commerce" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "ident_num" nvarchar(255), "special_contributor" int NOT NULL CONSTRAINT "DF_570da368aef9c63671ce1f44e7c" DEFAULT 1, "rc_special_contributor" int, "rc_rif" int, "days" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_7c64c2fcc27eed02cf143287988" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_be25f9975b9c77baffb5ba88b7d" DEFAULT getdate(), "id_ident_type" int, "id_activity" int, "id_location" int, "id_aci" int, "id_client" int, CONSTRAINT "PK_a2d9f3677becc5e674531be2f03" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "fm_status_pos" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_64d700ce33668921394dc7045c4" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_59331bd12850f31195208e186a8" DEFAULT getdate(), CONSTRAINT "PK_a83d527c3a8c3ebe7c0a0eff6e8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_types_telemarket" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_35a13d665915f4d5cc01b143f7f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_5413a33696daeaa26c7d4762efa" DEFAULT getdate(), CONSTRAINT "PK_97fb56c5633fe6d8f8472c11fc7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_telemercadeo" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "id_types_telemarket" int, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_d66198dbcb5d285eda9ba8484d6" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_27addecf80f276adf84eeb73b8f" DEFAULT getdate(), CONSTRAINT "PK_5c0c0104d2c48f4be207ea3ce55" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_status_pos" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_64d700ce33668921394dc7045c4" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_59331bd12850f31195208e186a8" DEFAULT getdate(), CONSTRAINT "PK_a83d527c3a8c3ebe7c0a0eff6e8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_product_photos_fm_photo" ("fmProductId" int NOT NULL, "fmPhotoId" int NOT NULL, CONSTRAINT "PK_96e83ac023b9c5c08917b64569b" PRIMARY KEY ("fmProductId", "fmPhotoId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_aead3451c666d14e82ccc3c48b" ON "fm_product_photos_fm_photo" ("fmProductId") `);
         await queryRunner.query(`CREATE INDEX "IDX_5c7a49c7769727f2a7161c16ee" ON "fm_product_photos_fm_photo" ("fmPhotoId") `);
@@ -244,9 +244,9 @@ export class POos1648657147817 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "IDX_5c7a49c7769727f2a7161c16ee" ON "fm_product_photos_fm_photo"`);
         await queryRunner.query(`DROP INDEX "IDX_aead3451c666d14e82ccc3c48b" ON "fm_product_photos_fm_photo"`);
         await queryRunner.query(`DROP TABLE "fm_product_photos_fm_photo"`);
+        await queryRunner.query(`DROP TABLE "fm_status_pos"`);
         await queryRunner.query(`DROP TABLE "fm_telemercadeo"`);
         await queryRunner.query(`DROP TABLE "fm_types_telemarket"`);
-        await queryRunner.query(`DROP TABLE "fm_status_pos"`);
         await queryRunner.query(`DROP TABLE "fm_commerce"`);
         await queryRunner.query(`DROP TABLE "fm_activity"`);
         await queryRunner.query(`DROP TABLE "fm_afiliados"`);

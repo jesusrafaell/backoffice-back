@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, response, Response } from 'express';
 import { getRepository } from 'typeorm';
 import fm_request from '../../../db/models/fm_request';
 import { Api } from '../../../interfaces';
-let token: string = '';
 
 let users: any[] = [];
 
@@ -21,8 +20,6 @@ interface tms7Auth {
 	username: string;
 	password: string;
 }
-
-interface tms7Commerce {}
 
 export const Login = async (
 	req: Request<any, Api.Resp, tms7Auth>,
@@ -102,18 +99,39 @@ const validarRif_tms7 = async (rif: string, access_token: string): Promise<boole
 	}
 };
 
-const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean> => {
-	console.log('Comercio en TMS7', commerce);
+const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
 	try {
 		await axios.post('http://10.198.72.86/TMS7API/v1/Merchant', commerce, {
 			headers: {
 				Authorization: 'Bearer ' + access_token,
 			},
 		});
-		return true;
-	} catch (err) {
-		let error: any = err;
-		return false;
+		return null;
+	} catch (err: any) {
+		const resError = {
+			message: err?.response.statusText,
+			status: err?.response.status,
+		};
+		console.log('Tms7 error ', resError);
+		return resError;
+	}
+};
+
+//seguir
+const validCommerceTms7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
+	try {
+		const comercio = await axios.get(
+			`http://10.198.72.86/TMS7API/v1/Merchant?net_id=${commerce.net_id}&taxId=${commerce.taxId}`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + access_token,
+				},
+			}
+		);
+		return comercio;
+	} catch (err: any) {
+		console.log('Comercio no existe en tms7');
+		return null;
 	}
 };
 
@@ -197,32 +215,20 @@ export const createCommerce = async (
 			city: id_client.name,
 			state: id_estado.estado,
 			postalcode: id_ciudad.postal_code,
+			status: 1,
 			group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
 			partner: null,
 		};
 
-		// const commerce = {
-		// 	net_id: 2,
-		// 	subacquirer_code: `7${id_activity.id_afiliado.id}`,
-		// 	merchantId: merchantId,
-		// 	company_name: name,
-		// 	receipt_name: name,
-		// 	trade_name: name,
-		// 	taxId: `${id_ident_type.name}${ident_num}`,
-		// 	address,
-		// 	address_number: 100,
-		// 	address_line1,
-		// 	address_line2,
-		// 	city: 'caracas',
-		// 	state: id_estado.estado,
-		// 	postalcode: id_ciudad.postal_code,
-		// 	group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
-		// 	partner: null,
-		// };
+		const resValidCommerceTsm7 = await validCommerceTms7(commerce, usar.access_token);
+		if (resValidCommerceTsm7) {
+			console.log('Comercio ya existe en TMS7 ', resValidCommerceTsm7);
+		} else {
+			console.log('Crear comercio en TMS7 --> ', commerce);
+			await createCommerceTMS7(commerce, usar.access_token);
+		}
 
-		await createCommerceTMS7(commerce, usar.access_token);
-
-		res.status(200).json({ message: 'comercio creado', info: commerce });
+		res.status(200).json({ message: 'Comercio creado' });
 	} catch (err) {
 		next(err);
 	}

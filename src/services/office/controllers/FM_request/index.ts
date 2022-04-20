@@ -580,7 +580,6 @@ export const FM_extraPos = async (
 			valid_special_contributor: '',
 			valid_ref_bank: '',
 			valid_comp_dep: '',
-			valid_planilla: '',
 			valid_rif: '',
 			valid_ident_card: '',
 		});
@@ -785,7 +784,6 @@ export const editStatusByIdAdmision = async (
 
 			if (pagadero) {
 				if (id_product.id === 1) {
-					console.log('Comenzar en Tms7', HOST, PORT_PROVIDERS);
 					await axios.post(
 						`${HOST}:${PORT_PROVIDERS}/auth/login`,
 						{
@@ -798,19 +796,32 @@ export const editStatusByIdAdmision = async (
 
 					console.log('loged in tms7');
 
-					await axios.post(
-						`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
-						{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-						{ headers: { token: req.headers.token_text } }
-					);
+					console.log('Comenzar en Tms7', HOST, ' ', PORT_PROVIDERS);
 
-					console.log('comercio creado tms7');
+					//TMS7
+					const resCommerce = await axios
+						.post(
+							`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
+							{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
+							{ headers: { token: req.headers.token_text } }
+						)
+						.catch((err) => {
+							console.log('Error al crear comercio', resCommerce);
+							throw { message: 'Error al crear comercio en TMS7' };
+						});
 
-					await axios.post(
-						`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
-						{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-						{ headers: { token: req.headers.token_text } }
-					);
+					console.log('Comenzar en 1000pagos', HOST, ' ', PORT_PROVIDERS);
+
+					await axios
+						.post(
+							`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
+							{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
+							{ headers: { token: req.headers.token_text } }
+						)
+						.catch((err) => {
+							console.log('Error al crear comercio en 1000pagos');
+							throw { message: 'Comercio se creo en TMS7 pero no en 1000pagos' };
+						});
 
 					console.log('comercio creado 1000pagos');
 				} else if (id_product.id === 2) {
@@ -818,11 +829,16 @@ export const editStatusByIdAdmision = async (
 
 					console.log('Comenzando solo en 1000pagos');
 
-					await axios.post(
-						`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
-						{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-						{ headers: { token: req.headers.token_text } }
-					);
+					await axios
+						.post(
+							`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
+							{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
+							{ headers: { token: req.headers.token_text } }
+						)
+						.catch((err) => {
+							console.log('Error al crear comercio en 1000pagos');
+							throw { message: 'Comercio se creo en TMS7 pero no en 1000pagos' };
+						});
 
 					console.log('comercio creado 1000pagos');
 				}
