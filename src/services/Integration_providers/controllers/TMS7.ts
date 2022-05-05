@@ -6,15 +6,6 @@ import { Api } from '../../../interfaces';
 
 let users: any[] = [];
 
-// const axios = Axios.create({
-// 	baseURL: 'http://10.198.72.86',
-// 	timeout: 1000,
-// 	headers: {
-// 		Authorization: `Bearer ${token}`,
-// 		'Content-Type': 'application/x-www-form-urlencoded',
-// 	},
-// });
-
 interface tms7Auth {
 	grant_type?: 'password';
 	username: string;
@@ -35,7 +26,7 @@ export const Login = async (
 
 		Object.keys(req.body).forEach((key: any) => bodyTMS7.append(key, body[key]));
 
-		const resp = await axios.post('http://10.198.72.86/auth/token', bodyTMS7, {
+		const resp = await axios.post(`${process.env.HOST_TMS7}/auth/token`, bodyTMS7, {
 			headers: {
 				Connection: 'keep-alive',
 				'Accept-Encoding': 'gzip, deflate, br',
@@ -70,7 +61,7 @@ export const getAllCommerce = async (
 		const usar = users.find((user) => user.id === id);
 		// if (!usar) throw { message: 'usuario no logeado', code: 401 };
 
-		const resp = await axios.get('http://10.198.72.86/TMS7API/v1/Merchant?net_id=0002', {
+		const resp = await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=0002`, {
 			headers: {
 				Authorization: 'Bearer ' + usar.access_token,
 			},
@@ -84,7 +75,7 @@ export const getAllCommerce = async (
 
 const validarRif_tms7 = async (rif: string, access_token: string): Promise<boolean> => {
 	try {
-		await axios.get(`http://10.198.72.86/TMS7API/v1/Merchant?net_id=2&taxId=${rif}`, {
+		await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=2&taxId=${rif}`, {
 			headers: {
 				Authorization: 'Bearer ' + access_token,
 			},
@@ -101,7 +92,7 @@ const validarRif_tms7 = async (rif: string, access_token: string): Promise<boole
 
 const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
 	try {
-		await axios.post('http://10.198.72.86/TMS7API/v1/Merchant', commerce, {
+		await axios.post(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant`, commerce, {
 			headers: {
 				Authorization: 'Bearer ' + access_token,
 			},
@@ -121,7 +112,7 @@ const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 const validCommerceTms7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
 	try {
 		const comercio = await axios.get(
-			`http://10.198.72.86/TMS7API/v1/Merchant?net_id=${commerce.net_id}&taxId=${commerce.taxId}`,
+			`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${commerce.net_id}&taxId=${commerce.taxId}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + access_token,
@@ -225,7 +216,10 @@ export const createCommerce = async (
 			console.log('Comercio ya existe en TMS7 ', resValidCommerceTsm7);
 		} else {
 			console.log('Crear comercio en TMS7 --> ', commerce);
-			await createCommerceTMS7(commerce, usar.access_token);
+			const saveComercioTMS7 = await createCommerceTMS7(commerce, usar.access_token);
+			if (saveComercioTMS7) {
+				throw { message: saveComercioTMS7?.message || 'Error en crear comercio en TMS7' };
+			}
 		}
 
 		res.status(200).json({ message: 'Comercio creado' });

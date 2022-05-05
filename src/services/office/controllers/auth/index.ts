@@ -48,7 +48,7 @@ export const register = async (
 		const { password, id, roles, ...data_user }: any = worker;
 
 		// generar token
-		const token = jwt.sign({ id, roles }, key, { expiresIn: 60 * 30 });
+		const token = jwt.sign({ id, roles }, key, { expiresIn: '8h' });
 
 		// enviar correo de validacion
 		await mail.verify(req.body);

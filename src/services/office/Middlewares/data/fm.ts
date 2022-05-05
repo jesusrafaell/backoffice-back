@@ -1,7 +1,13 @@
 import { check, ValidationChain } from 'express-validator';
 import { NoSQL } from './index';
 
+import { NextFunction, Request, Response } from 'express';
+import multer, { diskStorage, StorageEngine, Options } from 'multer';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+
 export const validFmData: ValidationChain[] = [
+	/*
 	//
 	check('rc_ref_bank', 'la referencia bancaria es requerido').isNumeric().custom(NoSQL),
 	//
@@ -27,4 +33,41 @@ export const validFmData: ValidationChain[] = [
 	check('id_payment_method', 'id_payment_method es requerido').isNumeric().custom(NoSQL),
 	//
 	check('id_request_origin', 'id_request_origin es requerido').isNumeric().custom(NoSQL),
+	*/
 ];
+
+const filename = (req: Request, file: Express.Multer.File, cb: any) => {
+	cb(null, uuidv4() + '@' + file.originalname.replace(/ /gi, '_'));
+};
+
+const storage: StorageEngine = diskStorage({
+	destination: path.resolve('static'),
+	filename,
+});
+
+const options: Options = {
+	fileFilter: (req, file, cb) => {
+		const filetypes = /jpeg|jpg|png|pdf/;
+		const mimetype = filetypes.test(file.mimetype);
+		const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+		if (mimetype && extname) {
+			return cb(null, true);
+		} else {
+			cb({
+				name: file.originalname,
+				message: 'Error: File upload only supports the following filetypes - ' + filetypes,
+			});
+		}
+	},
+	limits: { fileSize: 10000000 },
+	storage,
+};
+
+export const fmFormData = multer(options).fields([
+	{ name: 'images', maxCount: 20 },
+	{ name: 'constitutive_act', maxCount: 20 },
+	{ name: 'planilla', maxCount: 20 },
+	{ name: 'client' },
+	{ name: 'commerce' },
+	{ name: 'pos' },
+]);

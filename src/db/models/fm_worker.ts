@@ -10,12 +10,10 @@ import {
 	ManyToOne,
 } from 'typeorm';
 import fm_ident_type from './fm_ident_type';
-import fm_phone from './fm_phone';
 import fm_request from './fm_request';
 import fm_roles from './fm_roles';
 import fm_company from './fm_company';
 import fm_department from './fm_department';
-import fm_commerce from './fm_commerce';
 import fm_aci_commerce from './fm_aci_commerce';
 
 @Entity()

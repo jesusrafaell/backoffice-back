@@ -14,7 +14,7 @@ export const createCommerce = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		console.log('Comercio en 1000pagos');
+		console.log('Comercio en 1000pagos /Controller');
 		const fmData = await getRepository(fm_request).findOne({
 			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
 			order: { id: 'ASC' },
@@ -85,7 +85,7 @@ export const createCommerce = async (
 					.map((key) => id_commerce.id_location[key][key.replace('id_', '')])
 					.filter((item) => item)
 					.join(', '),
-
+				//
 				comerObservaciones: '',
 				comerCodAliado: id_commerce.id_aci,
 				comerEstatus: 5,
@@ -126,17 +126,24 @@ export const createCommerce = async (
 				contFreg: null,
 			};
 
-			await getRepository(Contactos).save(contacto); //new
+			await getRepository(Contactos).save(contacto);
 
 			const cxaCodAfi = `${id_commerce.id_activity.id_afiliado.id}`.split('');
-
 			while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');
+			const cxaCod: string = cxaCodAfi.join('');
 
-			await getRepository(ComerciosXafiliado).save({
-				cxaCodAfi: cxaCodAfi.join(''),
-				cxaCodComer: comercioSave.comerCod,
+			let comerXafiSave = await getRepository(ComerciosXafiliado).findOne({
+				where: { cxaCodComer: comercioSave!.comerCod },
 			});
-			console.log('El comercio fue creado en 1000pagos');
+
+			if (!comerXafiSave) {
+				comerXafiSave = await getRepository(ComerciosXafiliado).save({
+					cxaCodAfi: cxaCod,
+					cxaCodComer: comercioSave!.comerCod,
+				});
+			} else {
+				console.log('ComercioXafiliado ', contacto.contMail, ' ya existe');
+			}
 		} else console.log('El comercio ya existe en 1000pagos');
 
 		res.status(200).json({ message: 'Comercio creado' });

@@ -42,4 +42,7 @@ export const uploads = multer(options).fields([
 	{ name: 'images', maxCount: 20 },
 	{ name: 'constitutive_act', maxCount: 20 },
 	{ name: 'planilla', maxCount: 20 },
+	{ name: 'client' },
+	{ name: 'commerce' },
+	{ name: 'pos' },
 ]);
