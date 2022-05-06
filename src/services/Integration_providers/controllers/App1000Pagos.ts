@@ -120,11 +120,13 @@ export const createCommerce = async (
 				contCodUsuario: null,
 				contNombres: id_client.name,
 				contApellidos: id_client.last_name,
-				contTelefLoc: id_client.phones[0].phone.slice(3, id_client.phones[0].phone.length),
-				contTelefMov: id_client.phones[1].phone.slice(3, id_client.phones[1].phone.length),
+				contTelefLoc: '0' + id_client.phones[0].phone.slice(3, id_client.phones[0].phone.length),
+				contTelefMov: '0' + id_client.phones[1].phone.slice(3, id_client.phones[1].phone.length),
 				contMail: id_client.email,
 				contFreg: null,
 			};
+
+			console.log('contacto 1000pago', contacto);
 
 			await getRepository(Contactos).save(contacto);
 

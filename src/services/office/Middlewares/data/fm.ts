@@ -69,5 +69,15 @@ export const fmFormData = multer(options).fields([
 	{ name: 'planilla', maxCount: 20 },
 	{ name: 'client' },
 	{ name: 'commerce' },
-	{ name: 'pos' },
+	{ name: 'id_client' },
+	{ name: 'id_commerce' },
+	{ name: 'posX' },
+]);
+
+export const fmForDataExtraPos = multer(options).fields([
+	{ name: 'images', maxCount: 20 },
+	{ name: 'planilla', maxCount: 20 },
+	{ name: 'id_client' },
+	{ name: 'id_commerce' },
+	{ name: 'posX' },
 ]);

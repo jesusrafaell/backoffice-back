@@ -15,6 +15,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 		// use
 		if (result) {
+			//console.log('token', req.headers.token);
 			if (req.headers.token) {
 				const { token }: any = req.headers;
 

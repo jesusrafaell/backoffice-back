@@ -14,7 +14,7 @@ import { getFmAdministration, editStatusByIdAdministration } from '../../control
 
 import { validExistingClient, validClientData, validBankAccount } from '../../Middlewares/data/auth';
 import { validCommerceData } from '../../Middlewares/data/commerce';
-import { fmFormData, validFmData } from '../../Middlewares/data/fm';
+import { fmForDataExtraPos, fmFormData, validFmData } from '../../Middlewares/data/fm';
 import { valid_bank_account } from '../../controllers/FM_request';
 import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_request/index';
 
@@ -28,7 +28,7 @@ FM.route('/FM/:id/commerce').post(validCommerceData, fm_create_commerce);
 //
 FM.route('/FM').post(fmFormData, FM_create);
 //
-FM.route('/FM/extraPos').post(validFmData, FM_extraPos);
+FM.route('/FM/extraPos').post(fmForDataExtraPos, FM_extraPos);
 //
 FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
 //

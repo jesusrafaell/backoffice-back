@@ -40,13 +40,13 @@ export const upFilesRecaudos = async (
 		let info: any = {};
 
 		// definimos los ids de cliente y comercio
-		const { id_client, id_commerce }: any = req.body;
+		const { id_client, id_commerce, id_fm }: any = req.body;
 
 		// lista dereacudos
 		const description = ['rc_ref_bank', 'rc_rif', 'rc_ident_card', 'rc_special_contributor', 'rc_comp_dep'];
 
 		// query que retorna el ultimo fm con ese comercio y cliente
-		const fm: any = await getRepository(fm_request).findOne({
+		const fmClient: any = await getRepository(fm_request).findOne({
 			where: { id_client },
 			order: { id: 'ASC' },
 			relations: [
@@ -60,17 +60,35 @@ export const upFilesRecaudos = async (
 				'rc_comp_dep',
 			],
 		});
-		if (fm && fm.id_client) {
-			const { id_commerce, id_client } = fm;
-			const { rc_ident_card }: any = id_client;
-			const { rc_special_contributor, rc_constitutive_act, rc_ref_bank, rc_rif }: any = id_commerce;
+		const fmCommerce: any = await getRepository(fm_request).findOne({
+			where: { id_client, id_commerce },
+			order: { id: 'ASC' },
+			relations: [
+				'rc_ref_bank',
+				'id_client',
+				'id_client.rc_ident_card',
+				'id_commerce',
+				'id_commerce.rc_constitutive_act',
+				'id_commerce.rc_rif',
+				'id_commerce.rc_special_contributor',
+				'rc_comp_dep',
+			],
+		});
+		const fm = fmCommerce ? fmCommerce : fmClient;
 
-			if (fm.id_commerce === id_commerce) {
+		if (fm && fm.id_client) {
+			//console.log('llegue client');
+			const fmClient = fm.id_client;
+			const fmCommerce = fm.id_commerce;
+			const { rc_ident_card }: any = fmClient;
+			const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = fmCommerce;
+
+			if (fm.id_commerce.id === id_commerce) {
+				//console.log('llegue commerce');
 				info = {
 					rc_ident_card: rc_ident_card && rc_ident_card.id,
 					rc_rif: rc_rif && rc_rif.id,
 					rc_special_contributor: rc_special_contributor && rc_special_contributor.id,
-					rc_ref_bank: rc_ref_bank && rc_ref_bank.id,
 					rc_constitutive_act: rc_constitutive_act ? rc_constitutive_act.map((item: any) => item.id) : [],
 					planilla: [],
 				};
@@ -102,13 +120,21 @@ export const upFilesRecaudos = async (
 			await fs.mkdir(`${base}/${id_client}/${id_commerce}/constitutive_act`);
 		}
 
+		if (!existsSync(`${base}/${id_client}/${id_commerce}/${id_fm}`)) {
+			await fs.mkdir(`${base}/${id_client}/${id_commerce}/${id_fm}`);
+		}
+
 		if (files.planilla) {
-			if (!existsSync(`${base}/${id_client}/${id_commerce}/planilla`)) {
-				await fs.mkdir(`${base}/${id_client}/${id_commerce}/planilla`);
+			if (!existsSync(`${base}/${id_client}/${id_commerce}/${id_fm}/planilla`)) {
+				await fs.mkdir(`${base}/${id_client}/${id_commerce}/${id_fm}/planilla`);
 			}
 		}
 
-		const stop: Promise<void>[] = files.images
+		//console.log('origenfiles', files);
+		const auxFiles = removeFilesFromList(files.images, info);
+		//console.log('auxfiles ', auxFiles);
+
+		const stop: Promise<void>[] = auxFiles
 			.filter((file: Express.Multer.File) => {
 				const valid: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
 				//console.log(' description.includes(val`id)', description.includes(valid));
@@ -116,12 +142,26 @@ export const upFilesRecaudos = async (
 				return description.includes(valid);
 			})
 			.map(async (file: Express.Multer.File, i: number): Promise<void> => {
+				//console.log('aqui', file);
 				const descript: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
 
-				const route_ids: string = ['rc_ident_card'].includes(descript)
-					? `${id_client}`
-					: `${id_client}/${id_commerce}`;
+				const createRoutes = (value: string) => {
+					//console.log('actual ', value);
+					switch (value) {
+						case 'rc_ident_card':
+							return `${id_client}`;
+						case 'rc_ref_bank':
+						case 'rc_comp_dep':
+							return `${id_client}/${id_commerce}/${id_fm}`;
+						default:
+							return `${id_client}/${id_commerce}`;
+					}
+				};
 
+				const route_ids: string = createRoutes(file.filename.split('@')[1].split('.')[0]);
+
+				//console.log(file.filename, route_ids);
+				//console.log(file.filename, route_ids);
 				await Doc.Move(file.filename, route_ids);
 				const path = `static/${route_ids}/${file.filename}`;
 
@@ -134,8 +174,8 @@ export const upFilesRecaudos = async (
 
 		if (files.planilla) {
 			const stop2 = files.planilla.map(async (file: Express.Multer.File, i: number): Promise<void> => {
-				await Doc.Move(file.filename, `${id_client}/${id_commerce}/planilla`);
-				const path = `static/${id_client}/${id_commerce}/planilla/${file.filename}`;
+				await Doc.Move(file.filename, `${id_client}/${id_commerce}/${id_fm}/planilla`);
+				const path = `static/${id_client}/${id_commerce}/${id_fm}/planilla/${file.filename}`;
 
 				const data = getRepository(fm_photo).create({
 					name: file.filename,
@@ -150,22 +190,24 @@ export const upFilesRecaudos = async (
 			await Promise.all(stop2);
 		}
 
-		if (files.constitutive_act) {
-			const stop2 = files.constitutive_act.map(async (file: Express.Multer.File, i: number): Promise<void> => {
-				await Doc.Move(file.filename, `${id_client}/${id_commerce}/constitutive_act`);
-				const path = `static/${id_client}/${id_commerce}/constitutive_act/${file.filename}`;
+		if (!fm.id_commerce.rc_constitutive_act.length) {
+			if (files.constitutive_act) {
+				const stop2 = files.constitutive_act.map(async (file: Express.Multer.File, i: number): Promise<void> => {
+					await Doc.Move(file.filename, `${id_client}/${id_commerce}/constitutive_act`);
+					const path = `static/${id_client}/${id_commerce}/constitutive_act/${file.filename}`;
 
-				const data = getRepository(fm_photo).create({
-					name: file.filename,
-					path,
-					descript: 'rc_constitutive_act',
+					const data = getRepository(fm_photo).create({
+						name: file.filename,
+						path,
+						descript: 'rc_constitutive_act',
+					});
+					const save = await getRepository(fm_photo).save(data);
+
+					info.rc_constitutive_act.push(save.id);
 				});
-				const save = await getRepository(fm_photo).save(data);
 
-				info.rc_constitutive_act.push(save.id);
-			});
-
-			await Promise.all(stop2);
+				await Promise.all(stop2);
+			}
 		}
 
 		res.status(200).json({ message: 'archivos listos', info });
@@ -321,20 +363,19 @@ export const editRcByFm = async (
 	}
 };
 
-const notRemove = (file: any, data: any) => {
+const remove = (file: any, data: any) => {
 	for (const item of Object.entries(data)) {
-		if (item[0] === file.originalname.split('.')[0]) {
-			return false;
+		if (item[1] !== null && item[0] === file.originalname.split('.')[0]) {
+			return true;
 		}
 	}
-	return true;
+	return false;
 };
 
 const removeFilesFromList = (files: any, data: any) => {
 	const list: any[] = [];
-	console.log(files.length);
 	for (let i = 0; i < files.length; i++) {
-		if (notRemove(files[i], data)) {
+		if (!remove(files[i], data)) {
 			//console.log('add', files[i].originalname);
 			list.push(files[i]);
 		}
@@ -426,15 +467,19 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 			await fs.mkdir(`${base}/${id_client}/${id_commerce}/constitutive_act`);
 		}
 
+		if (!existsSync(`${base}/${id_client}/${id_commerce}/${id_fm}`)) {
+			await fs.mkdir(`${base}/${id_client}/${id_commerce}/${id_fm}`);
+		}
+
 		if (files.planilla) {
-			if (!existsSync(`${base}/${id_client}/${id_commerce}/planilla`)) {
-				await fs.mkdir(`${base}/${id_client}/${id_commerce}/planilla`);
+			if (!existsSync(`${base}/${id_client}/${id_commerce}/${id_fm}/planilla`)) {
+				await fs.mkdir(`${base}/${id_client}/${id_commerce}/${id_fm}/planilla`);
 			}
 		}
 
-		//console.log('origenfiles', files.images);
+		//console.log('origenfiles', files);
 		const auxFiles = removeFilesFromList(files.images, info);
-		//console.log('auxfiles ', auxFiles.length);
+		//console.log('auxfiles ', auxFiles);
 
 		const stop: Promise<void>[] = auxFiles
 			.filter((file: Express.Multer.File) => {
@@ -447,10 +492,23 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 				//console.log('aqui', file);
 				const descript: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
 
-				const route_ids: string = ['rc_ident_card'].includes(descript)
-					? `${id_client}`
-					: `${id_client}/${id_commerce}`;
+				const createRoutes = (value: string) => {
+					//console.log('actual ', value);
+					switch (value) {
+						case 'rc_ident_card':
+							return `${id_client}`;
+						case 'rc_ref_bank':
+						case 'rc_comp_dep':
+							return `${id_client}/${id_commerce}/${id_fm}`;
+						default:
+							return `${id_client}/${id_commerce}`;
+					}
+				};
 
+				const route_ids: string = createRoutes(file.filename.split('@')[1].split('.')[0]);
+
+				//console.log(file.filename, route_ids);
+				//console.log(file.filename, route_ids);
 				await Doc.Move(file.filename, route_ids);
 				const path = `static/${route_ids}/${file.filename}`;
 
@@ -463,8 +521,8 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 
 		if (files.planilla) {
 			const stop2 = files.planilla.map(async (file: Express.Multer.File, i: number): Promise<void> => {
-				await Doc.Move(file.filename, `${id_client}/${id_commerce}/planilla`);
-				const path = `static/${id_client}/${id_commerce}/planilla/${file.filename}`;
+				await Doc.Move(file.filename, `${id_client}/${id_commerce}/${id_fm}/planilla`);
+				const path = `static/${id_client}/${id_commerce}/${id_fm}/planilla/${file.filename}`;
 
 				const data = getRepository(fm_photo).create({
 					name: file.filename,
@@ -479,7 +537,7 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 			await Promise.all(stop2);
 		}
 
-		if (!fm.id_commerce.rc_constitutive_act) {
+		if (!fm.id_commerce.rc_constitutive_act.length) {
 			if (files.constitutive_act) {
 				const stop2 = files.constitutive_act.map(async (file: Express.Multer.File, i: number): Promise<void> => {
 					await Doc.Move(file.filename, `${id_client}/${id_commerce}/constitutive_act`);
@@ -504,16 +562,15 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 			await getRepository(fm_client).update(id_client, { rc_ident_card: info.rc_ident_card });
 		}
 		//save Images in Commerce
-		if (fm.id_commerce !== id_commerce) {
-			if (!fm.id_commerce.rc_special_contributor || !fm.id_commerce.rc_rif)
-				await getRepository(fm_commerce).update(id_commerce, {
-					rc_special_contributor: info.rc_special_contributor,
-					rc_rif: info.rc_rif,
-				});
-			if (!fm.id_commerce.rc_constitutive_act) {
-				const constitutive_act = info.rc_constitutive_act.map((id_photo: any) => ({ id_commerce, id_photo }));
-				await getRepository(fm_commerce_constitutive_act).save(constitutive_act);
-			}
+		if (!fm.id_commerce.rc_special_contributor || !fm.id_commerce.rc_rif)
+			await getRepository(fm_commerce).update(id_commerce, {
+				rc_special_contributor: info.rc_special_contributor,
+				rc_rif: info.rc_rif,
+			});
+
+		if (!fm.id_commerce.rc_constitutive_act.length) {
+			const constitutive_act = info.rc_constitutive_act.map((id_photo: any) => ({ id_commerce, id_photo }));
+			await getRepository(fm_commerce_constitutive_act).save(constitutive_act);
 		}
 
 		//save Imagen in FM

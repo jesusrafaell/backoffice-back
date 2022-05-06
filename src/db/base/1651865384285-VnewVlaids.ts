@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class VActualmayo1651606742395 implements MigrationInterface {
-    name = 'VActualmayo1651606742395'
+export class VnewVlaids1651865384285 implements MigrationInterface {
+    name = 'VnewVlaids1651865384285'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "fm_type_request" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_997f9cd296f703cf8a30433561f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ead8c3227a188cc1ed07635d03d" DEFAULT getdate(), CONSTRAINT "PK_d7b52c340b7fa1d9ad9836bec84" PRIMARY KEY ("id"))`);
@@ -27,12 +27,15 @@ export class VActualmayo1651606742395 implements MigrationInterface {
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_47c08889ebe40f2671a747e614" ON "fm_quotas_calculated" ("id_request") WHERE "id_request" IS NOT NULL`);
         await queryRunner.query(`CREATE TABLE "fm_type_payment" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), CONSTRAINT "PK_a3cfe925bfabad7b00a14912e3c" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_type_diferido" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255) NOT NULL, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_36aaed168d46c9bb97b78623ad4" DEFAULT getdate(), CONSTRAINT "PK_5488658074ee045452e15f5e843" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "fm_valid_request" ("id" int NOT NULL IDENTITY(1,1), "id_typedif_client" int, "id_typedif_commerce" int, "id_typedif_pos" int, "id_typedif_ref_bank" int, "id_typedif_comp_num" int, "valid_constitutive_act" nvarchar(255) NOT NULL, "valid_special_contributor" nvarchar(255) NOT NULL, "valid_ref_bank" nvarchar(255) NOT NULL, "valid_planilla" nvarchar(255) NOT NULL, "valid_comp_dep" nvarchar(255) NOT NULL, "valid_rif" nvarchar(255) NOT NULL, "valid_ident_card" nvarchar(255) NOT NULL, CONSTRAINT "PK_30eecfe0092a93cd8d345586e76" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_valid_request" ("id" int NOT NULL IDENTITY(1,1), "id_typedif_client" int, "id_typedif_commerce" int, "id_typedif_pos" int, "id_typedif_ref_bank" int, "id_typedif_comp_num" int, "id_typedif_consitutive_acta" int, "id_typedif_planilla" int, "id_typedif_special_contributor" int, "valid_ident_card" nvarchar(255) NOT NULL, "valid_rif" nvarchar(255) NOT NULL, "valid_constitutive_act" nvarchar(255) NOT NULL, "valid_special_contributor" nvarchar(255) NOT NULL, "valid_ref_bank" nvarchar(255) NOT NULL, "valid_planilla" nvarchar(255) NOT NULL, "valid_comp_dep" nvarchar(255) NOT NULL, CONSTRAINT "PK_30eecfe0092a93cd8d345586e76" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_a05ad32e9207f52c5deb67f96b" ON "fm_valid_request" ("id_typedif_client") WHERE "id_typedif_client" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_ccad3e4197ca1dacd7404f801b" ON "fm_valid_request" ("id_typedif_commerce") WHERE "id_typedif_commerce" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_beeaffb6d9f9c69a015901d23b" ON "fm_valid_request" ("id_typedif_pos") WHERE "id_typedif_pos" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_249b235eff4603ee7f5c88e773" ON "fm_valid_request" ("id_typedif_ref_bank") WHERE "id_typedif_ref_bank" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_ef131ede3c9051cf9291be578e" ON "fm_valid_request" ("id_typedif_comp_num") WHERE "id_typedif_comp_num" IS NOT NULL`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "REL_c071181090fe633d36f4ab05d0" ON "fm_valid_request" ("id_typedif_consitutive_acta") WHERE "id_typedif_consitutive_acta" IS NOT NULL`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "REL_04be458c06e51fc7b90f8adab3" ON "fm_valid_request" ("id_typedif_planilla") WHERE "id_typedif_planilla" IS NOT NULL`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "REL_e1bb4b882a35dd049b25249e13" ON "fm_valid_request" ("id_typedif_special_contributor") WHERE "id_typedif_special_contributor" IS NOT NULL`);
         await queryRunner.query(`CREATE TABLE "fm_request" ("id" int NOT NULL IDENTITY(1,1), "code" nvarchar(255), "number_post" int, "bank_account_num" nvarchar(255), "ci_referred" nvarchar(255), "nro_comp_dep" nvarchar(255), "discount" bit, "pagadero" bit, "id_quotas_calculat" int, "id_payment_method" int, "id_type_payment" int, "id_client" int, "id_commerce" int, "id_product" int, "id_type_request" int, "id_request_origin" int, "id_valid_request" int, "rc_comp_dep" int, "rc_ref_bank" int, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_1284c74e7454ad173773d68d2d3" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_25390c098a36ce62d28e42bd768" DEFAULT getdate(), CONSTRAINT "PK_bdbd90f697fa3fc67ed2207f66c" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_680b2a0d78e2edb2fd85052e89" ON "fm_request" ("id_quotas_calculat") WHERE "id_quotas_calculat" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_82416fb6e19b7157d05f08584f" ON "fm_request" ("id_valid_request") WHERE "id_valid_request" IS NOT NULL`);
@@ -101,6 +104,9 @@ export class VActualmayo1651606742395 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "fm_valid_request" ADD CONSTRAINT "FK_beeaffb6d9f9c69a015901d23bc" FOREIGN KEY ("id_typedif_pos") REFERENCES "fm_type_diferido"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_valid_request" ADD CONSTRAINT "FK_249b235eff4603ee7f5c88e7737" FOREIGN KEY ("id_typedif_ref_bank") REFERENCES "fm_type_diferido"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_valid_request" ADD CONSTRAINT "FK_ef131ede3c9051cf9291be578e7" FOREIGN KEY ("id_typedif_comp_num") REFERENCES "fm_type_diferido"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "fm_valid_request" ADD CONSTRAINT "FK_c071181090fe633d36f4ab05d0a" FOREIGN KEY ("id_typedif_consitutive_acta") REFERENCES "fm_type_diferido"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "fm_valid_request" ADD CONSTRAINT "FK_04be458c06e51fc7b90f8adab31" FOREIGN KEY ("id_typedif_planilla") REFERENCES "fm_type_diferido"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "fm_valid_request" ADD CONSTRAINT "FK_e1bb4b882a35dd049b25249e136" FOREIGN KEY ("id_typedif_special_contributor") REFERENCES "fm_type_diferido"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_request" ADD CONSTRAINT "FK_680b2a0d78e2edb2fd85052e89a" FOREIGN KEY ("id_quotas_calculat") REFERENCES "fm_quotas_calculated"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_request" ADD CONSTRAINT "FK_7af3f0d3b144b7d6a72ceac4073" FOREIGN KEY ("id_payment_method") REFERENCES "fm_payment_method"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_request" ADD CONSTRAINT "FK_e58a708881405ef2655aef9fd81" FOREIGN KEY ("id_type_payment") REFERENCES "fm_type_payment"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -198,6 +204,9 @@ export class VActualmayo1651606742395 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "fm_request" DROP CONSTRAINT "FK_e58a708881405ef2655aef9fd81"`);
         await queryRunner.query(`ALTER TABLE "fm_request" DROP CONSTRAINT "FK_7af3f0d3b144b7d6a72ceac4073"`);
         await queryRunner.query(`ALTER TABLE "fm_request" DROP CONSTRAINT "FK_680b2a0d78e2edb2fd85052e89a"`);
+        await queryRunner.query(`ALTER TABLE "fm_valid_request" DROP CONSTRAINT "FK_e1bb4b882a35dd049b25249e136"`);
+        await queryRunner.query(`ALTER TABLE "fm_valid_request" DROP CONSTRAINT "FK_04be458c06e51fc7b90f8adab31"`);
+        await queryRunner.query(`ALTER TABLE "fm_valid_request" DROP CONSTRAINT "FK_c071181090fe633d36f4ab05d0a"`);
         await queryRunner.query(`ALTER TABLE "fm_valid_request" DROP CONSTRAINT "FK_ef131ede3c9051cf9291be578e7"`);
         await queryRunner.query(`ALTER TABLE "fm_valid_request" DROP CONSTRAINT "FK_249b235eff4603ee7f5c88e7737"`);
         await queryRunner.query(`ALTER TABLE "fm_valid_request" DROP CONSTRAINT "FK_beeaffb6d9f9c69a015901d23bc"`);
@@ -266,6 +275,9 @@ export class VActualmayo1651606742395 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "REL_82416fb6e19b7157d05f08584f" ON "fm_request"`);
         await queryRunner.query(`DROP INDEX "REL_680b2a0d78e2edb2fd85052e89" ON "fm_request"`);
         await queryRunner.query(`DROP TABLE "fm_request"`);
+        await queryRunner.query(`DROP INDEX "REL_e1bb4b882a35dd049b25249e13" ON "fm_valid_request"`);
+        await queryRunner.query(`DROP INDEX "REL_04be458c06e51fc7b90f8adab3" ON "fm_valid_request"`);
+        await queryRunner.query(`DROP INDEX "REL_c071181090fe633d36f4ab05d0" ON "fm_valid_request"`);
         await queryRunner.query(`DROP INDEX "REL_ef131ede3c9051cf9291be578e" ON "fm_valid_request"`);
         await queryRunner.query(`DROP INDEX "REL_249b235eff4603ee7f5c88e773" ON "fm_valid_request"`);
         await queryRunner.query(`DROP INDEX "REL_beeaffb6d9f9c69a015901d23b" ON "fm_valid_request"`);

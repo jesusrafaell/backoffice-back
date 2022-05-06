@@ -32,7 +32,28 @@ export default class fm_valid_request {
 	@JoinColumn({ name: 'id_typedif_comp_num' })
 	id_typedif_comp_num!: number | fm_type_diferido;
 
+	@Column({ nullable: true, default: null })
+	@OneToOne(() => fm_type_diferido)
+	@JoinColumn({ name: 'id_typedif_consitutive_acta' })
+	id_typedif_consitutive_acta!: number | fm_type_diferido;
+
+	@Column({ nullable: true, default: null })
+	@OneToOne(() => fm_type_diferido)
+	@JoinColumn({ name: 'id_typedif_planilla' })
+	id_typedif_planilla!: number | fm_type_diferido;
+
+	@Column({ nullable: true, default: null })
+	@OneToOne(() => fm_type_diferido)
+	@JoinColumn({ name: 'id_typedif_special_contributor' })
+	id_typedif_special_contributor!: number | fm_type_diferido;
+
 	//Recaudos
+	@Column({ name: 'valid_ident_card' })
+	valid_ident_card!: string;
+
+	@Column({ name: 'valid_rif' })
+	valid_rif!: string;
+
 	@Column({ name: 'valid_constitutive_act' })
 	valid_constitutive_act!: string;
 
@@ -47,10 +68,4 @@ export default class fm_valid_request {
 
 	@Column({ name: 'valid_comp_dep' })
 	valid_comp_dep!: string;
-
-	@Column({ name: 'valid_rif' })
-	valid_rif!: string;
-
-	@Column({ name: 'valid_ident_card' })
-	valid_ident_card!: string;
 }

@@ -8,10 +8,11 @@ import Msg from '../../../../hooks/messages/index.ts';
 export const worker = async (req: Request<any, Api.Resp>, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id, type, email }: any = req.headers.token;
+		console.log('data token: ', id, ' from ', req.headers.token);
 
 		if (type === 1) throw { message: 'no tiene permiso de consumir enta data' };
 		const worker = await getRepository(fm_worker).findOne({
-			where: { id, email },
+			where: { id },
 			relations: ['roles', 'id_department'],
 		});
 
