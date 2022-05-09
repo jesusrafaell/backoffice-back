@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class VnewVlaids1651865384285 implements MigrationInterface {
-    name = 'VnewVlaids1651865384285'
+export class Vadd11652119350047 implements MigrationInterface {
+    name = 'Vadd11652119350047'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "fm_type_request" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_997f9cd296f703cf8a30433561f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ead8c3227a188cc1ed07635d03d" DEFAULT getdate(), CONSTRAINT "PK_d7b52c340b7fa1d9ad9836bec84" PRIMARY KEY ("id"))`);
@@ -28,14 +28,6 @@ export class VnewVlaids1651865384285 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "fm_type_payment" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), CONSTRAINT "PK_a3cfe925bfabad7b00a14912e3c" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_type_diferido" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255) NOT NULL, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_36aaed168d46c9bb97b78623ad4" DEFAULT getdate(), CONSTRAINT "PK_5488658074ee045452e15f5e843" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_valid_request" ("id" int NOT NULL IDENTITY(1,1), "id_typedif_client" int, "id_typedif_commerce" int, "id_typedif_pos" int, "id_typedif_ref_bank" int, "id_typedif_comp_num" int, "id_typedif_consitutive_acta" int, "id_typedif_planilla" int, "id_typedif_special_contributor" int, "valid_ident_card" nvarchar(255) NOT NULL, "valid_rif" nvarchar(255) NOT NULL, "valid_constitutive_act" nvarchar(255) NOT NULL, "valid_special_contributor" nvarchar(255) NOT NULL, "valid_ref_bank" nvarchar(255) NOT NULL, "valid_planilla" nvarchar(255) NOT NULL, "valid_comp_dep" nvarchar(255) NOT NULL, CONSTRAINT "PK_30eecfe0092a93cd8d345586e76" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_a05ad32e9207f52c5deb67f96b" ON "fm_valid_request" ("id_typedif_client") WHERE "id_typedif_client" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_ccad3e4197ca1dacd7404f801b" ON "fm_valid_request" ("id_typedif_commerce") WHERE "id_typedif_commerce" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_beeaffb6d9f9c69a015901d23b" ON "fm_valid_request" ("id_typedif_pos") WHERE "id_typedif_pos" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_249b235eff4603ee7f5c88e773" ON "fm_valid_request" ("id_typedif_ref_bank") WHERE "id_typedif_ref_bank" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_ef131ede3c9051cf9291be578e" ON "fm_valid_request" ("id_typedif_comp_num") WHERE "id_typedif_comp_num" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_c071181090fe633d36f4ab05d0" ON "fm_valid_request" ("id_typedif_consitutive_acta") WHERE "id_typedif_consitutive_acta" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_04be458c06e51fc7b90f8adab3" ON "fm_valid_request" ("id_typedif_planilla") WHERE "id_typedif_planilla" IS NOT NULL`);
-        await queryRunner.query(`CREATE UNIQUE INDEX "REL_e1bb4b882a35dd049b25249e13" ON "fm_valid_request" ("id_typedif_special_contributor") WHERE "id_typedif_special_contributor" IS NOT NULL`);
         await queryRunner.query(`CREATE TABLE "fm_request" ("id" int NOT NULL IDENTITY(1,1), "code" nvarchar(255), "number_post" int, "bank_account_num" nvarchar(255), "ci_referred" nvarchar(255), "nro_comp_dep" nvarchar(255), "discount" bit, "pagadero" bit, "id_quotas_calculat" int, "id_payment_method" int, "id_type_payment" int, "id_client" int, "id_commerce" int, "id_product" int, "id_type_request" int, "id_request_origin" int, "id_valid_request" int, "rc_comp_dep" int, "rc_ref_bank" int, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_1284c74e7454ad173773d68d2d3" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_25390c098a36ce62d28e42bd768" DEFAULT getdate(), CONSTRAINT "PK_bdbd90f697fa3fc67ed2207f66c" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_680b2a0d78e2edb2fd85052e89" ON "fm_request" ("id_quotas_calculat") WHERE "id_quotas_calculat" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_82416fb6e19b7157d05f08584f" ON "fm_request" ("id_valid_request") WHERE "id_valid_request" IS NOT NULL`);
@@ -43,7 +35,7 @@ export class VnewVlaids1651865384285 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "fm_company" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_91476e2adc6b8588bc94fecab2e" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_2c4492fe892c73fcd2dcac60c5f" DEFAULT getdate(), "id_commerce" int, CONSTRAINT "PK_fdfa792f651a4844d89c9f9b8ab" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_aci_commerce" ("id" int NOT NULL IDENTITY(1,1), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_3295e30bfff0befa68b01840924" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_f0cd0ab16bdf15f24b21e22a4d9" DEFAULT getdate(), "id_commerce" int, "id_worker" int, CONSTRAINT "PK_bf1f8c839373d4e9a45daff974a" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_30c2d9c55728a95e712e837362" ON "fm_aci_commerce" ("id_commerce") WHERE "id_commerce" IS NOT NULL`);
-        await queryRunner.query(`CREATE TABLE "fm_worker" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "last_name" nvarchar(255), "password" nvarchar(255), "ident_num" nvarchar(255), "email" nvarchar(255) NOT NULL, "block" int NOT NULL CONSTRAINT "DF_fb255af61f5baf90d546e06ad15" DEFAULT 0, "phone" nvarchar(255), "id_ident_type" int, "id_company" int, "id_department" int, CONSTRAINT "UQ_35eb1f25e7bf89140a2c986b07e" UNIQUE ("email"), CONSTRAINT "PK_bfdfa405d4a55894c0f9f30be3e" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_worker" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "last_name" nvarchar(255), "password" nvarchar(255), "ident_num" nvarchar(255), "email" nvarchar(255) NOT NULL, "block" int NOT NULL CONSTRAINT "DF_fb255af61f5baf90d546e06ad15" DEFAULT 0, "phone" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_870b59f9b2469b79bb4edd5733f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_81d2a39c5134e21c4f300c60925" DEFAULT getdate(), "id_ident_type" int, "id_company" int, "id_department" int, CONSTRAINT "UQ_35eb1f25e7bf89140a2c986b07e" UNIQUE ("email"), CONSTRAINT "PK_bfdfa405d4a55894c0f9f30be3e" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_7a21b1b04b3df8909ad71d8909" ON "fm_worker" ("id_ident_type", "ident_num") `);
         await queryRunner.query(`CREATE TABLE "fm_ident_type" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_7e2dc1f48265fd4426912f8000d" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_14373de418416ad7bb9f8311784" DEFAULT getdate(), CONSTRAINT "PK_fd14a58b675357f23b15e168ae6" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_phone" ("id" int NOT NULL IDENTITY(1,1), "phone" nvarchar(255) NOT NULL, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_94056d5651696d22a31a4aa6711" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_33339efd6ff91e08418534fc401" DEFAULT getdate(), "id_client" int, CONSTRAINT "PK_daa6754aa4e550e51a993683557" PRIMARY KEY ("id"))`);
@@ -55,6 +47,7 @@ export class VnewVlaids1651865384285 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "fm_afiliados" ("id" int NOT NULL IDENTITY(1,1), "bank_account_number" nvarchar(255), "name" nvarchar(255), "id_type_person" int, "id_bank" int, CONSTRAINT "PK_55acf88ee90f3000ae4f6548978" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_activity" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_f0f2d182af4656a5ab349056461" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_7f721b3c3629fdf2e8b4c43157f" DEFAULT getdate(), "id_afiliado" int, CONSTRAINT "PK_0388a73e1372de300962e6be970" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_commerce" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "ident_num" nvarchar(255), "special_contributor" int NOT NULL CONSTRAINT "DF_570da368aef9c63671ce1f44e7c" DEFAULT 1, "rc_special_contributor" int, "rc_rif" int, "days" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_7c64c2fcc27eed02cf143287988" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_be25f9975b9c77baffb5ba88b7d" DEFAULT getdate(), "id_ident_type" int, "id_activity" int, "id_location" int, "id_aci" int, "id_client" int, CONSTRAINT "PK_a2d9f3677becc5e674531be2f03" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_ger7_parametrization" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255) NOT NULL, "version" int NOT NULL, "desc" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_432204157ea16dc73fc98ab7f19" DEFAULT getdate(), CONSTRAINT "PK_949fc47b8cb521965931a0a7983" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_status_pos" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_64d700ce33668921394dc7045c4" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_59331bd12850f31195208e186a8" DEFAULT getdate(), CONSTRAINT "PK_a83d527c3a8c3ebe7c0a0eff6e8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_types_telemarket" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_35a13d665915f4d5cc01b143f7f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_5413a33696daeaa26c7d4762efa" DEFAULT getdate(), CONSTRAINT "PK_97fb56c5633fe6d8f8472c11fc7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_telemercadeo" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "id_types_telemarket" int, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_d66198dbcb5d285eda9ba8484d6" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_27addecf80f276adf84eeb73b8f" DEFAULT getdate(), CONSTRAINT "PK_5c0c0104d2c48f4be207ea3ce55" PRIMARY KEY ("id"))`);
@@ -256,6 +249,7 @@ export class VnewVlaids1651865384285 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "fm_telemercadeo"`);
         await queryRunner.query(`DROP TABLE "fm_types_telemarket"`);
         await queryRunner.query(`DROP TABLE "fm_status_pos"`);
+        await queryRunner.query(`DROP TABLE "fm_ger7_parametrization"`);
         await queryRunner.query(`DROP TABLE "fm_commerce"`);
         await queryRunner.query(`DROP TABLE "fm_activity"`);
         await queryRunner.query(`DROP TABLE "fm_afiliados"`);
@@ -275,14 +269,6 @@ export class VnewVlaids1651865384285 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "REL_82416fb6e19b7157d05f08584f" ON "fm_request"`);
         await queryRunner.query(`DROP INDEX "REL_680b2a0d78e2edb2fd85052e89" ON "fm_request"`);
         await queryRunner.query(`DROP TABLE "fm_request"`);
-        await queryRunner.query(`DROP INDEX "REL_e1bb4b882a35dd049b25249e13" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_04be458c06e51fc7b90f8adab3" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_c071181090fe633d36f4ab05d0" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_ef131ede3c9051cf9291be578e" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_249b235eff4603ee7f5c88e773" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_beeaffb6d9f9c69a015901d23b" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_ccad3e4197ca1dacd7404f801b" ON "fm_valid_request"`);
-        await queryRunner.query(`DROP INDEX "REL_a05ad32e9207f52c5deb67f96b" ON "fm_valid_request"`);
         await queryRunner.query(`DROP TABLE "fm_valid_request"`);
         await queryRunner.query(`DROP TABLE "fm_type_diferido"`);
         await queryRunner.query(`DROP TABLE "fm_type_payment"`);

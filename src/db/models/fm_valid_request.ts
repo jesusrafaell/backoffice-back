@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import fm from 'services/office/router/fm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import fm_type_diferido from './fm_type_diferido';
 
 @Entity()
@@ -8,42 +9,42 @@ export default class fm_valid_request {
 
 	//Motivos para diferido
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_client)
 	@JoinColumn({ name: 'id_typedif_client' })
 	id_typedif_client!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_commerce)
 	@JoinColumn({ name: 'id_typedif_commerce' })
 	id_typedif_commerce!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_pos)
 	@JoinColumn({ name: 'id_typedif_pos' })
 	id_typedif_pos!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_ref_bank)
 	@JoinColumn({ name: 'id_typedif_ref_bank' })
 	id_typedif_ref_bank!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_comp_num)
 	@JoinColumn({ name: 'id_typedif_comp_num' })
 	id_typedif_comp_num!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_consitutive_acta)
 	@JoinColumn({ name: 'id_typedif_consitutive_acta' })
 	id_typedif_consitutive_acta!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_planilla)
 	@JoinColumn({ name: 'id_typedif_planilla' })
 	id_typedif_planilla!: number | fm_type_diferido;
 
 	@Column({ nullable: true, default: null })
-	@OneToOne(() => fm_type_diferido)
+	@ManyToOne(() => fm_type_diferido, (fm_type_diferido) => fm_type_diferido.fm_td_special_contributor)
 	@JoinColumn({ name: 'id_typedif_special_contributor' })
 	id_typedif_special_contributor!: number | fm_type_diferido;
 

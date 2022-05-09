@@ -6,6 +6,7 @@ import ciudad from './ciudad';
 import company from './company';
 import department from './department';
 import estado from './estado';
+import ger7_parametrization from './get7_parametrization';
 import ident_type from './ident_type';
 import municipio from './municipio';
 import parroquia from './parroquia';
@@ -46,4 +47,5 @@ createConnection().then(async () => {
 	await type_telemarket();
 	await telemercadeo();
 	await type_diferido();
+	await ger7_parametrization();
 });

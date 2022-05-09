@@ -8,6 +8,8 @@ import {
 	JoinTable,
 	Index,
 	ManyToOne,
+	CreateDateColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import fm_ident_type from './fm_ident_type';
 import fm_request from './fm_request';
@@ -66,4 +68,10 @@ export default class fm_worker {
 	@OneToMany(() => fm_request, (fm_request) => fm_request.id_client)
 	@JoinColumn({ name: 'requests' })
 	requests?: fm_request[];
+
+	@CreateDateColumn({ select: false })
+	createdAt?: Date;
+
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

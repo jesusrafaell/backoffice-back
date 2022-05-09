@@ -579,8 +579,6 @@ export const editStatusByIdAdmision = async (
 		if (id_status_request === 4) {
 			const { id } = FM.id_valid_request;
 
-			//console.log(valids);
-
 			if (!valids) throw { message: 'cambio de estatus es 4, valids es requerido', code: 400 };
 
 			await getRepository(fm_valid_request).update(id, { ...valids });
