@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request, response, Response } from 'express';
 import { getRepository } from 'typeorm';
+import { createMerchantId } from '../../../utilis/createMerchantId';
 import fm_request from '../../../db/models/fm_request';
 import { Api } from '../../../interfaces';
 
@@ -102,6 +103,7 @@ const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 		const resError = {
 			message: err?.response.statusText,
 			status: err?.response.status,
+			data: err?.response.data,
 		};
 		console.log('Tms7 error ', resError);
 		return resError;
@@ -121,7 +123,7 @@ const validCommerceTms7 = async (commerce: any, access_token: string): Promise<b
 		);
 		return comercio;
 	} catch (err: any) {
-		console.log('Comercio no existe en tms7');
+		//console.log('Comercio no existe en tms7');
 		return null;
 	}
 };
@@ -189,7 +191,7 @@ export const createCommerce = async (
 			.map((key) => pos[0].id_location[key][key.replace('id_', '')])
 			.filter((item) => item)[0];
 
-		const merchantId = `7${id_activity.id_afiliado.id}${11000 + (id + 777)}`;
+		const merchantId = createMerchantId(id_activity.id_afiliado.id, id);
 
 		const commerce = {
 			net_id: 2,
@@ -213,7 +215,7 @@ export const createCommerce = async (
 
 		const resValidCommerceTsm7 = await validCommerceTms7(commerce, usar.access_token);
 		if (resValidCommerceTsm7) {
-			console.log('Comercio ya existe en TMS7 ', resValidCommerceTsm7);
+			console.log('Comercio ya existe en TMS7 ');
 		} else {
 			console.log('Crear comercio en TMS7 --> ', commerce);
 			const saveComercioTMS7 = await createCommerceTMS7(commerce, usar.access_token);
@@ -225,5 +227,133 @@ export const createCommerce = async (
 		res.status(200).json({ message: 'Comercio creado' });
 	} catch (err) {
 		next(err);
+	}
+};
+
+export const getAllTerminal = async (
+	req: Request<any, Api.Resp, any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { id }: any = req.headers.token;
+
+		const usar = users.find((user) => user.id === id);
+		// if (!usar) throw { message: 'usuario no logeado', code: 401 };
+
+		const resp = await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Terminal?net_id=2`, {
+			headers: {
+				Authorization: 'Bearer ' + usar.access_token,
+			},
+		});
+
+		res.status(200).json({ message: 'Auth OK', info: resp.data });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const createTerminal = async (
+	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { token }: any = req.headers;
+		console.log('crear terminal en tms7');
+
+		const usar = users.find((user) => user.id === token.id);
+		if (!usar) throw { message: 'usuario no logeado', code: 401 };
+
+		const fmData = await getRepository(fm_request).findOne({
+			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
+			order: { id: 'ASC' },
+			relations: [
+				// client
+				'id_client',
+				'id_client.id_ident_type',
+				//pos
+				'pos',
+				// commerce
+				'id_commerce',
+				'id_commerce.id_ident_type',
+				'id_commerce.id_activity',
+				'id_commerce.id_activity.id_afiliado',
+			],
+		});
+		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
+
+		const { id_commerce, id, number_post }: any = fmData;
+		const { id_ident_type, ident_num, id_activity }: any = id_commerce;
+
+		const merchant: any = await getMerchanId(`${id_ident_type.name}${ident_num}`, usar.access_token);
+
+		const merchantId2 = createMerchantId(id_activity.id_afiliado.id, id);
+
+		console.log(merchant.merchantId, merchantId2);
+
+		const terminal = {
+			net_id: 2,
+			merchantId: merchantId2,
+			parametrizationName: 'IP publico - Pruebas GER7',
+			parametrizationVersion: 12,
+			status: 7,
+		};
+
+		//fatal agrear que cree termianl por el numero de pos pedidos
+		for (let i = 0; i < number_post; i++) {
+			console.log('Terminal: ' + `${i + 1}` + 'creada para', id_commerce.name);
+			const saveTermianlTms7 = await createTerminalTms7(terminal, usar.access_token);
+			if (saveTermianlTms7) {
+				throw { message: saveTermianlTms7?.message || 'Error en crear Terminal en TMS7' };
+			}
+		}
+
+		res.status(200).json({ message: 'Terminales creadas' });
+	} catch (err) {
+		next(err);
+	}
+};
+
+const createTerminalTms7 = async (terminal: any, access_token: string): Promise<boolean | any> => {
+	try {
+		const res: any = await axios.post(`${process.env.HOST_TMS7}/TMS7API/v1/Terminal`, terminal, {
+			headers: {
+				Authorization: 'Bearer ' + access_token,
+			},
+		});
+		//console.log('terminal', res);
+		return null;
+	} catch (err: any) {
+		const resError = {
+			message: err?.response.statusText,
+			status: err?.response.status,
+			extra: err?.response.Message,
+		};
+		console.log('Tms7 error ', resError);
+		return resError;
+	}
+};
+
+const getMerchanId = async (taxId: string, access_token: string): Promise<boolean | any> => {
+	try {
+		const res: any = await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=2&taxId=${taxId}`, {
+			headers: {
+				Authorization: 'Bearer ' + access_token,
+			},
+		});
+		const merchantId = res.data.merchants[0].merchantId;
+		return {
+			merchantId,
+			ok: true,
+		};
+	} catch (err: any) {
+		const resError = {
+			message: err?.response.statusText,
+			status: err?.response.status,
+			ok: false,
+		};
+		console.log('Tms7 error ', resError);
+		return resError;
 	}
 };

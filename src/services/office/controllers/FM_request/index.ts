@@ -574,8 +574,6 @@ export const editStatusByIdAdmision = async (
 		});
 		if (!FM) throw { message: 'FM no existe' };
 
-		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
-
 		if (id_status_request === 4) {
 			const { id } = FM.id_valid_request;
 
@@ -586,12 +584,15 @@ export const editStatusByIdAdmision = async (
 
 		const edit = await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
 
+		console.log('comenzar');
+
 		if (id_status_request === 3) {
 			const { pagadero, id_product } = FM;
 
 			//Move other funcion [Code:3312]
 			if (pagadero) {
 				if (id_product.id === 1) {
+					console.log('Comenzar en Tms7', HOST, ':', PORT_PROVIDERS);
 					await axios.post(
 						`${HOST}:${PORT_PROVIDERS}/auth/login`,
 						{
@@ -602,9 +603,7 @@ export const editStatusByIdAdmision = async (
 						{ headers: { token: req.headers.token_text } }
 					);
 
-					console.log('loged in tms7');
-
-					console.log('Comenzar en Tms7', HOST, ' ', PORT_PROVIDERS);
+					console.log('bug1');
 
 					//TMS7
 					const resCommerce = await axios
@@ -617,6 +616,21 @@ export const editStatusByIdAdmision = async (
 							console.log('Error al crear comercio', resCommerce);
 							throw { message: 'Error al crear comercio en TMS7' };
 						});
+
+					console.log('Comercio creado en TMS7');
+
+					const resTerminalTms7 = await axios
+						.post(
+							`${HOST}:${PORT_PROVIDERS}/tms7/commerce/terminal`,
+							{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
+							{ headers: { token: req.headers.token_text } }
+						)
+						.catch((err) => {
+							console.log('Error al crear comercio', resCommerce);
+							throw { message: 'Error al crear comercio en TMS7' };
+						});
+
+					console.log('Fin Ger7 (Con terminal', resTerminalTms7);
 
 					console.log('Comenzar en 1000pagos', HOST, ' ', PORT_PROVIDERS);
 
@@ -654,6 +668,8 @@ export const editStatusByIdAdmision = async (
 		}
 
 		console.log('bugFinal');
+
+		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
 
 		const message: string = Msg('Status del FM').edit;
 

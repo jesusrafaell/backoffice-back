@@ -97,6 +97,7 @@ const admitions = (io: any) => {
 
 		socket.on('Editar_diferido', async (id_request: number, callback: any) => {
 			const diferido = await getDiferido(id_request);
+			console.log(diferido);
 			callback(diferido);
 		});
 

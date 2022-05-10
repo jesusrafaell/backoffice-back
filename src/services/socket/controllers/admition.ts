@@ -1,5 +1,5 @@
 import fm_status from '../../../db/models/fm_status';
-import { getConnection, getRepository, Any, Not, In } from 'typeorm';
+import { getConnection, getRepository, Any, Not, In, EntityRepository } from 'typeorm';
 import fm_request from '../../../db/models/fm_request';
 import fm_client from '../../../db/models/fm_client';
 
@@ -288,7 +288,9 @@ export const getDiferido = async (id_request: number) => {
 
 	if (!query) throw { message: 'el id soministrado no extie', code: 400 };
 
-	// console.log('query', query);
+	console.log('diferidos', query);
+
+	/*
 
 	let id_valid_request: any = {};
 	Object.keys(query.id_request.id_valid_request)
@@ -303,6 +305,9 @@ export const getDiferido = async (id_request: number) => {
 	const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = id_commerce;
 	const { rc_ident_card }: any = id_client;
 
+	*/
+
+	/*
 	let imgs: any = {};
 
 	const data: any = {
@@ -317,15 +322,18 @@ export const getDiferido = async (id_request: number) => {
 	Object.keys(id_valid_request)
 		.map((valid) => valid.replace('valid_', 'rc_'))
 		.forEach((key) => (imgs[key] = data[key]));
+	*/
+	/*
 
 	const resp = {
 		...imgs,
 		id_valid_request,
 	};
+	*/
 
 	// console.log('resp', resp);
 
-	return resp;
+	return query;
 };
 
 export const getDash = () => ({
