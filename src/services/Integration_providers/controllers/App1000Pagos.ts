@@ -7,6 +7,10 @@ import Comercios from '../../../db/models/Comercios';
 import Contactos from '../../../db/models/Contactos';
 import { Api } from '../../../interfaces';
 import ComerciosXafiliado from '../../../db/models/ComerciosXafliado';
+import fm_commerce from '../../../db/models/fm_commerce';
+import commerces from 'services/office/router/commerces';
+import Abonos from '../../../db/models/Abonos';
+import { Terminal } from '../../../interfaces/general';
 
 export const createCommerce = async (
 	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
@@ -14,7 +18,7 @@ export const createCommerce = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		console.log('Comercio en 1000pagos /Controller');
+		console.log('Comercio en 1000pagos');
 		const fmData = await getRepository(fm_request).findOne({
 			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
 			order: { id: 'ASC' },
@@ -115,6 +119,8 @@ export const createCommerce = async (
 
 			const comercioSave = await getRepository(Comercios).save(commerce);
 
+			console.log('Comercio creado en 1000pagos');
+
 			const contacto: any = {
 				contCodComer: comercioSave.comerCod,
 				contCodUsuario: null,
@@ -126,9 +132,9 @@ export const createCommerce = async (
 				contFreg: null,
 			};
 
-			console.log('contacto 1000pago', contacto);
-
 			await getRepository(Contactos).save(contacto);
+
+			console.log('contacto creado en 1000pago', contacto);
 
 			const cxaCodAfi = `${id_commerce.id_activity.id_afiliado.id}`.split('');
 			while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');
@@ -151,6 +157,84 @@ export const createCommerce = async (
 		res.status(200).json({ message: 'Comercio creado' });
 	} catch (err) {
 		console.log('Error al crear comercio en 1000pagos');
+		next(err);
+	}
+};
+
+export const abono1000pagos = async (
+	req: Request<Api.params, Api.Resp, { commerce: any; terminals: Terminal[] }>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	const { commerce, terminals } = req.body;
+	//console.log('terminales X', terminals);
+
+	try {
+		//console.log('abono lo que llego', terminals.length, commerce);
+		const resComercio: any = await getRepository(Comercios).findOne({
+			where: { comerRif: commerce.id_ident_type.name + commerce!.ident_num },
+		});
+		if (!resComercio) throw { message: 'el commercio suministrado no existe', code: 400 };
+
+		const resTermAbono: any = await getRepository(Abonos).find({
+			where: { aboCodComercio: resComercio.comerCod },
+		});
+
+		//buscar terminals en abono
+		let abono: Abonos[] = [];
+		if (resTermAbono.length) {
+			console.log('Tiene abonos tengo que recorrer');
+			//remover los terminales existentes[3312]
+			for (let i = 0; i < terminals.length; i++) {
+				let flag = true;
+				for (let j = 0; j < resTermAbono.length; j++) {
+					if (terminals[i].terminalId === resTermAbono[j].aboTerminal) {
+						flag = false;
+						break;
+					}
+				}
+				//console.log(terminals[i].terminalId);
+
+				if (flag) {
+					abono.push({
+						//aboCod: 1458,
+						aboCodAfi: `${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'),
+						aboTerminal: terminals[i].terminalId,
+						aboCodComercio: resComercio.comerCod,
+						aboCodBanco: resComercio.comerCodigoBanco,
+						aboNroCuenta: resComercio.comerCuentaBanco,
+						aboTipoCuenta: '01',
+						estatusId: 23,
+						pagoContado: 0,
+					});
+				}
+			}
+		} else {
+			console.log('No tiene abonos');
+			for (let i = 0; i < terminals.length; i++) {
+				abono.push({
+					//aboCod: 1458,
+					aboCodAfi: `${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'),
+					aboTerminal: terminals[i].terminalId,
+					aboCodComercio: resComercio.comerCod,
+					aboCodBanco: resComercio.comerCodigoBanco,
+					aboNroCuenta: resComercio.comerCuentaBanco,
+					aboTipoCuenta: '01',
+					estatusId: 23,
+					pagoContado: 0,
+				});
+			}
+		}
+
+		//console.log('save this abono', abono);
+
+		await getRepository(Abonos).save(abono);
+
+		//console.log('save abono', abono);
+
+		res.status(200).json({ message: 'Abonos creados' });
+	} catch (err) {
+		console.log('Error al crear abono en 1000pagos');
 		next(err);
 	}
 };

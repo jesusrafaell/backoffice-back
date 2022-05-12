@@ -48,7 +48,7 @@ export const register = async (
 		const { password, id, roles, ...data_user }: any = worker;
 
 		// generar token
-		const token = jwt.sign({ id, roles }, key, { expiresIn: '8h' });
+		const token = jwt.sign({ id, roles }, key, { expiresIn: process.env.TIME_TOKEN });
 
 		// enviar correo de validacion
 		await mail.verify(req.body);
@@ -157,7 +157,7 @@ export const login = async (
 		}
 
 		//generamos token
-		const token = jwt.sign({ id, type: 2, email }, key, { expiresIn: 60 * 30 });
+		const token = jwt.sign({ id, type: 2, email }, key, { expiresIn: process.env.TIME_TOKEN });
 
 		// Response
 		Resp(req, res, {

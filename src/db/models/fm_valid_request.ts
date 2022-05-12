@@ -1,4 +1,3 @@
-import fm from 'services/office/router/fm';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import fm_type_diferido from './fm_type_diferido';
 

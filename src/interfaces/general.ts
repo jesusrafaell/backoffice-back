@@ -29,3 +29,14 @@ export interface RC {
 	id_commerce: string;
 	bank_account_num: string;
 }
+
+export interface Terminal {
+	net_id: number;
+	merchantId: string;
+	terminalId: string;
+	parametrizationName: string;
+	parametrizationVersion: number;
+	status: number;
+	register_date: string;
+	tecnology_type: number;
+}

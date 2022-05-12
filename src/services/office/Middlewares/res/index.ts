@@ -10,7 +10,7 @@ const Resp = (req: Request<any, Api.Resp>, res: Response<Api.Resp>, msg: Api.Res
 		if (!msg.token) {
 			const { id, type, email }: any = req.headers.token;
 
-			return jwt.sign({ id, type, email }, Key, { expiresIn: '1h' });
+			return jwt.sign({ id, type, email }, Key, { expiresIn: process.env.TIME_TOKEN });
 		} else {
 			return msg.token;
 		}

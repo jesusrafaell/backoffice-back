@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllCommerce, createCommerce, getAllTerminal, createTerminal } from '../controllers/TMS7';
+import { getAllCommerce, createCommerce, createTerminal, getCommerceTerminals } from '../controllers/TMS7';
 import { CreateCommerceData, CreateTerminalData } from '../Middlewares/data/commerce';
 
 const Commerce: Router = Router();
@@ -8,6 +8,10 @@ const Commerce: Router = Router();
 //
 Commerce.route('/tms7/commerce').get(getAllCommerce).post(CreateCommerceData, createCommerce);
 //
-Commerce.route('/tms7/commerce/terminal').get(getAllTerminal).post(CreateTerminalData, createTerminal);
+
+Commerce.route('/tms7/commerce/terminals/:rif').get(getCommerceTerminals);
+
+//
+Commerce.route('/tms7/commerce/terminal').post(CreateTerminalData, createTerminal);
 
 export default Commerce;
