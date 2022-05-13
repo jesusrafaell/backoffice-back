@@ -312,7 +312,6 @@ export const getDiferido = async (id_request: number) => {
 			'id_request.rc_comp_dep',
 			'id_request.id_payment_method',
 			'id_request.id_type_payment',
-			//
 		],
 	});
 
