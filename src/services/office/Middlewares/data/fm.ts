@@ -81,3 +81,11 @@ export const fmForDataExtraPos = multer(options).fields([
 	{ name: 'id_commerce' },
 	{ name: 'posX' },
 ]);
+
+export const fmForDataDiferido = multer(options).fields([
+	{ name: 'images', maxCount: 20 },
+	{ name: 'constitutive_act', maxCount: 20 },
+	{ name: 'planilla', maxCount: 20 },
+	{ name: 'id_fm' },
+	{ name: 'fm' },
+]);

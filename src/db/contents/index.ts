@@ -14,6 +14,7 @@ import payment_method from './payment_method';
 import Product from './product';
 import request_origin from './request_origin';
 import roles from './roles';
+import status_photo from './status_photo';
 import status_request from './status_request';
 import telemercadeo from './telemercadeo';
 import type_diferido from './type_diferido';
@@ -48,4 +49,5 @@ createConnection().then(async () => {
 	await telemercadeo();
 	await type_diferido();
 	await ger7_parametrization();
+	await status_photo();
 });

@@ -8,13 +8,14 @@ import {
 	editStatusByIdAdmision,
 	valid_existin_clientAndCommerce,
 	FM_extraPos,
+	editStatusAdmitionDiferido,
 } from '../../controllers/FM_request/index';
 
 import { getFmAdministration, editStatusByIdAdministration } from '../../controllers/adminitration/index';
 
 import { validExistingClient, validClientData, validBankAccount } from '../../Middlewares/data/auth';
 import { validCommerceData } from '../../Middlewares/data/commerce';
-import { fmForDataExtraPos, fmFormData, validFmData } from '../../Middlewares/data/fm';
+import { fmForDataDiferido, fmForDataExtraPos, fmFormData, validFmData } from '../../Middlewares/data/fm';
 import { valid_bank_account } from '../../controllers/FM_request';
 import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_request/index';
 
@@ -41,6 +42,8 @@ FM.route('/FM/bank/valid').post(validBankAccount, valid_bank_account);
 FM.route('/FM').get(getFm);
 //
 FM.route('/FM/admision/:id_FM/status').put(editStatusByIdAdmision);
+//
+FM.route('/FM/admition/:id_FM/diferido').put(fmForDataDiferido, editStatusAdmitionDiferido);
 //
 FM.route('/FM/origins').get(requestOrigin);
 //

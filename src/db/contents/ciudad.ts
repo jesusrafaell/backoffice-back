@@ -6262,10 +6262,10 @@ const ciudad = async (): Promise<void> => {
 			{ id: 2787, id_estado: 2, ciudad: 'Otras Poblaciones', area_code: '0248', postal_code: '7101' },
 		];
 		const i = data.length / 8;
-		console.log('data.slice(0, i)', data.slice(0, i).length, data.slice(0, i)[data.slice(0, i).length - 1]);
-		console.log('data.slice(i, i * 2)', data.slice(i, i * 2).length, data.slice(i, i * 2)[0]);
-		console.log('data.slice(i * 2, i * 3)', data.slice(i * 2, i * 3).length);
-		console.log('data.slice(i * 3, i * 4)', data.slice(i * 3, i * 4).length);
+		//console.log('data.slice(0, i)', data.slice(0, i).length, data.slice(0, i)[data.slice(0, i).length - 1]);
+		//console.log('data.slice(i, i * 2)', data.slice(i, i * 2).length, data.slice(i, i * 2)[0]);
+		//console.log('data.slice(i * 2, i * 3)', data.slice(i * 2, i * 3).length);
+		//console.log('data.slice(i * 3, i * 4)', data.slice(i * 3, i * 4).length);
 
 		await getRepository(fm_ciudad).save(data.slice(0, i));
 		await getRepository(fm_ciudad).save(data.slice(i, i * 2));

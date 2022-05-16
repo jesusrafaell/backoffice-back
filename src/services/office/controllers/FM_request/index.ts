@@ -1146,3 +1146,73 @@ const createAbono1000pagos = async (commerce: any, token: any, terminals: any) =
 		return resErr;
 	}
 };
+
+export const editStatusAdmitionDiferido = async (
+	req: Request<any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { id_fm }: any = req.params;
+		const { fm } = req.body;
+		const files: any = req.files;
+
+		const dataFM: any = JSON.parse(fm);
+
+		//console.log(id_fm);
+		//console.log(files);
+		console.log(dataFM.id_commerce!.rc_constitutive_act);
+
+		throw { meesage: 'Vamos bien convive' };
+
+		/*
+
+		const FM: any = await getRepository(fm_request).findOne(id_FM, {
+			relations: [
+				'id_valid_request',
+				'id_product',
+				'id_commerce',
+				'id_commerce.id_ident_type',
+				'id_commerce.id_activity',
+				'id_commerce.id_activity.id_afiliado',
+			],
+		});
+		if (!FM) throw { message: 'FM no existe' };
+
+		console.log('comenzar');
+
+		if (id_status_request === 3) {
+			const { pagadero } = FM;
+
+			//Move other funcion [Code:3312]
+			if (pagadero) {
+				const resProviders: any = await comercioToProviders(id_status_request, FM, req.headers.token_text);
+				if (!resProviders.ok) {
+					throw { message: resProviders.message || 'Error en API Providers' };
+				}
+			}
+		}
+
+		console.log('Comercio creado, terminales y abonos');
+
+		if (id_status_request === 4) {
+			const { id } = FM.id_valid_request;
+
+			if (!valids) throw { message: 'cambio de estatus es 4, valids es requerido', code: 400 };
+
+			await getRepository(fm_valid_request).update(id, { ...valids });
+		}
+
+		const edit = await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
+
+		console.log('todo ok editar estado de la solic');
+		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
+
+		const message: string = Msg('Status del FM').edit;
+		*/
+
+		Resp(req, res, { message: 'ok' });
+	} catch (err) {
+		next(err);
+	}
+};

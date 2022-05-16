@@ -7,10 +7,12 @@ import {
 	JoinColumn,
 	OneToMany,
 	OneToOne,
+	ManyToOne,
 } from 'typeorm';
 import fm_request from './fm_request';
 import fm_commerce_constitutive_act from './fm_commerce_constitutive_act';
 import fm_planilla from './fm_planilla';
+import fm_status_photo from './fm_status_photo';
 
 @Entity()
 export default class fm_photo {
@@ -22,6 +24,11 @@ export default class fm_photo {
 
 	@Column({ nullable: true })
 	name!: string;
+
+	@Column({ default: 1 })
+	@ManyToOne(() => fm_status_photo, (fm_status_photo) => fm_status_photo.photo)
+	@JoinColumn({ name: 'id_status' })
+	id_status?: number;
 
 	@Column({ nullable: true })
 	descript!: string;

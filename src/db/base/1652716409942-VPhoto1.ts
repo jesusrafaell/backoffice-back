@@ -1,13 +1,14 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class Vadd11652119350047 implements MigrationInterface {
-    name = 'Vadd11652119350047'
+export class VPhoto11652716409942 implements MigrationInterface {
+    name = 'VPhoto11652716409942'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "fm_type_request" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_997f9cd296f703cf8a30433561f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ead8c3227a188cc1ed07635d03d" DEFAULT getdate(), CONSTRAINT "PK_d7b52c340b7fa1d9ad9836bec84" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_commerce_constitutive_act" ("id" int NOT NULL IDENTITY(1,1), "id_commerce" int, "id_photo" int, CONSTRAINT "PK_11e5e695fdd0292eede6e634ee1" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_planilla" ("id" int NOT NULL IDENTITY(1,1), "id_request" int, "id_photo" int, CONSTRAINT "PK_17aa7fe81ddc443551b7f4235bb" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "fm_photo" ("id" int NOT NULL IDENTITY(1,1), "path" nvarchar(255), "name" nvarchar(255), "descript" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_9a7472173012449a35734d65ade" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_a6161f830919c74a58d3c4813eb" DEFAULT getdate(), "rcConstitutiveActId" int, "rcPlanillaId" int, CONSTRAINT "PK_7bb4d32f98922c8d468355ed1c8" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_status_photo" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255) NOT NULL, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_965deb833f26ee33f6aaa74ed14" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_1acb9e2996f0bbfa1ed97c56239" DEFAULT getdate(), CONSTRAINT "PK_4888846ecb00b37ef38eea91342" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_photo" ("id" int NOT NULL IDENTITY(1,1), "path" nvarchar(255), "name" nvarchar(255), "id_status" int NOT NULL CONSTRAINT "DF_541d2a307418c4c8d256b8c3371" DEFAULT 1, "descript" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_9a7472173012449a35734d65ade" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_a6161f830919c74a58d3c4813eb" DEFAULT getdate(), "id_status_photo" int, "rcConstitutiveActId" int, "rcPlanillaId" int, CONSTRAINT "PK_7bb4d32f98922c8d468355ed1c8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_f2bbbe05ebffdcb768131a549c" ON "fm_photo" ("rcConstitutiveActId") WHERE "rcConstitutiveActId" IS NOT NULL`);
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_b183d41df081e7522d1a1b770d" ON "fm_photo" ("rcPlanillaId") WHERE "rcPlanillaId" IS NOT NULL`);
         await queryRunner.query(`CREATE TABLE "fm_payment_method" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_bbe33904cbd49bf2ba040d5bbbe" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ed257de8d6fdc6ede2f67e55ba3" DEFAULT getdate(), CONSTRAINT "PK_0bfd5127d1db6985eec810b3bf5" PRIMARY KEY ("id"))`);
@@ -73,6 +74,7 @@ export class Vadd11652119350047 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "fm_commerce_constitutive_act" ADD CONSTRAINT "FK_44c80483329d8b67210918e9aa3" FOREIGN KEY ("id_photo") REFERENCES "fm_photo"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_planilla" ADD CONSTRAINT "FK_d742495bc2bae44563b57144645" FOREIGN KEY ("id_request") REFERENCES "fm_request"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_planilla" ADD CONSTRAINT "FK_1522f88a907a771cc289415d68d" FOREIGN KEY ("id_photo") REFERENCES "fm_photo"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "fm_photo" ADD CONSTRAINT "FK_bc55b4dfa576d299744f1f426e0" FOREIGN KEY ("id_status_photo") REFERENCES "fm_status_photo"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_photo" ADD CONSTRAINT "FK_f2bbbe05ebffdcb768131a549ce" FOREIGN KEY ("rcConstitutiveActId") REFERENCES "fm_commerce_constitutive_act"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_photo" ADD CONSTRAINT "FK_b183d41df081e7522d1a1b770d4" FOREIGN KEY ("rcPlanillaId") REFERENCES "fm_planilla"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "fm_ciudad" ADD CONSTRAINT "FK_41e29c427582948e763288142c1" FOREIGN KEY ("id_estado") REFERENCES "fm_estado"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -224,6 +226,7 @@ export class Vadd11652119350047 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "fm_ciudad" DROP CONSTRAINT "FK_41e29c427582948e763288142c1"`);
         await queryRunner.query(`ALTER TABLE "fm_photo" DROP CONSTRAINT "FK_b183d41df081e7522d1a1b770d4"`);
         await queryRunner.query(`ALTER TABLE "fm_photo" DROP CONSTRAINT "FK_f2bbbe05ebffdcb768131a549ce"`);
+        await queryRunner.query(`ALTER TABLE "fm_photo" DROP CONSTRAINT "FK_bc55b4dfa576d299744f1f426e0"`);
         await queryRunner.query(`ALTER TABLE "fm_planilla" DROP CONSTRAINT "FK_1522f88a907a771cc289415d68d"`);
         await queryRunner.query(`ALTER TABLE "fm_planilla" DROP CONSTRAINT "FK_d742495bc2bae44563b57144645"`);
         await queryRunner.query(`ALTER TABLE "fm_commerce_constitutive_act" DROP CONSTRAINT "FK_44c80483329d8b67210918e9aa3"`);
@@ -290,6 +293,7 @@ export class Vadd11652119350047 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "REL_b183d41df081e7522d1a1b770d" ON "fm_photo"`);
         await queryRunner.query(`DROP INDEX "REL_f2bbbe05ebffdcb768131a549c" ON "fm_photo"`);
         await queryRunner.query(`DROP TABLE "fm_photo"`);
+        await queryRunner.query(`DROP TABLE "fm_status_photo"`);
         await queryRunner.query(`DROP TABLE "fm_planilla"`);
         await queryRunner.query(`DROP TABLE "fm_commerce_constitutive_act"`);
         await queryRunner.query(`DROP TABLE "fm_type_request"`);
