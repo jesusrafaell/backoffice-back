@@ -3,6 +3,8 @@ import { getConnection, getRepository, Any, Not, In, EntityRepository } from 'ty
 import fm_request from '../../../db/models/fm_request';
 import fm_client from '../../../db/models/fm_client';
 
+import shortid from 'shortid';
+
 export let allSolic: number = 0;
 export let allTerm: any = 0;
 export let diferido: any[] = [];
@@ -315,52 +317,34 @@ export const getDiferido = async (id_request: number) => {
 		],
 	});
 
+	const { rc_planilla } = query.id_request;
+
+	if (rc_planilla) {
+		let auxPlanilla: any[] = [];
+		for (let i = 0; i < rc_planilla.length; ++i) {
+			if (rc_planilla[i].id_photo.id_status === 1) {
+				console.log(rc_planilla[i], rc_planilla[i].id_photo.id_status);
+				auxPlanilla.push(rc_planilla[i]);
+			}
+			query.id_request.rc_planilla = auxPlanilla;
+		}
+	}
+
+	const { rc_constitutive_act } = query.id_request.id_commerce;
+	if (rc_constitutive_act) {
+		let auxActa: any[] = [];
+		for (let i = 0; i < rc_constitutive_act.length; ++i) {
+			if (rc_constitutive_act[i].id_photo.id_status === 1) {
+				console.log(rc_constitutive_act[i], rc_constitutive_act[i].id_photo.id_status);
+				auxActa.push(rc_constitutive_act[i]);
+			}
+			query.id_request.id_commerce.rc_constitutive_act = auxActa;
+		}
+	}
+
 	if (!query) throw { message: 'el id soministrado no extie', code: 400 };
 
-	console.log('diferidos', query);
-
-	/*
-
-	let id_valid_request: any = {};
-	Object.keys(query.id_request.id_valid_request)
-		.filter((key) => {
-			return query.id_request.id_valid_request[key].length;
-		})
-		.forEach((key) => (id_valid_request[key] = query.id_request.id_valid_request[key]));
-
-	const { id_commerce, id_client, rc_ref_bank, rc_comp_dep, rc_planilla }: any = query.id_request;
-	// console.log('id_commerce', id_commerce);
-
-	const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = id_commerce;
-	const { rc_ident_card }: any = id_client;
-
-	*/
-
-	/*
-	let imgs: any = {};
-
-	const data: any = {
-		rc_planilla,
-		rc_special_contributor,
-		rc_constitutive_act,
-		rc_rif,
-		rc_ident_card,
-		rc_ref_bank,
-		rc_comp_dep,
-	};
-	Object.keys(id_valid_request)
-		.map((valid) => valid.replace('valid_', 'rc_'))
-		.forEach((key) => (imgs[key] = data[key]));
-	*/
-	/*
-
-	const resp = {
-		...imgs,
-		id_valid_request,
-	};
-	*/
-
-	// console.log('resp', resp);
+	//console.log('diferidos', query);
 
 	return query;
 };

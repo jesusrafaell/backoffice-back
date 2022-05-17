@@ -22,8 +22,10 @@ import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
 import fm_product from '../../../../db/models/fm_product';
 import fm_commerce_constitutive_act from '../../../../db/models/fm_commerce_constitutive_act';
 import fm_planilla from '../../../../db/models/fm_planilla';
+import fm_photo from '../../../../db/models/fm_photo';
 import axios from 'axios';
-import { upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
+import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
+import { getLeadingCommentRanges } from 'typescript';
 //import dotenv from '../../../../config/env';
 //const { HOST, PORT_PROVIDERS } = dotenv;
 
@@ -588,7 +590,7 @@ export const editStatusByIdAdmision = async (
 
 			//Move other funcion [Code:3312]
 			if (pagadero) {
-				const resProviders: any = await comercioToProviders(id_status_request, FM, req.headers.token_text);
+				const resProviders: any = await comercioToProviders(FM, req.headers.token_text);
 				if (!resProviders.ok) {
 					throw { message: resProviders.message || 'Error en API Providers' };
 				}
@@ -605,7 +607,7 @@ export const editStatusByIdAdmision = async (
 			await getRepository(fm_valid_request).update(id, { ...valids });
 		}
 
-		const edit = await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
+		await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
 
 		console.log('todo ok editar estado de la solic');
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
@@ -1023,7 +1025,7 @@ export const fmCreateFMExtraPos = async (fmPos: any, id_client: number, id_comme
 	}
 };
 
-const comercioToProviders = async (id_status_request: number, FM: any, token: any) => {
+const comercioToProviders = async (FM: any, token: any) => {
 	try {
 		const { id_product } = FM;
 
@@ -1106,6 +1108,8 @@ const comercioToProviders = async (id_status_request: number, FM: any, token: an
 				throw { message: 'Error al crear Abono en 1000pagos' };
 			}
 			console.log('Abono creado en 1000pagos');
+		} else if (id_product.id === 2) {
+			console.log('create in pagina de temrianles');
 		}
 
 		return { ok: true };
@@ -1153,66 +1157,243 @@ export const editStatusAdmitionDiferido = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { id_fm }: any = req.params;
+		const { id_FM }: any = req.params;
 		const { fm } = req.body;
 		const files: any = req.files;
 
 		const dataFM: any = JSON.parse(fm);
 
+		console.log(id_FM, dataFM.id);
+
 		//console.log(id_fm);
 		//console.log(files);
-		console.log(dataFM.id_commerce!.rc_constitutive_act);
+		//console.log(dataFM.id_commerce!.rc_constitutive_act);
 
-		throw { meesage: 'Vamos bien convive' };
-
-		/*
-
-		const FM: any = await getRepository(fm_request).findOne(id_FM, {
+		let query: any = await getRepository(fm_request).findOne({
+			where: { id: id_FM },
 			relations: [
+				'id_client',
+				'id_client.id_location',
+				'id_client.id_location.id_estado',
+				'id_client.id_location.id_municipio',
+				'id_client.id_location.id_ciudad',
+				'id_client.id_location.id_parroquia',
+				'id_client.rc_ident_card',
+				'id_client.id_ident_type',
+				//
+				'rc_planilla',
+				'rc_planilla.id_photo',
 				'id_valid_request',
-				'id_product',
+				'pos',
+				'pos.id_location',
+				'pos.id_location.id_estado',
+				'pos.id_location.id_municipio',
+				'pos.id_location.id_ciudad',
+				'pos.id_location.id_parroquia',
+				//
 				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
-				'id_commerce.id_activity.id_afiliado',
+				'id_commerce.id_location',
+				'id_commerce.id_location.id_estado',
+				'id_commerce.id_location.id_municipio',
+				'id_commerce.id_location.id_ciudad',
+				'id_commerce.id_location.id_parroquia',
+				'id_commerce.banks',
+				'id_commerce.rc_constitutive_act',
+				'id_commerce.rc_constitutive_act.id_photo',
+				'id_commerce.rc_rif',
+				'id_commerce.rc_special_contributor',
+				'id_commerce.id_aci',
+				//
+				'id_product',
+				'id_type_request',
+				'id_request_origin',
+				//
+				'rc_ref_bank',
+				'rc_comp_dep',
+				'id_payment_method',
+				'id_type_payment',
 			],
 		});
-		if (!FM) throw { message: 'FM no existe' };
 
-		console.log('comenzar');
-
-		if (id_status_request === 3) {
-			const { pagadero } = FM;
-
-			//Move other funcion [Code:3312]
-			if (pagadero) {
-				const resProviders: any = await comercioToProviders(id_status_request, FM, req.headers.token_text);
-				if (!resProviders.ok) {
-					throw { message: resProviders.message || 'Error en API Providers' };
-				}
+		//console.log(query.id_valid_request);
+		if (query.id_valid_request.id_typedif_client !== null) {
+			const { id_location, rc_ident_card, id_ident_type, id, ...data } = dataFM.id_client;
+			if (JSON.stringify(query.id_client) !== JSON.stringify(dataFM.id_client)) {
+				//console.log(dataClient);
+				await getRepository(fm_client).update({ id }, data);
+				console.log('Client');
+				//console.log(newClient);
+			}
+			//Update imagen
+			//console.log(files.images);
+			if (getImagen(files.images, 'rc_ident_card')) {
+				//change bit id_status actual
+				await getRepository(fm_photo).update(
+					{ id: rc_ident_card.id },
+					{
+						id_status: 2,
+					}
+				);
 			}
 		}
 
-		console.log('Comercio creado, terminales y abonos');
+		if (query.id_valid_request.id_typedif_commerce !== null) {
+			const {
+				rc_constitutive_act,
+				id_activity,
+				banks,
+				id_aci,
+				id_location,
+				rc_rif,
+				rc_special_contributor,
+				id_ident_type,
+				id,
+				...data
+			} = dataFM.id_commerce;
+			if (JSON.stringify(query.id_commerce) !== JSON.stringify(dataFM.id_commerce)) {
+				await getRepository(fm_commerce).update({ id }, data);
+				console.log('Commercio', data);
+			}
+			if (getImagen(files.images, 'rc_rif')) {
+				//change bit id_status actual
+				await getRepository(fm_photo).update(
+					{ id: rc_rif.id },
+					{
+						id_status: 2,
+					}
+				);
+			}
+			if (getImagen(files.images, 'rc_special_contributor') && rc_special_contributor) {
+				await getRepository(fm_photo).update(
+					{ id: rc_special_contributor.id },
+					{
+						id_status: 2,
+					}
+				);
+			}
+		}
+		if (query.id_valid_request.id_typedif_ref_bank !== null) {
+			const { bank_account_num, rc_ref_bank } = dataFM;
+			console.log((query.bank_account_num as string).trim() !== (bank_account_num as string).trim());
+			if ((query.bank_account_num as string).trim() !== (bank_account_num as string).trim()) {
+				await getRepository(fm_request).update(
+					{ id: id_FM },
+					{ bank_account_num: (bank_account_num as string).trim() }
+				);
+				console.log('request bank ref');
+			}
+			//imagen
+			if (rc_ref_bank && getImagen(files.images, 'rc_ref_bank')) {
+				await getRepository(fm_photo).update(
+					{ id: rc_ref_bank.id },
+					{
+						id_status: 2,
+					}
+				);
+			}
+		}
+		console.log('bug4');
+		if (query.id_valid_request.id_typedif_comp_num !== null) {
+			const { rc_comp_dep, nro_comp_dep, ...data } = dataFM;
+			if ((query.nro_comp_dep as string).trim() === (nro_comp_dep as string).trim()) {
+				await getRepository(fm_request).update({ id: id_FM }, { nro_comp_dep: (nro_comp_dep as string).trim() });
+				console.log('request comprobatne de pago');
+			}
+			//imagen
+			if (rc_comp_dep && getImagen(files.images, 'rc_comp_dep')) {
+				await getRepository(fm_photo).update(
+					{ id: rc_comp_dep.id },
+					{
+						id_status: 2,
+					}
+				);
+			}
+		}
+		console.log('bug5');
+		if (query.id_valid_request.id_typedif_consitutive_acta !== null) {
+			//imagens acta
+			console.log('remove images acta');
+			const { rc_constitutive_act, ...data } = dataFM.id_commerce;
+			const old_constitutive_act = query.id_commerce.rc_constitutive_act;
+			//console.log('remover de acta', files);
+			const validListFile = (value: any) => {
+				return rc_constitutive_act.find((item: any) => {
+					return item.id === value.id;
+				})
+					? false
+					: true;
+			};
+			//
+			let files: any[] = old_constitutive_act.filter((file: fm_photo) => validListFile(file));
+			//
+			console.log('old acta', old_constitutive_act.length);
+			console.log('remover acta', files.length);
+			let filesIds: any[] = [];
+			for (let i = 0; i < files.length; i++) {
+				//console.log(files[i].id_photo.id);
+				filesIds.push({ id: files[i].id_photo.id });
+			}
+			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
+		}
+		if (query.id_valid_request.id_typedif_planilla !== null) {
+			//imagens acta
+			const { rc_planilla, ...data } = dataFM;
+			const old_rc_planilla = query.rc_planilla;
 
-		if (id_status_request === 4) {
-			const { id } = FM.id_valid_request;
-
-			if (!valids) throw { message: 'cambio de estatus es 4, valids es requerido', code: 400 };
-
-			await getRepository(fm_valid_request).update(id, { ...valids });
+			const validListFile = (value: any) => {
+				return rc_planilla.find((item: any) => {
+					return item.id === value.id;
+				})
+					? false
+					: true;
+			};
+			//
+			let files: any[] = old_rc_planilla.filter((file: fm_photo) => validListFile(file));
+			//
+			console.log('old planilla', old_rc_planilla.length);
+			console.log('remover de planilla', files.length);
+			let filesIds: any[] = [];
+			for (let i = 0; i < files.length; i++) {
+				//console.log(files[i].id_photo.id);
+				filesIds.push({ id: files[i].id_photo.id });
+			}
+			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
+		}
+		if (query.id_valid_request.id_typedif_special_contributor !== null) {
+			//imagens acta
+			console.log('images special contributor');
 		}
 
-		const edit = await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
+		const resFiles: any = await updateFilesRecaudosFM(files, query.id_client.id, query.id_commerce.id, id_FM);
+		if (!resFiles.okey) {
+			throw { message: resFiles.message || 'Error: Guardar Images' };
+		}
 
-		console.log('todo ok editar estado de la solic');
-		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
+		//Images
+		console.log('images', resFiles);
 
-		const message: string = Msg('Status del FM').edit;
-		*/
+		throw { message: 'todo ok' };
+		const resProviders: any = await comercioToProviders(query, req.headers.token_text);
+		if (!resProviders.ok) {
+			throw { message: resProviders.message || 'Error en API Providers' };
+		}
 
-		Resp(req, res, { message: 'ok' });
+		Resp(req, res, { message: 'ready update' });
 	} catch (err) {
 		next(err);
 	}
+};
+
+const getImagen = (list: any[], op: string) => {
+	if (list) {
+		for (let i = 0; i < list.length; i++) {
+			//console.log(list[i].originalname.split('.')[0]);
+			if (list[i].originalname.split('.')[0] === op) {
+				return list[i];
+			}
+		}
+	}
+	return null;
 };

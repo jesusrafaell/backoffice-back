@@ -592,3 +592,180 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 		return err;
 	}
 };
+
+export const updateFilesRecaudosFM = async (files: any, id_client: number, id_commerce: number, id_fm: number) => {
+	console.log('llegue', id_fm, id_client, id_commerce);
+	try {
+		let info: any = {};
+
+		// lista dereacudos
+		const description = ['rc_ref_bank', 'rc_rif', 'rc_ident_card', 'rc_special_contributor', 'rc_comp_dep'];
+
+		const fm: any = await getRepository(fm_request).findOne({
+			where: { id: id_fm },
+			order: { id: 'ASC' },
+			relations: [
+				'rc_ref_bank',
+				'id_client',
+				'id_client.rc_ident_card',
+				'id_commerce',
+				'id_commerce.rc_constitutive_act',
+				'id_commerce.rc_rif',
+				'id_commerce.rc_special_contributor',
+				'rc_comp_dep',
+			],
+		});
+
+		const fmClient = fm.id_client;
+		const fmCommerce = fm.id_commerce;
+
+		if (!fm) {
+			throw { message: 'Error no se encontro FM' };
+		}
+
+		const { rc_ident_card }: any = fmClient;
+		const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = fmCommerce;
+
+		console.log('init', info);
+
+		// validamos la lista de imagenes
+		const v_descript = files.images.filter((file: any) => description.includes(file.originalname)).length;
+
+		// filtramos si envia imagenes con nobres no validos
+		if (v_descript) throw { message: `${v_descript} imagenes no tiene un nombre referente a un recaudo` };
+
+		if (files.images) {
+			const stop: Promise<void>[] = files.images
+				.filter((file: Express.Multer.File) => {
+					const valid: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
+					//console.log(' description.includes(val`id)', description.includes(valid));
+
+					return description.includes(valid);
+				})
+				.map(async (file: Express.Multer.File, i: number): Promise<void> => {
+					//console.log('aqui', file);
+					const descript: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
+
+					const createRoutes = (value: string) => {
+						console.log('actual ', value);
+						switch (value) {
+							case 'rc_ident_card':
+								return `${id_client}`;
+							case 'rc_ref_bank':
+							case 'rc_comp_dep':
+								return `${id_client}/${id_commerce}/${id_fm}`;
+							default:
+								return `${id_client}/${id_commerce}`;
+						}
+					};
+
+					const route_ids: string = createRoutes(file.filename.split('@')[1].split('.')[0]);
+
+					//console.log(file.filename, route_ids);
+					await Doc.Move(file.filename, route_ids);
+					const path = `static/${route_ids}/${file.filename}`;
+
+					const data = getRepository(fm_photo).create({ name: file.filename, path, descript });
+					const save = await getRepository(fm_photo).save(data);
+
+					//console.log(save.name, save.id);
+
+					info[descript] = save.id;
+				});
+			await Promise.all(stop);
+		}
+
+		if (files.planilla) {
+			info.planilla = [];
+			const stop2 = files.planilla.map(async (file: Express.Multer.File, i: number): Promise<void> => {
+				await Doc.Move(file.filename, `${id_client}/${id_commerce}/${id_fm}/planilla`);
+				const path = `static/${id_client}/${id_commerce}/${id_fm}/planilla/${file.filename}`;
+
+				const data = getRepository(fm_photo).create({
+					name: file.filename,
+					path,
+					descript: 'planilla',
+				});
+				const save = await getRepository(fm_photo).save(data);
+
+				info.planilla.push(save.id);
+			});
+
+			await Promise.all(stop2);
+		}
+
+		if (files.constitutive_act) {
+			info.rc_constitutive_act = [];
+			const stop2 = files.constitutive_act.map(async (file: Express.Multer.File, i: number): Promise<void> => {
+				await Doc.Move(file.filename, `${id_client}/${id_commerce}/constitutive_act`);
+				const path = `static/${id_client}/${id_commerce}/constitutive_act/${file.filename}`;
+
+				const data = getRepository(fm_photo).create({
+					name: file.filename,
+					path,
+					descript: 'rc_constitutive_act',
+				});
+				const save = await getRepository(fm_photo).save(data);
+
+				info.rc_constitutive_act.push(save.id);
+			});
+
+			await Promise.all(stop2);
+		}
+
+		//save Images in Client
+		if (getImagen(files.images, 'rc_ident_card')) {
+			console.log('imagen anterior', fmClient.rc_ident_card.id);
+			await getRepository(fm_client).update(id_client, { rc_ident_card: info.rc_ident_card });
+			console.log('imagen new cliente', info.rc_ident_card);
+		}
+		if (getImagen(files.images, 'rc_rif') || getImagen(files.images, 'rc_special_contributor')) {
+			let data: any = {};
+			if (info.rc_special_contributor) data.rc_special_contributor = info.rc_special_contributor;
+			if (info.rc_rif) data.rc_rif = info.rc_rif;
+			await getRepository(fm_commerce).update(id_commerce, data);
+			console.log('imagen new comercio', info.rc_rif, '/', info.rc_special_contributor);
+		}
+
+		if (files.constitutive_act) {
+			const constitutive_act = info.rc_constitutive_act.map((id_photo: any) => ({ id_commerce, id_photo }));
+			await getRepository(fm_commerce_constitutive_act).save(constitutive_act);
+			console.log('imagen new acta ', constitutive_act);
+		}
+
+		//save Imagen in FM
+		if (files.planilla) {
+			const rc_planilla = info.planilla.map((id_photo: number) => ({ id_request: id_fm, id_photo }));
+			await getRepository(fm_planilla).save(rc_planilla);
+			console.log('imagen new planilla', rc_planilla);
+		}
+
+		if (getImagen(files.images, 'rc_comp_dep') || getImagen(files.images, 'rc_ref_bank')) {
+			let data: any = {};
+			if (info.rc_comp_dep) data.rc_comp_dep = info.rc_comp_dep;
+			if (info.rc_ref_bank) data.rc_rif = data.rc_ref_bank;
+			await getRepository(fm_request).update(id_fm, data);
+			console.log('imagen new fm comp', info.rc_comp_dep);
+			console.log('imagen new fm ref', info.rc_ref_bank);
+		}
+
+		console.log('end', info);
+
+		return {
+			...info,
+			okey: true,
+		};
+	} catch (err) {
+		return err;
+	}
+};
+
+const getImagen = (list: any[], op: string) => {
+	for (let i = 0; i < list.length; i++) {
+		//console.log(list[i].originalname.split('.')[0]);
+		if (list[i].originalname.split('.')[0] === op) {
+			return list[i];
+		}
+	}
+	return null;
+};
