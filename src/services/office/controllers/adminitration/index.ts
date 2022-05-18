@@ -6,6 +6,7 @@ import Resp from '../../Middlewares/res';
 import fm_request from '../../../../db/models/fm_request';
 import fm_status from '../../../../db/models/fm_status';
 import axios from 'axios';
+import { comercioToProviders } from '../providers';
 
 const { HOST, PORT_PROVIDERS } = process.env;
 
@@ -61,49 +62,30 @@ export const editStatusByIdAdministration = async (
 		const { id_status_request, id_payment_method, id_type_payment } = req.body;
 
 		const FM: any = await getRepository(fm_request).findOne(id_FM, {
-			relations: ['id_valid_request', 'id_product'],
+			relations: [
+				'id_valid_request',
+				'id_product',
+				'id_commerce',
+				'id_commerce.id_ident_type',
+				'id_commerce.id_activity',
+				'id_commerce.id_activity.id_afiliado',
+			],
 		});
 		if (!FM) throw { message: 'FM no existe' };
+
+		const { pagadero, id_product } = FM;
+
+		if (!pagadero) {
+			const resProviders: any = await comercioToProviders(FM, req.headers.token_text);
+			if (!resProviders.ok) {
+				throw { message: resProviders.message || 'Error en API Providers' };
+			}
+		}
 
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 7 }, { id_status_request });
 
 		if (id_payment_method && id_type_payment) {
 			await getRepository(fm_request).update({ id: id_FM }, { id_payment_method, id_type_payment });
-		}
-
-		const { pagadero, id_product } = FM;
-
-		if (!pagadero) {
-			if (id_product.id === 1) {
-				await axios.post(
-					`${HOST}:${PORT_PROVIDERS}/auth/login`,
-					{
-						grant_type: 'password',
-						username: 'acesso.teste',
-						password: '@ger7123',
-					},
-					{ headers: { token: req.headers.token_text } }
-				);
-
-				await axios.post(
-					`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
-					{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-					{ headers: { token: req.headers.token_text } }
-				);
-
-				await axios.post(
-					`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
-					{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-					{ headers: { token: req.headers.token_text } }
-				);
-			} else if (id_product.id === 2) {
-				//
-				await axios.post(
-					`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
-					{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-					{ headers: { token: req.headers.token_text } }
-				);
-			}
 		}
 
 		const message: string = Msg('Status del FM').edit;
