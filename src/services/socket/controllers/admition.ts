@@ -3,8 +3,6 @@ import { getConnection, getRepository, Any, Not, In, EntityRepository } from 'ty
 import fm_request from '../../../db/models/fm_request';
 import fm_client from '../../../db/models/fm_client';
 
-import shortid from 'shortid';
-
 export let allSolic: number = 0;
 export let allTerm: any = 0;
 export let diferido: any[] = [];
