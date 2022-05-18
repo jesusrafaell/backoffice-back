@@ -594,7 +594,7 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 };
 
 export const updateFilesRecaudosFM = async (files: any, id_client: number, id_commerce: number, id_fm: number) => {
-	console.log('llegue', id_fm, id_client, id_commerce);
+	//console.log('llegue', id_fm, id_client, id_commerce);
 	try {
 		let info: any = {};
 
@@ -626,10 +626,13 @@ export const updateFilesRecaudosFM = async (files: any, id_client: number, id_co
 		const { rc_ident_card }: any = fmClient;
 		const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = fmCommerce;
 
-		console.log('init', info);
-
 		// validamos la lista de imagenes
+		if (!files.images) {
+			files.images = [];
+		}
 		const v_descript = files.images.filter((file: any) => description.includes(file.originalname)).length;
+
+		console.log('init', info);
 
 		// filtramos si envia imagenes con nobres no validos
 		if (v_descript) throw { message: `${v_descript} imagenes no tiene un nombre referente a un recaudo` };

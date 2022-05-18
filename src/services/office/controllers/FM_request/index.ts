@@ -26,6 +26,7 @@ import fm_photo from '../../../../db/models/fm_photo';
 import axios from 'axios';
 import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
 import { getLeadingCommentRanges } from 'typescript';
+import FM from 'services/office/router/fm/fm.routes';
 //import dotenv from '../../../../config/env';
 //const { HOST, PORT_PROVIDERS } = dotenv;
 
@@ -609,7 +610,7 @@ export const editStatusByIdAdmision = async (
 
 		await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
 
-		console.log('todo ok editar estado de la solic');
+		console.log('Toda ok Validacion solic');
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
 
 		const message: string = Msg('Status del FM').edit;
@@ -1066,7 +1067,7 @@ const comercioToProviders = async (FM: any, token: any) => {
 					{ headers: { token: token } }
 				)
 				.catch((err) => {
-					console.log('Error al crear comercio', resCommerce);
+					console.log('Error al crear comercio');
 					throw { message: 'Error al crear comercio en TMS7' };
 				});
 
@@ -1079,15 +1080,15 @@ const comercioToProviders = async (FM: any, token: any) => {
 					{ headers: { token: token } }
 				)
 				.catch((err) => {
-					console.log('Error al crear comercio', resCommerce);
-					throw { message: 'Error al crear comercio en TMS7' };
+					console.log('Error al crear terminales ');
+					throw { message: 'Error al crear terminales en TMS7' };
 				});
 
 			console.log('Fin Ger7 terminales creadas');
 
-			console.log('commerce para crear abono', FM.id_commerce);
-
 			const rif = FM.id_commerce.id_ident_type.name + FM.id_commerce.ident_num;
+
+			console.log('Crear abono para ', rif);
 
 			const terminalsTms7 = await axios
 				.get(
@@ -1163,7 +1164,7 @@ export const editStatusAdmitionDiferido = async (
 
 		const dataFM: any = JSON.parse(fm);
 
-		console.log(id_FM, dataFM.id);
+		//console.log(id_FM, dataFM.id);
 
 		//console.log(id_fm);
 		//console.log(files);
@@ -1194,6 +1195,9 @@ export const editStatusAdmitionDiferido = async (
 				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
+				//para abono
+				'id_commerce.id_activity.id_afiliado',
+				//location
 				'id_commerce.id_location',
 				'id_commerce.id_location.id_estado',
 				'id_commerce.id_location.id_municipio',
@@ -1374,11 +1378,13 @@ export const editStatusAdmitionDiferido = async (
 		//Images
 		console.log('images', resFiles);
 
-		throw { message: 'todo ok' };
 		const resProviders: any = await comercioToProviders(query, req.headers.token_text);
 		if (!resProviders.ok) {
 			throw { message: resProviders.message || 'Error en API Providers' };
 		}
+
+		console.log('Toda ok Diferido solic');
+		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request: 3 });
 
 		Resp(req, res, { message: 'ready update' });
 	} catch (err) {

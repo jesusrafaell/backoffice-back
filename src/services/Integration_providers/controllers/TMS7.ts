@@ -110,7 +110,6 @@ const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 	}
 };
 
-//seguir
 const validCommerceTms7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
 	try {
 		const comercio = await axios.get(
@@ -259,7 +258,8 @@ export const getCommerceTerminals = async (
 			}
 		);
 
-		console.log('tsm7 ' + merchant.merchantId + ' term', terminales.data.terminals.length);
+		console.log(terminales.data.terminals);
+		console.log('tsm7 ' + merchant.merchantId + ' term' + terminales.data.terminals.length);
 
 		res.status(200).json({ message: 'Auth OK', terminals: terminales.data.terminals });
 	} catch (err) {
@@ -317,9 +317,10 @@ export const createTerminal = async (
 			status: 7,
 		};
 
-		//fatal agrear que cree termianl por el numero de pos pedidos
+		console.log('terminal:', terminal);
+
 		for (let i = 0; i < number_post; i++) {
-			console.log('Terminal: ' + `${i + 1}` + 'creada para', id_commerce.name);
+			console.log('Terminal: ' + (i + 1) + 'creada para', id_commerce.name);
 			const saveTermianlTms7 = await createTerminalTms7(terminal, usar.access_token);
 			if (saveTermianlTms7) {
 				throw { message: saveTermianlTms7?.message || 'Error en crear Terminal en TMS7' };
