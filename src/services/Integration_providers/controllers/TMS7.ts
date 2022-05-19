@@ -311,7 +311,7 @@ export const createTerminal = async (
 
 		const terminal = {
 			net_id: 2,
-			merchantId: merchantId2,
+			merchantId: merchant.merchantId,
 			parametrizationName: 'IP publico - Pruebas GER7',
 			parametrizationVersion: 12,
 			status: 7,
