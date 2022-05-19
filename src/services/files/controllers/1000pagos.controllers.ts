@@ -393,8 +393,8 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 		const description = ['rc_ref_bank', 'rc_rif', 'rc_ident_card', 'rc_special_contributor', 'rc_comp_dep'];
 
 		// query que retorna el ultimo fm con ese comercio y cliente
-		const fmClient: any = await getRepository(fm_request).findOne({
-			where: { id_client },
+		const fm: any = await getRepository(fm_request).findOne({
+			where: { id: id_fm },
 			order: { id: 'ASC' },
 			relations: [
 				'rc_ref_bank',
@@ -407,21 +407,6 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 				'rc_comp_dep',
 			],
 		});
-		const fmCommerce: any = await getRepository(fm_request).findOne({
-			where: { id_client, id_commerce },
-			order: { id: 'ASC' },
-			relations: [
-				'rc_ref_bank',
-				'id_client',
-				'id_client.rc_ident_card',
-				'id_commerce',
-				'id_commerce.rc_constitutive_act',
-				'id_commerce.rc_rif',
-				'id_commerce.rc_special_contributor',
-				'rc_comp_dep',
-			],
-		});
-		const fm = fmCommerce ? fmCommerce : fmClient;
 
 		if (fm && fm.id_client) {
 			//console.log('llegue client');
@@ -430,7 +415,7 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 			const { rc_ident_card }: any = fmClient;
 			const { rc_special_contributor, rc_constitutive_act, rc_rif }: any = fmCommerce;
 
-			if (fm.id_commerce.id === id_commerce) {
+			if (fm.id_commerce) {
 				//console.log('llegue commerce');
 				info = {
 					rc_ident_card: rc_ident_card && rc_ident_card.id,
@@ -562,11 +547,25 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 			await getRepository(fm_client).update(id_client, { rc_ident_card: info.rc_ident_card });
 		}
 		//save Images in Commerce
-		if (!fm.id_commerce.rc_special_contributor || !fm.id_commerce.rc_rif)
-			await getRepository(fm_commerce).update(id_commerce, {
-				rc_special_contributor: info.rc_special_contributor,
-				rc_rif: info.rc_rif,
-			});
+		if (!fm.id_commerce.rc_special_contributor || !fm.id_commerce.rc_rif) {
+			if (info.rc_special_contributor && info.rc_rif) {
+				await getRepository(fm_commerce).update(id_commerce, {
+					rc_special_contributor: info.rc_special_contributor,
+					rc_rif: info.rc_rif,
+				});
+			} else {
+				if (info.rc_special_contributor) {
+					await getRepository(fm_commerce).update(id_commerce, {
+						rc_special_contributor: info.rc_special_contributor,
+					});
+				}
+				if (info.rc_rif) {
+					await getRepository(fm_commerce).update(id_commerce, {
+						rc_rif: info.rc_rif,
+					});
+				}
+			}
+		}
 
 		if (!fm.id_commerce.rc_constitutive_act.length) {
 			const constitutive_act = info.rc_constitutive_act.map((id_photo: any) => ({ id_commerce, id_photo }));
