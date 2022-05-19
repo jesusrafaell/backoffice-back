@@ -9,6 +9,7 @@ import {
 	getAllRequestSource,
 	getAlldistribuidores,
 	getAllTypesDiferidos,
+	getAllAcis_Distribudores,
 } from '../../controllers/global';
 import { getAllStatus, getAllCompanys } from '../../controllers/global/index';
 const global: Router = Router();
@@ -58,6 +59,10 @@ global.route('/request_source').get(getAllRequestSource);
 // ? type_diferido
 //
 global.route('/type_diferido').get(getAllTypesDiferidos);
+
+// ? acis and distribuidores
+//
+global.route('/aci&distribuidores').get(getAllAcis_Distribudores);
 
 // ?
 //

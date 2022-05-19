@@ -196,6 +196,22 @@ export const getAlldistribuidores = async (
 	}
 };
 
+export const getAllAcis_Distribudores = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const info = await getRepository(Aliados).find();
+
+		const message: string = Msg('request_source').getAll;
+
+		Resp(req, res, { message, info });
+	} catch (err) {
+		next(err);
+	}
+};
+
 export const getAllTypesDiferidos = async (
 	req: Request<any, any, Api.Resp>,
 	res: Response<Api.Resp>,
