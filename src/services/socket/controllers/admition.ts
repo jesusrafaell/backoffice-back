@@ -214,6 +214,7 @@ export const listSolic = async () => {
 			'id_request.id_client.id_location.id_parroquia',
 			'id_request.id_client.rc_ident_card',
 			'id_request.id_client.id_ident_type',
+			'id_request.id_client.phones',
 			//
 			'id_request.rc_planilla',
 			'id_request.rc_planilla.id_photo',

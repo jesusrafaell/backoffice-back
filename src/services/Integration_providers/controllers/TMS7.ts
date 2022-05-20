@@ -302,12 +302,12 @@ export const createTerminal = async (
 
 		const merchant: any = await getMerchanId(`${id_ident_type.name}${ident_num}`, usar.access_token);
 		if (!merchant.ok) {
-			console.log('Tiene merchan en tms7');
+			console.log('No tiene merchatId el comercio');
 		}
 
-		const merchantId2 = createMerchantId(id_activity.id_afiliado.id, id);
+		//const merchantId2 = createMerchantId(id_activity.id_afiliado.id, id);
 
-		console.log(merchant.merchantId, merchantId2);
+		console.log(merchant.merchantId);
 
 		const terminal = {
 			net_id: 2,
