@@ -28,6 +28,7 @@ import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/control
 import { getLeadingCommentRanges } from 'typescript';
 import FM from 'services/office/router/fm/fm.routes';
 import { comercioToProviders } from '../providers';
+import { relationsFMFull } from '../../utilitis/relationsFMFull';
 //import dotenv from '../../../../config/env';
 //const { HOST, PORT_PROVIDERS } = dotenv;
 
@@ -1037,76 +1038,43 @@ export const editStatusAdmitionDiferido = async (
 ): Promise<void> => {
 	try {
 		const { id_FM }: any = req.params;
-		const { fm } = req.body;
+		const { fm, client, commerce } = req.body;
 		const files: any = req.files;
 
 		const dataFM: any = JSON.parse(fm);
+		let clientData: any = null;
+		let commerceData: any = null;
+		if (client) {
+			clientData = JSON.parse(client);
+		}
+		if (commerce) {
+			commerceData = JSON.parse(commerce);
+		}
 
-		//console.log(id_FM, dataFM.id);
+		//console.log(clientData);
+		//console.log(commerceData);
 
-		//console.log(id_fm);
-		//console.log(files);
-		//console.log(dataFM.id_commerce!.rc_constitutive_act);
+		//console.log('bugx0', id_FM);
 
-		let query: any = await getRepository(fm_request).findOne({
+		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },
-			relations: [
-				'id_client',
-				'id_client.id_location',
-				'id_client.id_location.id_estado',
-				'id_client.id_location.id_municipio',
-				'id_client.id_location.id_ciudad',
-				'id_client.id_location.id_parroquia',
-				'id_client.rc_ident_card',
-				'id_client.id_ident_type',
-				//
-				'rc_planilla',
-				'rc_planilla.id_photo',
-				'id_valid_request',
-				'pos',
-				'pos.id_location',
-				'pos.id_location.id_estado',
-				'pos.id_location.id_municipio',
-				'pos.id_location.id_ciudad',
-				'pos.id_location.id_parroquia',
-				//
-				'id_commerce',
-				'id_commerce.id_ident_type',
-				'id_commerce.id_activity',
-				//para abono
-				'id_commerce.id_activity.id_afiliado',
-				//location
-				'id_commerce.id_location',
-				'id_commerce.id_location.id_estado',
-				'id_commerce.id_location.id_municipio',
-				'id_commerce.id_location.id_ciudad',
-				'id_commerce.id_location.id_parroquia',
-				'id_commerce.banks',
-				'id_commerce.rc_constitutive_act',
-				'id_commerce.rc_constitutive_act.id_photo',
-				'id_commerce.rc_rif',
-				'id_commerce.rc_special_contributor',
-				'id_commerce.id_aci',
-				//
-				'id_product',
-				'id_type_request',
-				'id_request_origin',
-				//
-				'rc_ref_bank',
-				'rc_comp_dep',
-				'id_payment_method',
-				'id_type_payment',
-			],
+			relations: relationsFMFull,
 		});
 
-		//console.log(query.id_valid_request);
-		if (query.id_valid_request.id_typedif_client !== null) {
-			const { id_location, rc_ident_card, id_ident_type, id, ...data } = dataFM.id_client;
+		const validate = query.id_valid_request;
+
+		if (validate.id_typedif_client !== null) {
+			const { rc_ident_card, id_ident_type, ref_person_1, ref_person_2, phones, phone, id, ...data } = clientData;
 			if (JSON.stringify(query.id_client) !== JSON.stringify(dataFM.id_client)) {
 				//console.log(dataClient);
+				console.log('Client1');
 				await getRepository(fm_client).update({ id }, data);
-				console.log('Client');
+				console.log('Client2');
 				//console.log(newClient);
+			}
+			console.log(query.id_client.phones[0].phone, phones.phone1.phone);
+			if (query.id_client.phones[0].phone !== phones) {
+				console.log('telfeno dif');
 			}
 			//Update imagen
 			//console.log(files.images);
@@ -1121,19 +1089,19 @@ export const editStatusAdmitionDiferido = async (
 			}
 		}
 
-		if (query.id_valid_request.id_typedif_commerce !== null) {
+		if (validate.id_typedif_commerce !== null) {
 			const {
-				rc_constitutive_act,
-				id_activity,
+				id,
 				banks,
 				id_aci,
+				id_activity,
+				rc_constitutive_act,
+				id_ident_type,
 				id_location,
 				rc_rif,
 				rc_special_contributor,
-				id_ident_type,
-				id,
 				...data
-			} = dataFM.id_commerce;
+			} = commerceData;
 			if (JSON.stringify(query.id_commerce) !== JSON.stringify(dataFM.id_commerce)) {
 				await getRepository(fm_commerce).update({ id }, data);
 				console.log('Commercio', data);
@@ -1156,7 +1124,7 @@ export const editStatusAdmitionDiferido = async (
 				);
 			}
 		}
-		if (query.id_valid_request.id_typedif_ref_bank !== null) {
+		if (validate.id_typedif_ref_bank !== null) {
 			const { bank_account_num, rc_ref_bank } = dataFM;
 			console.log((query.bank_account_num as string).trim() !== (bank_account_num as string).trim());
 			if ((query.bank_account_num as string).trim() !== (bank_account_num as string).trim()) {
@@ -1177,7 +1145,7 @@ export const editStatusAdmitionDiferido = async (
 			}
 		}
 		console.log('bug4');
-		if (query.id_valid_request.id_typedif_comp_num !== null) {
+		if (validate.id_typedif_comp_num !== null) {
 			const { rc_comp_dep, nro_comp_dep, ...data } = dataFM;
 			if ((query.nro_comp_dep as string).trim() === (nro_comp_dep as string).trim()) {
 				await getRepository(fm_request).update({ id: id_FM }, { nro_comp_dep: (nro_comp_dep as string).trim() });
@@ -1194,7 +1162,7 @@ export const editStatusAdmitionDiferido = async (
 			}
 		}
 		console.log('bug5');
-		if (query.id_valid_request.id_typedif_consitutive_acta !== null) {
+		if (validate.id_typedif_consitutive_acta !== null) {
 			//imagens acta
 			console.log('remove images acta');
 			const { rc_constitutive_act, ...data } = dataFM.id_commerce;
@@ -1219,7 +1187,7 @@ export const editStatusAdmitionDiferido = async (
 			}
 			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
 		}
-		if (query.id_valid_request.id_typedif_planilla !== null) {
+		if (validate.id_typedif_planilla !== null) {
 			//imagens acta
 			const { rc_planilla, ...data } = dataFM;
 			const old_rc_planilla = query.rc_planilla;
@@ -1243,7 +1211,7 @@ export const editStatusAdmitionDiferido = async (
 			}
 			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
 		}
-		if (query.id_valid_request.id_typedif_special_contributor !== null) {
+		if (validate.id_typedif_special_contributor !== null) {
 			//imagens acta
 			console.log('images special contributor');
 		}

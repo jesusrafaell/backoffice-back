@@ -60,12 +60,15 @@ export const comercioToProviders = async (FM: any, token: any) => {
 					throw { message: 'Error al crear terminales en TMS7' };
 				});
 
-			console.log('Fin Ger7 terminales creadas');
+			console.log('Fin Ger7 terminales creadas', resTerminalTms7.data.terminales);
+
+			let terminals = resTerminalTms7.data.terminales;
 
 			const rif = FM.id_commerce.id_ident_type.name + FM.id_commerce.ident_num;
 
 			console.log('Crear abono para ', rif);
 
+			/*
 			const terminalsTms7 = await axios
 				.get(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce/terminals/${rif}`,
@@ -78,7 +81,8 @@ export const comercioToProviders = async (FM: any, token: any) => {
 				});
 
 			//console.log('terminales', terminalsTms7.data.terminals);
-			const terminals = terminalsTms7.data.terminals;
+			terminals = terminalsTms7.data.terminals;
+			*/
 
 			const resAbono: any = await createAbono1000pagos(FM.id_commerce, token, terminals);
 			if (!resAbono.ok) {

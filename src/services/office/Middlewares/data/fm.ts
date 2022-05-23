@@ -88,4 +88,6 @@ export const fmForDataDiferido = multer(options).fields([
 	{ name: 'planilla', maxCount: 20 },
 	{ name: 'id_fm' },
 	{ name: 'fm' },
+	{ name: 'client' },
+	{ name: 'commerce' },
 ]);

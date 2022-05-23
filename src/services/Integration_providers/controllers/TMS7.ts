@@ -319,16 +319,19 @@ export const createTerminal = async (
 
 		console.log('terminal:', terminal);
 
+		let terminales: any = [];
+
 		for (let i = 0; i < number_post; i++) {
 			console.log('Terminal: ' + (i + 1) + ' creada para', id_commerce.name);
 			const saveTerminalTms7 = await createTerminalTms7(terminal, usar.access_token);
-			console.log('save Term ', saveTerminalTms7);
-			if (saveTerminalTms7) {
+			if (saveTerminalTms7.ok) {
+				terminales.push(saveTerminalTms7.terminal);
+			} else {
 				throw { message: saveTerminalTms7?.message || 'Error en crear Terminal en TMS7' };
 			}
 		}
 
-		res.status(200).json({ message: 'Terminales creadas' });
+		res.status(200).json({ message: 'Terminales creadas', terminales });
 	} catch (err) {
 		next(err);
 	}
@@ -342,12 +345,17 @@ const createTerminalTms7 = async (terminal: any, access_token: string): Promise<
 			},
 		});
 		//console.log('terminal', res);
-		return null;
+		console.log('creacion de termianl:', res.data);
+		return {
+			ok: true,
+			terminal: res.data,
+		};
 	} catch (err: any) {
 		const resError = {
 			message: err?.response.statusText,
 			status: err?.response.status,
 			extra: err?.response.Message,
+			ok: false,
 		};
 		console.log('Tms7 error ', err);
 		return resError;
