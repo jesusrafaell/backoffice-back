@@ -9,7 +9,7 @@ import {
 
 const administra = (io: any) => {
 	io.on('connection', (socket: any) => {
-		socket.emit('PruebaAdmin', administracion);
+		//socket.emit('PruebaAdmin', administracion);
 		io.emit('server:loadAdministracion', administracion);
 
 		//Devuelve
@@ -53,9 +53,9 @@ const administra = (io: any) => {
 			io.emit('server:loadAdministracion', administracion);
 		});
 
-		socket.on('cliente:disconnect', async () => {
+		socket.on('cliente:disconnectAdministracion', async () => {
 			// console.log(socket.id, 'disconnected');
-			// console.log('');
+			console.log('Disconnec Administra');
 			disconectAdminis(socket.id);
 			await getFmAdministration();
 			io.emit('server:loadAdministracion', administracion);

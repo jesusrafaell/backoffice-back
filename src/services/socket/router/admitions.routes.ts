@@ -65,8 +65,8 @@ const admitions = (io: any) => {
 			disconectsolic(socket.id);
 			await listDiferido();
 			await listSolic();
-			console.log('Hay Soli', solictudes);
-			console.log('diferidos', diferido);
+			//console.log('Hay Soli', solictudes);
+			//console.log('diferidos', diferido);
 			const todo = await All_Info();
 			const todos = getDash();
 			await io.emit('server:solicitudes', solictudes);
@@ -138,7 +138,7 @@ const admitions = (io: any) => {
 
 		socket.on('cliente:coleado', async (key: any, callback: any) => {
 			const one = await OneSolic(key);
-			console.log('Coleado... :', one);
+			//console.log('Coleado... :', one);
 			callback(one);
 		});
 	});

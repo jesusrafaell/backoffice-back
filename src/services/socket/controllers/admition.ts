@@ -322,7 +322,7 @@ export const getDiferido = async (id_request: number) => {
 		let auxPlanilla: any[] = [];
 		for (let i = 0; i < rc_planilla.length; ++i) {
 			if (rc_planilla[i].id_photo.id_status === 1) {
-				console.log(rc_planilla[i], rc_planilla[i].id_photo.id_status);
+				//console.log(rc_planilla[i], rc_planilla[i].id_photo.id_status);
 				auxPlanilla.push(rc_planilla[i]);
 			}
 			query.id_request.rc_planilla = auxPlanilla;
@@ -334,7 +334,7 @@ export const getDiferido = async (id_request: number) => {
 		let auxActa: any[] = [];
 		for (let i = 0; i < rc_constitutive_act.length; ++i) {
 			if (rc_constitutive_act[i].id_photo.id_status === 1) {
-				console.log(rc_constitutive_act[i], rc_constitutive_act[i].id_photo.id_status);
+				//console.log(rc_constitutive_act[i], rc_constitutive_act[i].id_photo.id_status);
 				auxActa.push(rc_constitutive_act[i]);
 			}
 			query.id_request.id_commerce.rc_constitutive_act = auxActa;

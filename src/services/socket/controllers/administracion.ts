@@ -6,33 +6,39 @@ export let administracion: any[] = [];
 export let administracionTrabajndo: any[] = [];
 
 export const listAdminisWorking = async (id_conectado: any, user: any, id_fm: any) => {
-	if (administracion.length <= 0) {
-		return [];
+	try {
+		await getFmAdministration();
+		if (administracion.length <= 0) {
+			return [];
+		}
+		// const obj = administracionTrabajndo.find((items) => {
+		// 	//console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
+		// 	return items.id;
+		// });
+
+		const i = administracion.findIndex((item) => {
+			return item.id === id_fm;
+		});
+		if (i == -1) {
+			return; // // console.log('MENOL NO EXISTE');
+		}
+
+		// console.log('Valor I', i);
+		const resp = administracion[i];
+
+		// console.log('Administracio', resp);
+
+		administracion.splice(i, 1);
+
+		// console.log('Despues del filter', administracionTrabajndo);
+		administracionTrabajndo.unshift({ id_conectado, ...user, ...resp });
+
+		// console.log(administracionTrabajndo);
+
+		return resp;
+	} catch (err) {
+		console.log(err);
 	}
-	const obj = administracionTrabajndo.find((items) => {
-		//// // console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
-		return items.id_conectado === id_conectado && items.id === user.id;
-	});
-	const i = administracion.findIndex((item) => {
-		return item.id === id_fm;
-	});
-	if (i == -1) {
-		return; // // console.log('MENOL NO EXISTE');
-	}
-
-	// console.log('Valor I', i);
-	const resp = administracion[i];
-
-	// console.log('Administracio', resp);
-
-	administracion.splice(i, 1);
-
-	// console.log('Despues del filter', administracionTrabajndo);
-	administracionTrabajndo.unshift({ id_conectado, ...user, ...resp });
-
-	// console.log(administracionTrabajndo);
-
-	return resp;
 };
 
 export const disconectAdminis = (id_sockect: any) => {
@@ -62,10 +68,12 @@ export const getFmAdministration = async (): Promise<void> => {
 
 		if (!query.length) throw { message: 'no existen solicitudes en espera', code: 400 };
 
+		let ids2 = [...administracionTrabajndo.map((solictude) => solictude.id)];
+
 		const ids: any[] = query.map((item: any) => item.id_request.id);
 
 		const query2 = await getRepository(fm_status).find({
-			where: { id_request: In(ids), id_department: 7, id_status_request: 1 },
+			where: { id_request: In(ids), id_department: 7, id_status_request: 1, id: Not(In(ids2)) },
 			relations: [
 				'id_request',
 				'id_request.id_commerce',
