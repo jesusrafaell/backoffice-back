@@ -210,7 +210,6 @@ export const listSolic = async () => {
 			...solictudesTrabajando.map((solictude) => solictude.id),
 		];
 
-<<<<<<< Updated upstream
 		const query = await getRepository(fm_status).find({
 			where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
 			take: 50,
@@ -264,21 +263,6 @@ export const listSolic = async () => {
 				'id_request.id_type_payment',
 			],
 		});
-=======
-	let ids = [
-		...solictudes.map((solictude) => solictude.id),
-		...solictudesTrabajando.map((solictude) => solictude.id),
-	];
-
-	const query = await getRepository(fm_status).find({
-		where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
-		take: 50,
-		order: {
-			id: 'ASC',
-		},
-		relations: relationsFM,
-	});
->>>>>>> Stashed changes
 
 		// console.log('Query para SOlicitud', query);
 
@@ -298,7 +282,6 @@ export const listSolic = async () => {
 };
 
 export const getDiferido = async (id_request: number) => {
-<<<<<<< Updated upstream
 	try {
 		let query: any = await getRepository(fm_status).findOne({
 			where: { id_request },
@@ -359,21 +342,6 @@ export const getDiferido = async (id_request: number) => {
 					auxPlanilla.push(rc_planilla[i]);
 				}
 				query.id_request.rc_planilla = auxPlanilla;
-=======
-	let query: any = await getRepository(fm_status).findOne({
-		where: { id_request },
-		relations: relationsFM,
-	});
-
-	const { rc_planilla } = query.id_request;
-
-	if (rc_planilla) {
-		let auxPlanilla: any[] = [];
-		for (let i = 0; i < rc_planilla.length; ++i) {
-			if (rc_planilla[i].id_photo.id_status === 1) {
-				//console.log(rc_planilla[i], rc_planilla[i].id_photo.id_status);
-				auxPlanilla.push(rc_planilla[i]);
->>>>>>> Stashed changes
 			}
 		}
 
