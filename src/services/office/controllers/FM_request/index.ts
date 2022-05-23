@@ -573,6 +573,8 @@ export const editStatusByIdAdmision = async (
 		const { id_FM }: any = req.params;
 		const { id_status_request, valids, id_aci } = req.body;
 
+		console.log(valids);
+
 		const FM: any = await getRepository(fm_request).findOne(id_FM, {
 			relations: [
 				'id_valid_request',
@@ -597,9 +599,8 @@ export const editStatusByIdAdmision = async (
 					throw { message: resProviders.message || 'Error en API Providers' };
 				}
 			}
+			console.log('Comercio creado, terminales y abonos');
 		}
-
-		console.log('Comercio creado, terminales y abonos');
 
 		if (id_status_request === 4) {
 			const { id } = FM.id_valid_request;
@@ -611,8 +612,8 @@ export const editStatusByIdAdmision = async (
 
 		await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
 
-		console.log('Toda ok Validacion solic');
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
+		console.log('Status update FM:', id_FM, 'Status:', id_status_request);
 
 		const message: string = Msg('Status del FM').edit;
 
@@ -762,8 +763,9 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 			valid_ref_bank: '',
 			valid_comp_dep: '',
 			valid_planilla: '',
-			valid_rif: '',
-			valid_ident_card: '',
+			valid_commerce: '',
+			valid_client: '',
+			valid_pos: '',
 		});
 
 		console.log('saved');
@@ -910,8 +912,9 @@ export const fmCreateFMExtraPos = async (fmPos: any, id_client: number, id_comme
 			valid_ref_bank: '',
 			valid_comp_dep: '',
 			valid_planilla: '',
-			valid_rif: '',
-			valid_ident_card: '',
+			valid_commerce: '',
+			valid_client: '',
+			valid_pos: '',
 		});
 
 		const initial = ((): number => {

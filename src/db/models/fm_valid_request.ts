@@ -49,10 +49,10 @@ export default class fm_valid_request {
 
 	//Recaudos
 	@Column({ name: 'valid_ident_card' })
-	valid_ident_card!: string;
+	valid_client!: string;
 
 	@Column({ name: 'valid_rif' })
-	valid_rif!: string;
+	valid_commerce!: string;
 
 	@Column({ name: 'valid_constitutive_act' })
 	valid_constitutive_act!: string;
@@ -68,4 +68,7 @@ export default class fm_valid_request {
 
 	@Column({ name: 'valid_comp_dep' })
 	valid_comp_dep!: string;
+
+	@Column({ name: 'valid_pos' })
+	valid_pos!: string;
 }

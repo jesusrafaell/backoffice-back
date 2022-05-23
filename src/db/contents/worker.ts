@@ -80,9 +80,18 @@ const worker = async (): Promise<void> => {
 			id_company: 2,
 			id_department: 4,
 		},
+		{
+			name: 'Isis',
+			last_name: 'Mata',
+			password: '$2b$10$N9LMDR7T2WWv3Jv4dEvVzuNzKREEIZI7lPfClx4vwH/KwpqkcwVdu',
+			id_ident_type: 1,
+			ident_num: '25210419',
+			email: 'imata@1000pagos.com',
+			phone: '+584165186697',
+			id_company: 1,
+			id_department: 4,
+		},
 	];
-
-	//
 	const valid = await getRepository(fm_worker).find();
 	if (!valid.length) await getRepository(fm_worker).save(data);
 };

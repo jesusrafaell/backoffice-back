@@ -320,10 +320,11 @@ export const createTerminal = async (
 		console.log('terminal:', terminal);
 
 		for (let i = 0; i < number_post; i++) {
-			console.log('Terminal: ' + (i + 1) + 'creada para', id_commerce.name);
-			const saveTermianlTms7 = await createTerminalTms7(terminal, usar.access_token);
-			if (saveTermianlTms7) {
-				throw { message: saveTermianlTms7?.message || 'Error en crear Terminal en TMS7' };
+			console.log('Terminal: ' + (i + 1) + ' creada para', id_commerce.name);
+			const saveTerminalTms7 = await createTerminalTms7(terminal, usar.access_token);
+			console.log('save Term ', saveTerminalTms7);
+			if (saveTerminalTms7) {
+				throw { message: saveTerminalTms7?.message || 'Error en crear Terminal en TMS7' };
 			}
 		}
 
@@ -348,7 +349,7 @@ const createTerminalTms7 = async (terminal: any, access_token: string): Promise<
 			status: err?.response.status,
 			extra: err?.response.Message,
 		};
-		console.log('Tms7 error ', resError);
+		console.log('Tms7 error ', err);
 		return resError;
 	}
 };
