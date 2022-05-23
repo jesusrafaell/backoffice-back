@@ -12,9 +12,10 @@ export let solictudesTrabajando: any[] = [];
 export let solicitudColeada: any[] = [];
 
 export const listDiferido = async () => {
-	const ids = diferidoTranbajando.map((item) => item.id);
-	const query = await getConnection()
-		.query(/*sql*/ `SELECT r.id ,r.code, cc.name as nameComer, c.name as nameClient, c.last_name as lastnameClient, c.email , i.name as identTypeComer, cc.ident_num as identNumComer , r.updatedAt
+	try {
+		const ids = diferidoTranbajando.map((item) => item.id);
+		const query = await getConnection()
+			.query(/*sql*/ `SELECT r.id ,r.code, cc.name as nameComer, c.name as nameClient, c.last_name as lastnameClient, c.email , i.name as identTypeComer, cc.ident_num as identNumComer , r.updatedAt
 			FROM [MilPagos].[dbo].[fm_status]
 
 			inner join fm_request as r on r.id = id_request
@@ -26,10 +27,13 @@ export const listDiferido = async () => {
 				ids.length ? `AND id_request NOT IN (${ids.join(', ')})` : ``
 			} `);
 
-	diferido = query;
-	// diferidos = query.map((item) => item.id_request);
+		diferido = query;
+		// diferidos = query.map((item) => item.id_request);
 
-	return diferido;
+		return diferido;
+	} catch (err) {
+		console.log('err', err);
+	}
 };
 
 export const oneDIferido = async (id_request: any) => {
@@ -37,37 +41,41 @@ export const oneDIferido = async (id_request: any) => {
 	// 	/*sql*/ `SELECT * FROM [MilPagos].[dbo].[fm_status] where id_department = 1 and id_status_request = 1`
 	// );
 	// if (diferido.length <= 5) {
-	if (allSolic == 0) throw { message: 'no existen solicitudes en espera', code: 400 };
-	else {
-		let ids = [
-			...solictudes.map((solictude) => solictude.id),
-			...solictudesTrabajando.map((solictude) => solictude.id),
-		];
+	try {
+		if (allSolic == 0) throw { message: 'no existen solicitudes en espera', code: 400 };
+		else {
+			let ids = [
+				...solictudes.map((solictude) => solictude.id),
+				...solictudesTrabajando.map((solictude) => solictude.id),
+			];
 
-		const query = await getRepository(fm_status).findOne({
-			where: { id_request, id: Not(In(ids)) },
-			relations: [
-				'id_request',
-				'id_request.id_client',
-				'id_request.id_client.id_ident_type',
-				'id_request.id_client.rc_ident_card',
-				'id_request.id_commerce',
-				'id_request.id_commerce.rc_constitutive_act',
-				'id_request.id_commerce.rc_constitutive_act.id_photo',
-				'id_request.id_commerce.rc_special_contributor',
-				'id_request.id_commerce.rc_rif',
-				'id_request.id_commerce.id_aci',
-				'id_request.rc_ref_bank',
-				'id_request.id_valid_request',
-				'id_request.rc_comp_dep',
-			],
-		});
+			const query = await getRepository(fm_status).findOne({
+				where: { id_request, id: Not(In(ids)) },
+				relations: [
+					'id_request',
+					'id_request.id_client',
+					'id_request.id_client.id_ident_type',
+					'id_request.id_client.rc_ident_card',
+					'id_request.id_commerce',
+					'id_request.id_commerce.rc_constitutive_act',
+					'id_request.id_commerce.rc_constitutive_act.id_photo',
+					'id_request.id_commerce.rc_special_contributor',
+					'id_request.id_commerce.rc_rif',
+					'id_request.id_commerce.id_aci',
+					'id_request.rc_ref_bank',
+					'id_request.id_valid_request',
+					'id_request.rc_comp_dep',
+				],
+			});
 
-		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+			if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
 
-		diferidoTranbajando.push(query.id_request);
+			diferidoTranbajando.push(query.id_request);
 
-		return diferidoTranbajando;
+			return diferidoTranbajando;
+		}
+	} catch (err) {
+		console.log('err', err);
 	}
 
 	// }
@@ -104,41 +112,44 @@ export const listDiferidoWorking = async (id_conectado: any, user: any, id_dife:
 	// console.log('Id_Sockect ', id_conectado);
 	// console.log('User ', user);
 	// console.log('Id ', id_dife);
+	try {
+		const obj = diferidoTranbajando.find((items) => {
+			// console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
 
-	const obj = diferidoTranbajando.find((items) => {
-		// console.log(`items.id_conectado === id_conectado`, items.id_conectado === id_conectado);
-
-		return items.id_conectado === id_conectado || items.id === user.id;
-	});
-	// console.log('Obj', obj);
-	if (obj) return obj;
-	if (diferido.length > 0) {
-		const i = diferido.findIndex((item) => {
-			return item.id == id_dife;
+			return items.id_conectado === id_conectado || items.id === user.id;
 		});
-		// console.log('Valor I', i);
-		if (i == -1) {
-			return; // // console.log('MENOL NO EXISTE');
+		// console.log('Obj', obj);
+		if (obj) return obj;
+		if (diferido.length > 0) {
+			const i = diferido.findIndex((item) => {
+				return item.id == id_dife;
+			});
+			// console.log('Valor I', i);
+			if (i == -1) {
+				return; // // console.log('MENOL NO EXISTE');
+			}
+			// const working2 = diferido.find((item) => {
+			// 	return item.id === id_dife;
+			// });
+
+			const resp = diferido[i];
+
+			// console.log('DIferido pos', resp);
+
+			diferido.splice(i, 1);
+
+			//// // console.log('Lista de Diferidos', diferido);
+
+			// diferidoTranbajando.unshift({ id_conectado, ...user, ...working2 });
+			diferidoTranbajando.unshift({ id_conectado, ...user, ...resp });
+
+			// console.log('diferido pos', diferido);
+			// console.log('diferido pos', diferidoTranbajando);
+			//
+			return resp;
 		}
-		// const working2 = diferido.find((item) => {
-		// 	return item.id === id_dife;
-		// });
-
-		const resp = diferido[i];
-
-		// console.log('DIferido pos', resp);
-
-		diferido.splice(i, 1);
-
-		//// // console.log('Lista de Diferidos', diferido);
-
-		// diferidoTranbajando.unshift({ id_conectado, ...user, ...working2 });
-		diferidoTranbajando.unshift({ id_conectado, ...user, ...resp });
-
-		// console.log('diferido pos', diferido);
-		// console.log('diferido pos', diferidoTranbajando);
-		//
-		return resp;
+	} catch (err) {
+		console.log('err', err);
 	}
 };
 
@@ -192,160 +203,167 @@ export const listSolic = async () => {
 	// const query = await getConnection().query(
 	// 	/*sql*/ `SELECT * FROM [MilPagos].[dbo].[fm_status] where id_department = 1 and id_status_request = 1`
 	// );
+	try {
+		let ids = [
+			...solictudes.map((solictude) => solictude.id),
+			...solictudesTrabajando.map((solictude) => solictude.id),
+		];
 
-	let ids = [
-		...solictudes.map((solictude) => solictude.id),
-		...solictudesTrabajando.map((solictude) => solictude.id),
-	];
+		const query = await getRepository(fm_status).find({
+			where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
+			take: 50,
+			order: {
+				id: 'ASC',
+			},
+			relations: [
+				'id_request',
+				'id_request.id_client',
+				'id_request.id_client.id_location',
+				'id_request.id_client.id_location.id_estado',
+				'id_request.id_client.id_location.id_municipio',
+				'id_request.id_client.id_location.id_ciudad',
+				'id_request.id_client.id_location.id_parroquia',
+				'id_request.id_client.rc_ident_card',
+				'id_request.id_client.id_ident_type',
+				'id_request.id_client.phones',
+				//
+				'id_request.rc_planilla',
+				'id_request.rc_planilla.id_photo',
+				'id_request.id_valid_request',
+				'id_request.pos',
+				'id_request.pos.id_location',
+				'id_request.pos.id_location.id_estado',
+				'id_request.pos.id_location.id_municipio',
+				'id_request.pos.id_location.id_ciudad',
+				'id_request.pos.id_location.id_parroquia',
+				//
+				'id_request.id_commerce',
+				'id_request.id_commerce.id_ident_type',
+				'id_request.id_commerce.id_activity',
+				'id_request.id_commerce.id_location',
+				'id_request.id_commerce.id_location.id_estado',
+				'id_request.id_commerce.id_location.id_municipio',
+				'id_request.id_commerce.id_location.id_ciudad',
+				'id_request.id_commerce.id_location.id_parroquia',
+				'id_request.id_commerce.banks',
+				'id_request.id_commerce.rc_constitutive_act',
+				'id_request.id_commerce.rc_constitutive_act.id_photo',
+				'id_request.id_commerce.rc_rif',
+				'id_request.id_commerce.rc_special_contributor',
+				'id_request.id_commerce.id_aci',
+				//
+				'id_request.id_product',
+				'id_request.id_type_request',
+				'id_request.id_request_origin',
+				//
+				'id_request.rc_ref_bank',
+				'id_request.rc_comp_dep',
+				'id_request.id_payment_method',
+				'id_request.id_type_payment',
+			],
+		});
 
-	const query = await getRepository(fm_status).find({
-		where: { id_status_request: 1, id_department: 4, id: Not(In(ids)) },
-		take: 50,
-		order: {
-			id: 'ASC',
-		},
-		relations: [
-			'id_request',
-			'id_request.id_client',
-			'id_request.id_client.id_location',
-			'id_request.id_client.id_location.id_estado',
-			'id_request.id_client.id_location.id_municipio',
-			'id_request.id_client.id_location.id_ciudad',
-			'id_request.id_client.id_location.id_parroquia',
-			'id_request.id_client.rc_ident_card',
-			'id_request.id_client.id_ident_type',
-			'id_request.id_client.phones',
-			//
-			'id_request.rc_planilla',
-			'id_request.rc_planilla.id_photo',
-			'id_request.id_valid_request',
-			'id_request.pos',
-			'id_request.pos.id_location',
-			'id_request.pos.id_location.id_estado',
-			'id_request.pos.id_location.id_municipio',
-			'id_request.pos.id_location.id_ciudad',
-			'id_request.pos.id_location.id_parroquia',
-			//
-			'id_request.id_commerce',
-			'id_request.id_commerce.id_ident_type',
-			'id_request.id_commerce.id_activity',
-			'id_request.id_commerce.id_location',
-			'id_request.id_commerce.id_location.id_estado',
-			'id_request.id_commerce.id_location.id_municipio',
-			'id_request.id_commerce.id_location.id_ciudad',
-			'id_request.id_commerce.id_location.id_parroquia',
-			'id_request.id_commerce.banks',
-			'id_request.id_commerce.rc_constitutive_act',
-			'id_request.id_commerce.rc_constitutive_act.id_photo',
-			'id_request.id_commerce.rc_rif',
-			'id_request.id_commerce.rc_special_contributor',
-			'id_request.id_commerce.id_aci',
-			//
-			'id_request.id_product',
-			'id_request.id_type_request',
-			'id_request.id_request_origin',
-			//
-			'id_request.rc_ref_bank',
-			'id_request.rc_comp_dep',
-			'id_request.id_payment_method',
-			'id_request.id_type_payment',
-		],
-	});
+		// console.log('Query para SOlicitud', query);
 
-	// console.log('Query para SOlicitud', query);
+		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
 
-	if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+		const info: any = query.map((item) => item.id_request);
 
-	const info: any = query.map((item) => item.id_request);
+		solictudes = info;
+		// diferidos = query.map((item) => item.id_request);
 
-	solictudes = info;
-	// diferidos = query.map((item) => item.id_request);
+		// console.log('Lista de solicitudes', solictudes);
 
-	// console.log('Lista de solicitudes', solictudes);
-
-	return solictudes;
+		return solictudes;
+	} catch (err) {
+		console.log('err', err);
+	}
 };
 
 export const getDiferido = async (id_request: number) => {
-	let query: any = await getRepository(fm_status).findOne({
-		where: { id_request },
-		relations: [
-			'id_request',
-			'id_request.id_client',
-			'id_request.id_client.id_location',
-			'id_request.id_client.id_location.id_estado',
-			'id_request.id_client.id_location.id_municipio',
-			'id_request.id_client.id_location.id_ciudad',
-			'id_request.id_client.id_location.id_parroquia',
-			'id_request.id_client.rc_ident_card',
-			'id_request.id_client.id_ident_type',
-			//
-			'id_request.rc_planilla',
-			'id_request.rc_planilla.id_photo',
-			'id_request.id_valid_request',
-			'id_request.pos',
-			'id_request.pos.id_location',
-			'id_request.pos.id_location.id_estado',
-			'id_request.pos.id_location.id_municipio',
-			'id_request.pos.id_location.id_ciudad',
-			'id_request.pos.id_location.id_parroquia',
-			//
-			'id_request.id_commerce',
-			'id_request.id_commerce.id_ident_type',
-			'id_request.id_commerce.id_activity',
-			'id_request.id_commerce.id_location',
-			'id_request.id_commerce.id_location.id_estado',
-			'id_request.id_commerce.id_location.id_municipio',
-			'id_request.id_commerce.id_location.id_ciudad',
-			'id_request.id_commerce.id_location.id_parroquia',
-			'id_request.id_commerce.banks',
-			'id_request.id_commerce.rc_constitutive_act',
-			'id_request.id_commerce.rc_constitutive_act.id_photo',
-			'id_request.id_commerce.rc_rif',
-			'id_request.id_commerce.rc_special_contributor',
-			'id_request.id_commerce.id_aci',
-			//
-			'id_request.id_product',
-			'id_request.id_type_request',
-			'id_request.id_request_origin',
-			//
-			'id_request.rc_ref_bank',
-			'id_request.rc_comp_dep',
-			'id_request.id_payment_method',
-			'id_request.id_type_payment',
-		],
-	});
+	try {
+		let query: any = await getRepository(fm_status).findOne({
+			where: { id_request },
+			relations: [
+				'id_request',
+				'id_request.id_client',
+				'id_request.id_client.id_location',
+				'id_request.id_client.id_location.id_estado',
+				'id_request.id_client.id_location.id_municipio',
+				'id_request.id_client.id_location.id_ciudad',
+				'id_request.id_client.id_location.id_parroquia',
+				'id_request.id_client.rc_ident_card',
+				'id_request.id_client.id_ident_type',
+				//
+				'id_request.rc_planilla',
+				'id_request.rc_planilla.id_photo',
+				'id_request.id_valid_request',
+				'id_request.pos',
+				'id_request.pos.id_location',
+				'id_request.pos.id_location.id_estado',
+				'id_request.pos.id_location.id_municipio',
+				'id_request.pos.id_location.id_ciudad',
+				'id_request.pos.id_location.id_parroquia',
+				//
+				'id_request.id_commerce',
+				'id_request.id_commerce.id_ident_type',
+				'id_request.id_commerce.id_activity',
+				'id_request.id_commerce.id_location',
+				'id_request.id_commerce.id_location.id_estado',
+				'id_request.id_commerce.id_location.id_municipio',
+				'id_request.id_commerce.id_location.id_ciudad',
+				'id_request.id_commerce.id_location.id_parroquia',
+				'id_request.id_commerce.banks',
+				'id_request.id_commerce.rc_constitutive_act',
+				'id_request.id_commerce.rc_constitutive_act.id_photo',
+				'id_request.id_commerce.rc_rif',
+				'id_request.id_commerce.rc_special_contributor',
+				'id_request.id_commerce.id_aci',
+				//
+				'id_request.id_product',
+				'id_request.id_type_request',
+				'id_request.id_request_origin',
+				//
+				'id_request.rc_ref_bank',
+				'id_request.rc_comp_dep',
+				'id_request.id_payment_method',
+				'id_request.id_type_payment',
+			],
+		});
 
-	const { rc_planilla } = query.id_request;
+		const { rc_planilla } = query.id_request;
 
-	if (rc_planilla) {
-		let auxPlanilla: any[] = [];
-		for (let i = 0; i < rc_planilla.length; ++i) {
-			if (rc_planilla[i].id_photo.id_status === 1) {
-				//console.log(rc_planilla[i], rc_planilla[i].id_photo.id_status);
-				auxPlanilla.push(rc_planilla[i]);
+		if (rc_planilla) {
+			let auxPlanilla: any[] = [];
+			for (let i = 0; i < rc_planilla.length; ++i) {
+				if (rc_planilla[i].id_photo.id_status === 1) {
+					//console.log(rc_planilla[i], rc_planilla[i].id_photo.id_status);
+					auxPlanilla.push(rc_planilla[i]);
+				}
+				query.id_request.rc_planilla = auxPlanilla;
 			}
-			query.id_request.rc_planilla = auxPlanilla;
 		}
-	}
 
-	const { rc_constitutive_act } = query.id_request.id_commerce;
-	if (rc_constitutive_act) {
-		let auxActa: any[] = [];
-		for (let i = 0; i < rc_constitutive_act.length; ++i) {
-			if (rc_constitutive_act[i].id_photo.id_status === 1) {
-				//console.log(rc_constitutive_act[i], rc_constitutive_act[i].id_photo.id_status);
-				auxActa.push(rc_constitutive_act[i]);
+		const { rc_constitutive_act } = query.id_request.id_commerce;
+		if (rc_constitutive_act) {
+			let auxActa: any[] = [];
+			for (let i = 0; i < rc_constitutive_act.length; ++i) {
+				if (rc_constitutive_act[i].id_photo.id_status === 1) {
+					//console.log(rc_constitutive_act[i], rc_constitutive_act[i].id_photo.id_status);
+					auxActa.push(rc_constitutive_act[i]);
+				}
+				query.id_request.id_commerce.rc_constitutive_act = auxActa;
 			}
-			query.id_request.id_commerce.rc_constitutive_act = auxActa;
 		}
+
+		if (!query) throw { message: 'el id soministrado no extie', code: 400 };
+
+		//console.log('diferidos', query);
+
+		return query;
+	} catch (err) {
+		console.log('err', err);
 	}
-
-	if (!query) throw { message: 'el id soministrado no extie', code: 400 };
-
-	//console.log('diferidos', query);
-
-	return query;
 };
 
 export const getDash = () => ({
@@ -356,28 +374,32 @@ export const getDash = () => ({
 });
 
 export const All_Info = async () => {
-	let solicitudes = await getRepository(fm_status).count({
-		where: { id_status_request: 1, id_department: 4 },
-	});
+	try {
+		let solicitudes = await getRepository(fm_status).count({
+			where: { id_status_request: 1, id_department: 4 },
+		});
 
-	let terminadas: any = await getRepository(fm_status).count({
-		where: { id_status_request: 3, id_department: 4 },
-	});
+		let terminadas: any = await getRepository(fm_status).count({
+			where: { id_status_request: 3, id_department: 4 },
+		});
 
-	let diferidos: any = await getRepository(fm_status).count({
-		where: { id_status_request: 4, id_department: 4 },
-	});
+		let diferidos: any = await getRepository(fm_status).count({
+			where: { id_status_request: 4, id_department: 4 },
+		});
 
-	// getDash();
+		// getDash();
 
-	allSolic = solicitudes;
-	allTerm = terminadas;
+		allSolic = solicitudes;
+		allTerm = terminadas;
 
-	const total = { allSolic, allTerm, diferidos };
+		const total = { allSolic, allTerm, diferidos };
 
-	//// // console.log(total);
+		//// // console.log(total);
 
-	return total;
+		return total;
+	} catch (err) {
+		console.log('err', err);
+	}
 };
 
 export const OneSolic = async (key: any) => {
