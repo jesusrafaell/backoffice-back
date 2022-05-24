@@ -30,9 +30,11 @@ export default class fm_ciudad {
 	@Column({ nullable: true })
 	postal_code!: string;
 
+	/*
 	@OneToMany(() => fm_location, (fm_location) => fm_location.id_municipio)
 	@JoinColumn({ name: 'locations' })
 	locations?: fm_location[];
+	*/
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;

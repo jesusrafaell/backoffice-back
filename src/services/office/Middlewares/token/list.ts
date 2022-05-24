@@ -14,11 +14,15 @@ const list: string[] = [
 	'payment',
 	'tipo_de_carteras',
 	'telemarket',
-	'type_Pay',
+	'type_pay',
 	'request_source',
 	'type_diferido',
+	'aci',
 	'distribuidores',
 	'types_solict',
+	'aci&distribuidores',
+	'direccion',
+	'ident_type',
 ];
 
 export default list;

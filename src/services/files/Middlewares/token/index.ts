@@ -15,8 +15,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 		// use
 		if (result) {
-			if (req.headers.token) {
-				const { token }: any = req.headers;
+			if (req.headers.authorization) {
+				const token: string = req.headers.authorization;
 				const resp: any = jwt.verify(token, Key);
 
 				console.log(resp);

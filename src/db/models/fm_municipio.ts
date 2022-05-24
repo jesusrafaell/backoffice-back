@@ -28,9 +28,11 @@ export default class fm_municipio {
 	@JoinColumn({ name: 'parroquias' })
 	parroquias?: fm_parroquia[];
 
+	/*
 	@OneToMany(() => fm_location, (fm_location) => fm_location.id_municipio)
 	@JoinColumn({ name: 'locations' })
 	locations?: fm_location[];
+	*/
 
 	@Column({ nullable: true })
 	municipio!: string;

@@ -23,23 +23,27 @@ const FM: Router = Router();
 
 // RC
 //
-FM.route('/FM/client').post(validClientData, fm_create_client);
+//FM.route('/FM/client').post(validClientData, fm_create_client);
 //
-FM.route('/FM/:id/commerce').post(validCommerceData, fm_create_commerce);
+//FM.route('/FM/:id/commerce').post(validCommerceData, fm_create_commerce);
 //
-FM.route('/FM').post(fmFormData, FM_create);
-//
-FM.route('/FM/extraPos').post(fmForDataExtraPos, FM_extraPos);
+//-Creacion FM
 //
 FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
 //
 FM.route('/FM/:id/commerce/valid').post(valid_exitin_commerce);
 //
+FM.route('/FM').post(fmFormData, FM_create);
+//
+FM.route('/FM/extraPos').post(fmForDataExtraPos, FM_extraPos);
+//
 FM.route('/FM/valid/extrapos').post(valid_existin_clientAndCommerce);
 //
 FM.route('/FM/bank/valid').post(validBankAccount, valid_bank_account);
 //
-FM.route('/FM').get(getFm);
+//FM.route('/FM').get(getFm);
+//
+//Update FM
 //
 FM.route('/FM/admision/:id_FM/status').put(editStatusByIdAdmision);
 //

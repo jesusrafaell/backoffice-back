@@ -1,18 +1,23 @@
 import axios from 'axios';
+import fm_client from '../../../../db/models/fm_client';
+import fm_commerce from '../../../../db/models/fm_commerce';
+import { getRepository } from 'typeorm';
 const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
 
 export const comercioToProviders = async (FM: any, token: any) => {
 	try {
 		const { id_product } = FM;
+		const id_client = FM.id_client.id;
+		const id_commerce = FM.id_commerce.id;
 
 		console.log('Comenzar en 1000pagos', HOST, ' ', PORT_PROVIDERS);
 
 		await axios
 			.post(
 				`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
-				{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-				{ headers: { token: token } }
+				{ id_fm: FM.id, id_commerce, id_client },
+				{ headers: { Authorization: token } }
 			)
 			.catch((err) => {
 				console.log('Error al crear comercio en 1000pagos');
@@ -30,7 +35,7 @@ export const comercioToProviders = async (FM: any, token: any) => {
 					username: 'acesso.teste',
 					password: '@ger7123',
 				},
-				{ headers: { token: token } }
+				{ headers: { Authorization: token } }
 			);
 
 			console.log('bug1');
@@ -39,8 +44,8 @@ export const comercioToProviders = async (FM: any, token: any) => {
 			const resCommerce = await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
-					{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-					{ headers: { token: token } }
+					{ id_fm: FM.id, id_commerce, id_client },
+					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {
 					console.log('Error al crear comercio');
@@ -52,8 +57,8 @@ export const comercioToProviders = async (FM: any, token: any) => {
 			const resTerminalTms7 = await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce/terminal`,
-					{ id_fm: FM.id, id_commerce: FM.id_commerce, id_client: FM.id_client },
-					{ headers: { token: token } }
+					{ id_fm: FM.id, id_commerce, id_client },
+					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {
 					console.log('Error al crear terminales ');
@@ -90,7 +95,16 @@ export const comercioToProviders = async (FM: any, token: any) => {
 			}
 			console.log('Abono creado en 1000pagos');
 		} else if (id_product.id === 2) {
-			console.log('create in pagina de temrianles');
+			console.log('create in pagina de terminales');
+		}
+
+		//validate cliente y commerce
+
+		if (FM.id_client.validate === 0) {
+			await getRepository(fm_client).update(id_client, { validate: 1 });
+		}
+		if (FM.id_commerce.validate === 0) {
+			await getRepository(fm_commerce).update(id_commerce, { validate: 1 });
 		}
 
 		return { ok: true };
@@ -112,7 +126,7 @@ const createAbono1000pagos = async (commerce: any, token: any, terminals: any) =
 			.post(
 				`${HOST}:${PORT_PROVIDERS}/app1000pagos/abonoTms7`,
 				{ commerce: commerce, terminals: terminals },
-				{ headers: { token: token } }
+				{ headers: { Authorization: token } }
 			)
 			.catch((err) => {
 				console.log('Error al crear abono en 1000pagos');
