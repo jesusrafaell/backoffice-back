@@ -29,11 +29,9 @@ import { getLeadingCommentRanges } from 'typescript';
 import FM from 'services/office/router/fm/fm.routes';
 import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
+import { createEncriptCode, desEncriptCode } from '../../../../utilis/createEncriptCodeFm';
 //import dotenv from '../../../../config/env';
 //const { HOST, PORT_PROVIDERS } = dotenv;
-
-const HOST = 'http://localhost';
-const PORT_PROVIDERS = 8000;
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -48,8 +46,9 @@ export const createCodeFM = (item1: number, item2: number, item3: number, op: nu
 			aux = 'S';
 			break;
 	}
-	const codeX = 'C' + `${item2}`.padStart(3, '0') + 'X' + `${item3}`.padStart(3, '0');
-	const codeFM = aux + `${item1}`.padStart(4, '0') + codeX;
+	const codeFM = aux + createEncriptCode(item1, item2, item3);
+	console.log('code', codeFM);
+	console.log('code', desEncriptCode(codeFM.slice(1, codeFM.length)));
 	return codeFM;
 };
 
