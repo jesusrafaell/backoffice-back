@@ -10,8 +10,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		// define array route
 
 		// use
-		if (req.headers.token) {
-			const { token }: any = req.headers;
+		if (req.headers.authorization) {
+			const token: string = req.headers.authorization;
 			const resp: any = jwt.verify(token, Key);
 
 			req.headers.token = resp;

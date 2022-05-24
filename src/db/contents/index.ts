@@ -26,7 +26,6 @@ import worker from './worker';
 // init server
 
 createConnection().then(async () => {
-	await status_request();
 	await type_request();
 	await ident_type();
 	await roles();
@@ -36,10 +35,10 @@ createConnection().then(async () => {
 	await department();
 	await worker();
 	await Product();
-	await estado();
-	await municipio();
-	await parroquia();
-	await ciudad();
+	//await estado();
+	//await municipio();
+	//await parroquia();
+	//await ciudad();
 	await bank();
 	await type_person();
 	await afiliados();
@@ -50,4 +49,5 @@ createConnection().then(async () => {
 	await type_diferido();
 	await ger7_parametrization();
 	await status_photo();
+	await status_request();
 });

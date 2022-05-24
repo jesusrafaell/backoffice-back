@@ -14,16 +14,23 @@ export default (req: Request, res: Response, next: NextFunction) => {
 			list.includes(req.baseUrl) || list.includes(req.path.split('/')[1]) || list.includes(req.path.split('/')[2]);
 
 		// use
+		console.log('bug0', result, req.path);
 		if (result) {
-			//console.log('token', req.headers.token);
-			if (req.headers.token) {
-				const { token }: any = req.headers;
-
+			//console.log('bug1', req.headers?.authorization);
+			if (req.headers.authorization) {
+				//console.log('bug2');
+				const token: string = req.headers.authorization;
+				console.log('token', token);
+				//console.log('bug3');
 				const Resp: any = jwt.verify(token, Key);
 				// console.log('Resp',Resp);
 
+				//console.log('bug5');
+
 				req.headers.token = Resp;
 				req.headers.token_text = token;
+
+				//console.log('bug6', req.path);
 
 				next();
 				//

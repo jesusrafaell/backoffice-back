@@ -92,6 +92,7 @@ const validarRif_tms7 = async (rif: string, access_token: string): Promise<boole
 };
 
 const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
+	console.log(commerce);
 	try {
 		await axios.post(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant`, commerce, {
 			headers: {
@@ -145,50 +146,50 @@ export const createCommerce = async (
 				// client
 				'id_client',
 				'id_client.id_location',
-				'id_client.id_location.id_estado',
-				'id_client.id_location.id_municipio',
-				'id_client.id_location.id_ciudad',
-				'id_client.id_location.id_parroquia',
+				'id_client.id_location.id_direccion',
+				// 'id_client.id_location.id_estado',
+				// 'id_client.id_location.id_municipio',
+				// 'id_client.id_location.id_ciudad',
+				// 'id_client.id_location.id_parroquia',
 				'id_client.id_ident_type',
 				//pos
 				'pos',
 				'pos.id_location',
-				'pos.id_location.id_estado',
-				'pos.id_location.id_municipio',
-				'pos.id_location.id_ciudad',
-				'pos.id_location.id_parroquia',
+				'pos.id_location.id_direccion',
+				// 'pos.id_location.id_estado',
+				// 'pos.id_location.id_municipio',
+				// 'pos.id_location.id_ciudad',
+				// 'pos.id_location.id_parroquia',
 				// commerce
 				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
 				'id_commerce.id_activity.id_afiliado',
 				'id_commerce.id_location',
-				'id_commerce.id_location.id_estado',
-				'id_commerce.id_location.id_municipio',
-				'id_commerce.id_location.id_ciudad',
-				'id_commerce.id_location.id_parroquia',
+				'id_commerce.id_location.id_direccion',
+				// 'id_commerce.id_location.id_estado',
+				// 'id_commerce.id_location.id_municipio',
+				// 'id_commerce.id_location.id_ciudad',
+				// 'id_commerce.id_location.id_parroquia',
 			],
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
 		const { id_commerce, id_client, pos, id }: any = fmData;
 		const { name, id_ident_type, ident_num, id_activity }: any = id_commerce;
-		const { id_estado, id_ciudad } = id_commerce.id_location;
+		const { estado, codigoPostal } = id_commerce.id_location.id_direccion;
 
-		const address = Object.keys(id_commerce.id_location)
-			.filter((key) => key !== 'id')
-			.map((key) => id_commerce.id_location[key][key.replace('id_', '')])
-			.filter((item) => item)
-			.join(', ');
+		const dirCC = id_commerce.id_location.id_direccion;
 
-		const address_line1 = Object.keys(id_client.id_location)
-			.filter((key) => key !== 'id')
-			.map((key) => id_client.id_location[key][key.replace('id_', '')])
-			.filter((item) => item)[0];
+		const address = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}, ${dirCC.sector}; ${id_commerce.id_location.calle}, ${id_commerce.id_location.local}`;
 
-		const address_line2 = Object.keys(pos[0].id_location)
-			.map((key) => pos[0].id_location[key][key.replace('id_', '')])
-			.filter((item) => item)[0];
+		const dirC = id_client.id_location.id_direccion;
+
+		const address_line1 = `${dirC.estado}`;
+
+		const dirPos = pos[0].id_location.id_direccion;
+
+		const address_line2 = `${dirPos.estado}`;
 
 		const merchantId = createMerchantId(id_activity.id_afiliado.id, id);
 
@@ -202,11 +203,11 @@ export const createCommerce = async (
 			taxId: `${id_ident_type.name}${ident_num}`,
 			address,
 			address_number: 100,
-			address_line1,
-			address_line2,
-			city: id_client.name,
-			state: id_estado.estado,
-			postalcode: id_ciudad.postal_code,
+			address_line1, //Maximo de 15 char Aproxidamente
+			address_line2, //Maximo de 15 char Aproxidamente
+			city: dirCC.ciudad,
+			state: estado,
+			postalcode: codigoPostal,
 			status: 1,
 			group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
 			partner: null,
@@ -216,7 +217,7 @@ export const createCommerce = async (
 		if (resValidCommerceTsm7) {
 			console.log('Comercio ya existe en TMS7 ');
 		} else {
-			console.log('Crear comercio en TMS7 --> ', commerce);
+			console.log('Crear comercio en TMS7 --> ');
 			const saveComercioTMS7 = await createCommerceTMS7(commerce, usar.access_token);
 			if (saveComercioTMS7) {
 				throw { message: saveComercioTMS7?.message || 'Error en crear comercio en TMS7' };

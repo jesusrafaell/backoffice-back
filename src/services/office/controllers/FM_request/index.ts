@@ -23,17 +23,11 @@ import fm_product from '../../../../db/models/fm_product';
 import fm_commerce_constitutive_act from '../../../../db/models/fm_commerce_constitutive_act';
 import fm_planilla from '../../../../db/models/fm_planilla';
 import fm_photo from '../../../../db/models/fm_photo';
-import axios from 'axios';
 import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
-import { getLeadingCommentRanges } from 'typescript';
-import FM from 'services/office/router/fm/fm.routes';
 import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
 //import dotenv from '../../../../config/env';
 //const { HOST, PORT_PROVIDERS } = dotenv;
-
-const HOST = 'http://localhost';
-const PORT_PROVIDERS = 8000;
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -158,15 +152,7 @@ export const valid_existin_client = async (
 
 		const client = await getRepository(fm_client).findOne({
 			where: { email },
-			relations: [
-				'phones',
-				'id_ident_type',
-				'id_location',
-				'id_location.id_estado',
-				'id_location.id_municipio',
-				'id_location.id_ciudad',
-				'id_location.id_parroquia',
-			],
+			relations: ['phones', 'id_ident_type', 'id_location', 'id_location.id_direccion'],
 		});
 
 		if (client && client.ident_num != ident_num && client.id_ident_type != id_ident_type) {
@@ -260,10 +246,11 @@ export const valid_exitin_commerce = async (
 				'id_ident_type',
 				'id_activity',
 				'id_location',
-				'id_location.id_estado',
-				'id_location.id_municipio',
-				'id_location.id_ciudad',
-				'id_location.id_parroquia',
+				'id_location.id_direccion',
+				// 'id_location.id_estado',
+				// 'id_location.id_municipio',
+				// 'id_location.id_ciudad',
+				// 'id_location.id_parroquia',
 				'banks',
 			],
 		});
@@ -524,10 +511,10 @@ export const getFm = async (
 				'id_request',
 				'id_request.id_client',
 				'id_request.id_client.id_location',
-				'id_request.id_client.id_location.id_estado',
-				'id_request.id_client.id_location.id_municipio',
-				'id_request.id_client.id_location.id_ciudad',
-				'id_request.id_client.id_location.id_parroquia',
+				// 'id_request.id_client.id_location.id_estado',
+				// 'id_request.id_client.id_location.id_municipio',
+				// 'id_request.id_client.id_location.id_ciudad',
+				// 'id_request.id_client.id_location.id_parroquia',
 				'id_request.id_client.id_ident_type',
 				'id_request.id_valid_request',
 				'id_request.pos',
@@ -544,10 +531,10 @@ export const getFm = async (
 				'id_request.id_commerce.id_ident_type',
 				'id_request.id_commerce.id_activity',
 				'id_request.id_commerce.id_location',
-				'id_request.id_commerce.id_location.id_estado',
-				'id_request.id_commerce.id_location.id_municipio',
-				'id_request.id_commerce.id_location.id_ciudad',
-				'id_request.id_commerce.id_location.id_parroquia',
+				// 'id_request.id_commerce.id_location.id_estado',
+				// 'id_request.id_commerce.id_location.id_municipio',
+				// 'id_request.id_commerce.id_location.id_ciudad',
+				// 'id_request.id_commerce.id_location.id_parroquia',
 				'id_request.id_commerce.banks',
 				'id_request.id_product',
 				'id_request.id_type_request',
@@ -580,6 +567,7 @@ export const editStatusByIdAdmision = async (
 			relations: [
 				'id_valid_request',
 				'id_product',
+				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
@@ -653,6 +641,7 @@ export const fmCreateClient = async (fmCliente: ClientInterface) => {
 			const salt: string = await bcrypt.genSalt(10);
 			const password = await bcrypt.hash(type[0].name + ident_num + '.', salt);
 
+			console.log(location);
 			const reslocation = await getRepository(fm_location).save(location);
 			const id_location = reslocation.id;
 
@@ -1051,11 +1040,6 @@ export const editStatusAdmitionDiferido = async (
 			commerceData = JSON.parse(commerce);
 		}
 
-		//console.log(clientData);
-		//console.log(commerceData);
-
-		//console.log('bugx0', id_FM);
-
 		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },
 			relations: relationsFMFull,
@@ -1064,7 +1048,7 @@ export const editStatusAdmitionDiferido = async (
 		const validate = query.id_valid_request;
 
 		if (validate.id_typedif_client !== null) {
-			const { rc_ident_card, id_ident_type, ref_person_1, ref_person_2, phones, phone, id, ...data } = clientData;
+			const { rc_ident_card, id_ident_type, ref_person_1, ref_person_2, phone, id, ...data } = clientData;
 			if (JSON.stringify(query.id_client) !== JSON.stringify(dataFM.id_client)) {
 				//console.log(dataClient);
 				console.log('Client1');
@@ -1072,9 +1056,10 @@ export const editStatusAdmitionDiferido = async (
 				console.log('Client2');
 				//console.log(newClient);
 			}
-			console.log(query.id_client.phones[0].phone, phones.phone1.phone);
-			if (query.id_client.phones[0].phone !== phones) {
-				console.log('telfeno dif');
+			console.log(phone);
+			console.log(query.id_client.phones[0].phone, phone.phone1);
+			if (query.id_client.phones[0].phone !== phone.phone1) {
+				console.log('Falta actulizar telefonos');
 			}
 			//Update imagen
 			//console.log(files.images);

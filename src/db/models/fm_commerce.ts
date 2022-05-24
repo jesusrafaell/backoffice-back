@@ -40,6 +40,9 @@ export default class fm_commerce {
 	@Column({ default: 1 })
 	special_contributor!: number;
 
+	@Column({ default: 0 })
+	validate?: number;
+
 	@ManyToOne(() => fm_activity, (fm_activity) => fm_activity.commerces)
 	@JoinColumn({ name: 'id_activity' })
 	id_activity!: number | fm_activity;

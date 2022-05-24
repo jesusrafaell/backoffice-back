@@ -9,19 +9,17 @@ import {
 	CreateDateColumn,
 	OneToMany,
 } from 'typeorm';
-import fm_estado from './fm_estado';
-import fm_municipio from './fm_municipio';
-import fm_ciudad from './fm_ciudad';
-import fm_parroquia from './fm_parroquia';
 import fm_client from './fm_client';
 import fm_commerce from './fm_commerce';
 import fm_posXcommerce from './fm_posXcommerce';
+import fm_direccion from './fm_direccion';
 
 @Entity()
 export default class fm_location {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
+	/*
 	@ManyToOne(() => fm_estado, (fm_estado) => fm_estado.locations)
 	@JoinColumn({ name: 'id_estado' })
 	id_estado!: number;
@@ -37,6 +35,11 @@ export default class fm_location {
 	@ManyToOne(() => fm_parroquia, (fm_parroquia) => fm_parroquia.locations)
 	@JoinColumn({ name: 'id_parroquia' })
 	id_parroquia!: number;
+	*/
+
+	@ManyToOne(() => fm_direccion)
+	@JoinColumn({ name: 'id_direccion' })
+	id_direccion!: number;
 
 	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_location)
 	@JoinColumn({ name: 'pos' })

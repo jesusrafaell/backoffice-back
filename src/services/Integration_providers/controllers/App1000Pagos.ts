@@ -26,29 +26,32 @@ export const createCommerce = async (
 				// client
 				'id_client',
 				'id_client.id_location',
-				'id_client.id_location.id_estado',
-				'id_client.id_location.id_municipio',
-				'id_client.id_location.id_ciudad',
-				'id_client.id_location.id_parroquia',
+				'id_client.id_location.id_direccion',
+				// 'id_client.id_location.id_estado',
+				// 'id_client.id_location.id_municipio',
+				// 'id_client.id_location.id_ciudad',
+				// 'id_client.id_location.id_parroquia',
 				'id_client.id_ident_type',
 				'id_client.phones',
 				//pos
 				'pos',
 				'pos.id_location',
-				'pos.id_location.id_estado',
-				'pos.id_location.id_municipio',
-				'pos.id_location.id_ciudad',
-				'pos.id_location.id_parroquia',
+				'pos.id_location.id_direccion',
+				// 'pos.id_location.id_estado',
+				// 'pos.id_location.id_municipio',
+				// 'pos.id_location.id_ciudad',
+				// 'pos.id_location.id_parroquia',
 				// commerce
 				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
 				'id_commerce.id_activity.id_afiliado',
 				'id_commerce.id_location',
-				'id_commerce.id_location.id_estado',
-				'id_commerce.id_location.id_municipio',
-				'id_commerce.id_location.id_ciudad',
-				'id_commerce.id_location.id_parroquia',
+				'id_commerce.id_location.id_direccion',
+				// 'id_commerce.id_location.id_estado',
+				// 'id_commerce.id_location.id_municipio',
+				// 'id_commerce.id_location.id_ciudad',
+				// 'id_commerce.id_location.id_parroquia',
 				//
 			],
 		});
@@ -61,6 +64,14 @@ export const createCommerce = async (
 				comerRif: id_commerce.id_ident_type.name + id_commerce.ident_num,
 			},
 		});
+
+		const dirCC = id_commerce.id_location.id_direccion;
+		const dirC = id_client.id_location.id_direccion;
+		const dirPos = pos[0].id_location.id_direccion;
+
+		const addressCommerce = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}. ${dirCC.sector}, ${id_commerce.id_location.calle}, ${id_commerce.id_location.local}`;
+		const address_Client = `${dirC.estado}, ${dirC.municipio}, ${dirC.ciudad}, ${dirC.parroquia}. ${dirC.sector}, ${id_client.id_location.calle}, ${id_client.id_location.local}`;
+		const address_Pos1 = `${dirPos.estado}, ${dirPos.municipio}, ${dirPos.ciudad}, ${dirPos.parroquia}. ${dirPos.sector}, ${pos[0].id_location.calle}, ${pos[0].id_location.local}`;
 
 		if (!fmCommerce1000pagos) {
 			const commerce: any = {
@@ -84,11 +95,7 @@ export const createCommerce = async (
 				comerModalidadPos: 3,
 				comerTipoPos: id_product,
 				comerRecaudos: null,
-				comerDireccion: Object.keys(id_commerce.id_location)
-					.filter((key) => key !== 'id')
-					.map((key) => id_commerce.id_location[key][key.replace('id_', '')])
-					.filter((item) => item)
-					.join(', '),
+				comerDireccion: addressCommerce,
 				//
 				comerObservaciones: '',
 				comerCodAliado: id_commerce.id_aci,
@@ -101,17 +108,9 @@ export const createCommerce = async (
 				comerCodigoBanco3: '',
 				comerCuentaBanco3: '',
 				//
-				comerDireccionHabitacion: Object.keys(id_client.id_location)
-					.filter((key) => key !== 'id')
-					.map((key) => id_commerce.id_location[key][key.replace('id_', '')])
-					.filter((item) => item)
-					.join(', '),
+				comerDireccionHabitacion: address_Client,
 				//
-				comerDireccionPos: Object.keys(pos[0].id_location)
-					.map((key) => {
-						return pos[0].id_location[key][key.replace('id_', '')];
-					})
-					.filter((item) => item)[0],
+				comerDireccionPos: address_Pos1,
 				//
 				comerDiasOperacion: id_commerce.days,
 				comerFechaGarFian: null,

@@ -49,6 +49,9 @@ export default class fm_client {
 	@Column({ unique: true })
 	email!: string;
 
+	@Column({ default: 0 })
+	validate?: number;
+
 	@Column({ nullable: true, default: null })
 	@ManyToOne(() => fm_photo, (fm_photo) => fm_photo.requests)
 	@JoinColumn({ name: 'rc_ident_card' })

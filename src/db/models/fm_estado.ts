@@ -31,9 +31,11 @@ export default class fm_estado {
 	@JoinColumn({ name: 'municipios' })
 	municipios?: fm_municipio[];
 
+	/*
 	@OneToMany(() => fm_location, (fm_location) => fm_location.id_estado)
 	@JoinColumn({ name: 'locations' })
 	locations?: fm_location[];
+	*/
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;
