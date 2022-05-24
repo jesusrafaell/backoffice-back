@@ -10,6 +10,8 @@ Commerce.route('/app1000pagos/commerce').post(CreateCommerceData, createCommerce
 //
 
 Commerce.route('/app1000pagos/abonoTms7').post(abono1000pagos);
+//
+//Commerce.route('/app1000pagos/pagina_terminales').post(createTerminal);
 
 //
 export default Commerce;

@@ -19,6 +19,7 @@ export const createCommerce = async (
 ): Promise<void> => {
 	try {
 		console.log('Comercio en 1000pagos');
+		console.log(req.body.id_fm, req.body.id_commerce, req.body.id_client);
 		const fmData = await getRepository(fm_request).findOne({
 			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
 			order: { id: 'ASC' },

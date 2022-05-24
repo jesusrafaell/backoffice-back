@@ -65,6 +65,7 @@ export const editStatusByIdAdministration = async (
 			relations: [
 				'id_valid_request',
 				'id_product',
+				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
