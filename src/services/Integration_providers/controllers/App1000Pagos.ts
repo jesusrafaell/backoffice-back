@@ -211,7 +211,8 @@ export const abono1000pagos = async (
 			}
 		} else {
 			console.log('No tiene abonos');
-			console.log(commerce.id_activity.id_afiliado);
+			//console.log(commerce);
+			//console.log(commerce.id_activity.id_afiliado);
 			console.log(`${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'));
 			for (let i = 0; i < terminals.length; i++) {
 				abono.push({

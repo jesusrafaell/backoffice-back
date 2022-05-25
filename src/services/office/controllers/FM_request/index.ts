@@ -135,41 +135,36 @@ export const valid_existin_client = async (
 		let resp: Api.Resp = { message: ``, info: { matsh: false } };
 
 		// validar existencia de la clave cumpuesta
-		const validIdent = await getRepository(fm_client).findOne({ id_ident_type, ident_num });
-		if (validIdent && validIdent.email != email) {
-			throw { message: 'el documento de identidad ya esta afiliado a un correo' };
-		}
-
-		const validIdentType: any = await getRepository(fm_client)
-			.createQueryBuilder('fm_clinet')
-			.leftJoinAndSelect('fm_clinet.id_ident_type', 'id_ident_type')
-			.where(`fm_clinet.ident_num = ${ident_num}`)
-			.getOne();
-
-		if (validIdentType && validIdentType.id_ident_type.id != id_ident_type) {
-			throw { message: 'el de docuemnto de identidad no coinside' };
-		}
-
-		const client = await getRepository(fm_client).findOne({
-			where: { email },
+		const validIdent = await getRepository(fm_client).findOne({
+			where: { id_ident_type, ident_num },
 			relations: ['phones', 'id_ident_type', 'id_location', 'id_location.id_direccion'],
 		});
+		if (email !== '') {
+			if (validIdent && validIdent.email != email) {
+				throw { message: 'el documento de identidad ya esta afiliado a un correo' };
+			}
+			const client = await getRepository(fm_client).findOne({
+				where: { email },
+				relations: ['id_ident_type'],
+			});
 
-		if (client && client.ident_num != ident_num && client.id_ident_type != id_ident_type) {
-			throw { message: 'el correo ya esta asociado a otro documento de identidad' };
-			//
-		} else if (client) {
+			if (client && client.ident_num != ident_num && client.id_ident_type != id_ident_type) {
+				throw { message: 'el correo ya esta asociado a otro documento de identidad' };
+				//
+			}
+		}
+		if (validIdent) {
 			resp = {
 				message: 'el usuario existe',
 				info: {
-					client,
+					client: validIdent,
 					matsh: true,
-					matshImg: (await getRepository(fm_request).findOne({ id_client: client.id })) ? true : false,
+					matshImg: (await getRepository(fm_request).findOne({ id_client: validIdent.id })) ? true : false,
 				},
 			};
 			//
 		} else if (!resp.message.length) {
-			resp.message = `ni el correo ni la ci existen`;
+			resp.message = `OK, cliente no existe`;
 			//
 		}
 
@@ -1238,3 +1233,15 @@ const getImagen = (list: any[], op: string) => {
 	}
 	return null;
 };
+
+/*
+		const validIdentType: any = await getRepository(fm_client)
+			.createQueryBuilder('fm_clinet')
+			.leftJoinAndSelect('fm_clinet.id_ident_type', 'id_ident_type')
+			.where(`fm_clinet.ident_num = ${ident_num}`)
+			.getOne();
+
+		if (validIdentType && validIdentType.id_ident_type.id != id_ident_type) {
+			throw { message: 'el de docuemnto de identidad no coinside' };
+		}
+		*/

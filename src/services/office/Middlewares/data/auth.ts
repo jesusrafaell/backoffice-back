@@ -34,12 +34,6 @@ export const RegisterData: ValidationChain[] = [
 ];
 
 export const validExistingClient: ValidationChain[] = [
-	check('email', 'el correo no es valido')
-		.exists({ checkFalsy: true, checkNull: true })
-		.normalizeEmail()
-		.isEmail()
-		.custom(NoSQL),
-	//
 	check('id_ident_type', 'el tipo de documento de identidad no es valido')
 		.exists({ checkFalsy: true, checkNull: true })
 		.isNumeric()

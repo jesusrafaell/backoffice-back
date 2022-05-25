@@ -1,12 +1,25 @@
 import axios from 'axios';
 import fm_client from '../../../../db/models/fm_client';
 import fm_commerce from '../../../../db/models/fm_commerce';
+import fm_request from '../../../../db/models/fm_request';
 import { getRepository } from 'typeorm';
 const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
 
-export const comercioToProviders = async (FM: any, token: any) => {
+export const comercioToProviders = async (idFm: any, token: any) => {
 	try {
+		const FM: any = await getRepository(fm_request).findOne(idFm.id, {
+			relations: [
+				'id_valid_request',
+				'id_product',
+				'id_client',
+				'id_commerce',
+				'id_commerce.id_ident_type',
+				'id_commerce.id_activity',
+				'id_commerce.id_activity.id_afiliado',
+			],
+		});
+		if (!FM) throw { message: 'FM no existe call (Providers)' };
 		const { id_product } = FM;
 		const id_client = FM.id_client.id;
 		const id_commerce = FM.id_commerce.id;
