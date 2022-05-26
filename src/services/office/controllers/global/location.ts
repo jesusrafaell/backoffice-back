@@ -145,7 +145,7 @@ export const getDireccionesParroquia = async (
 		// getter list of estados to db ith typeorm
 		const info = await getRepository(fm_direccion)
 			.createQueryBuilder('direccion')
-			.select('parroquia,codigoPostal')
+			.select('parroquia')
 			.where({ estado, municipio, ciudad })
 			.distinct(true)
 			.getRawMany();
@@ -166,7 +166,7 @@ export const getDireccionesSector = async (
 		// getter list of estados to db ith typeorm
 		const info = await getRepository(fm_direccion)
 			.createQueryBuilder('direccion')
-			.select('sector,id')
+			.select('sector,id,codigoPostal')
 			.where({ estado, municipio, ciudad, parroquia })
 			.distinct(true)
 			.getRawMany();
