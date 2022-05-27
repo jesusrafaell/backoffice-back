@@ -120,12 +120,15 @@ const updateCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 				Authorization: 'Bearer ' + access_token,
 			},
 		});
-		return null;
+		return {
+			ok: true,
+		};
 	} catch (err: any) {
 		const resError = {
 			message: err?.response.statusText,
 			status: err?.response.status,
 			data: err?.response.data,
+			ok: false,
 		};
 		console.log('Tms7 error ', resError);
 		return resError;
@@ -463,54 +466,53 @@ export const editCommerceTMS7 = async (
 		if (!commerce) throw { message: 'el commercio suministrado no existe', code: 400 };
 
 		const merchant: any = await getMerchanId(rif, usar.access_token);
-		if (!merchant.ok || !merchant.data) {
-			console.log('Comercio no esta en TMS7');
-			throw { message: 'Comercio no esta en TMS7' };
-		}
+		if (merchant.ok && merchant.data) {
+			const { id_location } = commerce;
+			const { name, id_ident_type, ident_num, id_activity }: any = commerce;
+			const { estado, codigoPostal } = id_location.id_direccion;
+			const dirCC = id_location.id_direccion;
 
-		const { id_location } = commerce;
-		const { name, id_ident_type, ident_num, id_activity }: any = commerce;
-		const { estado, codigoPostal } = id_location.id_direccion;
-		const dirCC = id_location.id_direccion;
+			const address = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}, ${dirCC.sector}; ${id_location.calle}, ${id_location.local}`;
 
-		const address = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}, ${dirCC.sector}; ${id_location.calle}, ${id_location.local}`;
-
-		if (id_activity.id_afiliado.name !== merchant.data.group.name) {
-			console.log(id_activity.id_afiliado.name, id_activity.id_afiliado.name.length);
-			console.log(merchant.data.group.name, merchant.data.group.name.length);
-			console.log('TMS7 no permite editar el Grupo del comercio');
-			//throw { message: 'TMS7 no permite editar el Grupo del comercio' };
-		}
-
-		const newDataCommerce = {
-			...merchant.data,
-			company_name: name,
-			receipt_name: name,
-			trade_name: name,
-			taxId: `${id_ident_type.name}${ident_num}`,
-			address,
-			city: dirCC.ciudad,
-			state: estado,
-			postalcode: codigoPostal,
-			status: 1,
-			subacquirer_code: `0${id_activity.id_afiliado.id}`,
-			//Tiene error el endpoint cuando mando group
-			/*
+			if (id_activity.id_afiliado.name !== merchant.data.group.name) {
+				console.log(id_activity.id_afiliado.name, id_activity.id_afiliado.name.length);
+				console.log(merchant.data.group.name, merchant.data.group.name.length);
+				console.log('TMS7 no permite editar el Grupo del comercio');
+				//throw { message: 'TMS7 no permite editar el Grupo del comercio' };
+			} else {
+				const newDataCommerce = {
+					...merchant.data,
+					company_name: name,
+					receipt_name: name,
+					trade_name: name,
+					taxId: `${id_ident_type.name}${ident_num}`,
+					address,
+					city: dirCC.ciudad,
+					state: estado,
+					postalcode: codigoPostal,
+					status: 1,
+					subacquirer_code: `0${id_activity.id_afiliado.id}`,
+					//Tiene error el endpoint cuando mando group
+					/*
 			group: {
 				name: id_activity.id_afiliado.name,
 				installments: merchant.data.group.installments,
 			},
 			*/
-		};
+				};
 
-		console.log('send data', newDataCommerce);
+				console.log('send data', newDataCommerce);
 
-		const resUpdateTms7 = await updateCommerceTMS7(newDataCommerce, usar.access_token);
-		if (resUpdateTms7) {
-			throw { message: resUpdateTms7?.message || 'Error en editar comercio en TMS7' };
+				const resUpdateTms7 = await updateCommerceTMS7(newDataCommerce, usar.access_token);
+				if (!resUpdateTms7.ok) {
+					throw { message: resUpdateTms7?.message || 'Error en editar comercio en TMS7' };
+				}
+
+				console.log('comercio updatated en tms7');
+			}
+		} else {
+			console.log('Comercio no esta en TMS7');
 		}
-
-		console.log('comercio updatadio en tms7');
 
 		res.status(200).json({ message: 'Comercio editado en TMS7' });
 	} catch (err) {

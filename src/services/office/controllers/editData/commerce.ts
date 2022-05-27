@@ -187,9 +187,7 @@ export const updateCommerce = async (req: Request<any>, res: Response, next: Nex
 			}
 		}
 
-		throw { message: 'ok vamos con edit commerce' };
-
-		Resp(req, res, { message: 'update ok' });
+		Resp(req, res, { message: 'Comercio Editado' });
 	} catch (err) {
 		next(err);
 	}
@@ -226,15 +224,7 @@ export const getDataCommerce = async (
 		const id_ident_type: any = commerce.id_ident_type;
 
 		const rif: string = `${id_ident_type.name}${commerce.ident_num}`;
-		console.log('rif bus', rif);
-
-		//Esta en TMS7?
-		/*
-		const resProviders: any = await merchantCommerceTms7(`${rif}`, req.headers.token_text);
-		if (!resProviders.ok) {
-			throw { message: resProviders.message || 'Error en API Providers' };
-		}
-		*/
+		//console.log('rif bus', rif);
 
 		const info = {
 			...commerce,

@@ -1028,14 +1028,13 @@ export const editStatusAdmitionDiferido = async (
 		const files: any = req.files;
 
 		const dataFM: any = JSON.parse(fm);
-		let clientData: any = null;
-		let commerceData: any = null;
-		if (client) {
-			clientData = JSON.parse(client);
-		}
-		if (commerce) {
-			commerceData = JSON.parse(commerce);
-		}
+		let clientData: any = JSON.parse(client);
+		let commerceData: any = JSON.parse(commerce);
+
+		console.log('cliente', clientData);
+		console.log('commerce', commerceData);
+
+		throw { message: 'vamos diferido' };
 
 		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },
