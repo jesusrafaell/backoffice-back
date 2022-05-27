@@ -35,31 +35,8 @@ const options: Options = {
 	storage,
 };
 
-export const fmFormData = multer(options).fields([
+export const commerceFormData = multer(options).fields([
 	{ name: 'images', maxCount: 20 },
 	{ name: 'constitutive_act', maxCount: 20 },
-	{ name: 'planilla', maxCount: 20 },
-	{ name: 'client' },
-	{ name: 'commerce' },
-	{ name: 'id_client' },
-	{ name: 'id_commerce' },
-	{ name: 'posX' },
-]);
-
-export const fmForDataExtraPos = multer(options).fields([
-	{ name: 'images', maxCount: 20 },
-	{ name: 'planilla', maxCount: 20 },
-	{ name: 'id_client' },
-	{ name: 'id_commerce' },
-	{ name: 'posX' },
-]);
-
-export const fmForDataDiferido = multer(options).fields([
-	{ name: 'images', maxCount: 20 },
-	{ name: 'constitutive_act', maxCount: 20 },
-	{ name: 'planilla', maxCount: 20 },
-	{ name: 'id_fm' },
-	{ name: 'fm' },
-	{ name: 'client' },
 	{ name: 'commerce' },
 ]);

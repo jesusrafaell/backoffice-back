@@ -20,7 +20,6 @@ import { valid_bank_account } from '../../controllers/FM_request';
 import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_request/index';
 
 const FM: Router = Router();
-
 // RC
 //
 //FM.route('/FM/client').post(validClientData, fm_create_client);

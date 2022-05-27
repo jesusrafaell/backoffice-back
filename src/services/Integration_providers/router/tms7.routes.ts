@@ -8,9 +8,7 @@ const Commerce: Router = Router();
 //
 Commerce.route('/tms7/commerce').get(getAllCommerce).post(CreateCommerceData, createCommerce);
 //
-
 Commerce.route('/tms7/commerce/terminals/:rif').get(getCommerceTerminals);
-
 //
 Commerce.route('/tms7/commerce/terminal').post(CreateTerminalData, createTerminal);
 

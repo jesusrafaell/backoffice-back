@@ -91,9 +91,9 @@ export default class fm_commerce {
 	@JoinColumn({ name: 'requests' })
 	requests?: fm_request[];
 
-	@CreateDateColumn({ select: false })
+	@CreateDateColumn({ select: true })
 	createdAt?: Date;
 
-	@UpdateDateColumn({ select: false })
+	@UpdateDateColumn({ select: true })
 	updatedAt?: Date;
 }
