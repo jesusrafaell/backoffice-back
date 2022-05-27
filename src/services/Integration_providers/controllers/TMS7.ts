@@ -4,6 +4,7 @@ import { getRepository } from 'typeorm';
 import { createMerchantId } from '../../../utilis/createMerchantId';
 import fm_request from '../../../db/models/fm_request';
 import { Api } from '../../../interfaces';
+import fm_commerce from '../../../db/models/fm_commerce';
 
 let users: any[] = [];
 
@@ -95,6 +96,26 @@ const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 	console.log(commerce);
 	try {
 		await axios.post(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant`, commerce, {
+			headers: {
+				Authorization: 'Bearer ' + access_token,
+			},
+		});
+		return null;
+	} catch (err: any) {
+		const resError = {
+			message: err?.response.statusText,
+			status: err?.response.status,
+			data: err?.response.data,
+		};
+		console.log('Tms7 error ', resError);
+		return resError;
+	}
+};
+
+const updateCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
+	console.log(commerce);
+	try {
+		await axios.put(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant`, commerce, {
 			headers: {
 				Authorization: 'Bearer ' + access_token,
 			},
@@ -238,7 +259,7 @@ export const getCommerceTerminals = async (
 	const { rif }: any = req.params;
 	console.log('buscar este ', rif);
 	try {
-		console.log('llegue ', rif);
+		console.log('Get Terminales from ', rif);
 		const { id }: any = req.headers.token;
 
 		const usar = users.find((user) => user.id === id);
@@ -373,6 +394,7 @@ const getMerchanId = async (taxId: string, access_token: string): Promise<boolea
 		const merchantId = res.data.merchants[0].merchantId;
 		return {
 			merchantId,
+			data: res.data.merchants[0],
 			ok: true,
 		};
 	} catch (err: any) {
@@ -383,5 +405,116 @@ const getMerchanId = async (taxId: string, access_token: string): Promise<boolea
 		};
 		console.log('Tms7 error ', resError);
 		return resError;
+	}
+};
+
+export const getCommerceTms7 = async (
+	req: Request<any, Api.Resp, any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	const { rif }: any = req.params;
+	console.log('buscar este ', rif);
+	try {
+		console.log('llegue ', rif);
+		const { id }: any = req.headers.token;
+
+		const usar = users.find((user) => user.id === id);
+
+		const merchant: any = await getMerchanId(rif, usar.access_token);
+		if (!merchant.ok) {
+			console.log('Comercio no esta en TMS7', rif);
+			throw { message: 'Comercio no esta en TMS7', ok: false };
+		}
+
+		const info = {
+			ok: true,
+			merchant: merchant.merchantId,
+		};
+
+		res.status(200).json({ message: 'Auth OK', info });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const editCommerceTMS7 = async (
+	req: Request<Api.params, Api.Resp, { id_commerce: number; rif: string }>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { token }: any = req.headers;
+
+		const usar = users.find((user) => user.id === token.id);
+		if (!usar) throw { message: 'usuario no logeado', code: 401 };
+
+		const id_commerce: number = req.body.id_commerce;
+		const rif: string = req.body.rif;
+		const commerce: any = await getRepository(fm_commerce).findOne(id_commerce, {
+			relations: [
+				'id_ident_type',
+				'id_activity',
+				'id_activity.id_afiliado',
+				'id_location',
+				'id_location.id_direccion',
+			],
+		});
+		if (!commerce) throw { message: 'el commercio suministrado no existe', code: 400 };
+
+		const merchant: any = await getMerchanId(rif, usar.access_token);
+		if (!merchant.ok || !merchant.data) {
+			console.log('Comercio no esta en TMS7');
+			throw { message: 'Comercio no esta en TMS7' };
+		}
+
+		const { id_location } = commerce;
+		const { name, id_ident_type, ident_num, id_activity }: any = commerce;
+		const { estado, codigoPostal } = id_location.id_direccion;
+		const dirCC = id_location.id_direccion;
+
+		const address = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}, ${dirCC.sector}; ${id_location.calle}, ${id_location.local}`;
+
+		if (id_activity.id_afiliado.name !== merchant.data.group.name) {
+			console.log(id_activity.id_afiliado.name, id_activity.id_afiliado.name.length);
+			console.log(merchant.data.group.name, merchant.data.group.name.length);
+			console.log('TMS7 no permite editar el Grupo del comercio');
+			//throw { message: 'TMS7 no permite editar el Grupo del comercio' };
+		}
+
+		const newDataCommerce = {
+			...merchant.data,
+			company_name: name,
+			receipt_name: name,
+			trade_name: name,
+			taxId: `${id_ident_type.name}${ident_num}`,
+			address,
+			city: dirCC.ciudad,
+			state: estado,
+			postalcode: codigoPostal,
+			status: 1,
+			subacquirer_code: `0${id_activity.id_afiliado.id}`,
+			//Tiene error el endpoint cuando mando group
+			/*
+			group: {
+				name: id_activity.id_afiliado.name,
+				installments: merchant.data.group.installments,
+			},
+			*/
+		};
+
+		console.log('send data', newDataCommerce);
+
+		const resUpdateTms7 = await updateCommerceTMS7(newDataCommerce, usar.access_token);
+		if (resUpdateTms7) {
+			throw { message: resUpdateTms7?.message || 'Error en editar comercio en TMS7' };
+		}
+
+		console.log('comercio updatadio en tms7');
+
+		res.status(200).json({ message: 'Comercio editado en TMS7' });
+	} catch (err) {
+		console.log('Error al editar comercio en tms7');
+		next(err);
 	}
 };

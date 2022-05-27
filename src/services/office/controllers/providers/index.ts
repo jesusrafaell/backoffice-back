@@ -164,3 +164,99 @@ const createAbono1000pagos = async (commerce: any, token: any, terminals: any) =
 		return resErr;
 	}
 };
+
+export const merchantCommerceTms7 = async (rif: string, token: any) => {
+	try {
+		await axios;
+		await axios.post(
+			`${HOST}:${PORT_PROVIDERS}/auth/login`,
+			{
+				grant_type: 'password',
+				username: 'acesso.teste',
+				password: '@ger7123',
+			},
+			{ headers: { Authorization: token } }
+		);
+		const res = await axios
+			.get(`${HOST}:${PORT_PROVIDERS}/tms7/commerce/${rif}`, { headers: { Authorization: token } })
+			.catch((err) => {
+				console.log('Error al crear comercio');
+				throw { message: 'Error al crear comercio en TMS7' };
+			});
+		console.log('mercaht res', res);
+		return {
+			ok: true,
+			merchant: res,
+		};
+	} catch (err) {
+		return {
+			ok: false,
+			err: err,
+		};
+	}
+};
+
+export const EditComercioToProviders = async (rif: string, id_commerce: number, token: any) => {
+	try {
+		console.log('Comenzar editcion en 1000pagos', HOST, ' ', PORT_PROVIDERS);
+
+		await axios
+			.put(
+				`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce`,
+				{ id_commerce, rif },
+				{ headers: { Authorization: token } }
+			)
+			.catch((err) => {
+				console.log('Error al editar comercio en 1000pagos');
+				throw { message: 'Error al editar comercio en 1000pagos' };
+			});
+
+		console.log('comercio editado en 1000pagos');
+
+		console.log('editar en Tms7', HOST, ':', PORT_PROVIDERS);
+		await axios.post(
+			`${HOST}:${PORT_PROVIDERS}/auth/login`,
+			{
+				grant_type: 'password',
+				username: 'acesso.teste',
+				password: '@ger7123',
+			},
+			{ headers: { Authorization: token } }
+		);
+
+		const commerceEditTms7: any = await axios
+			.put(`${HOST}:${PORT_PROVIDERS}/tms7/commerce`, { id_commerce, rif }, { headers: { Authorization: token } })
+			.catch((err) => {
+				console.log('Error al  editar comercio');
+				throw { message: 'Error al  editar comercio en TMS7' };
+			});
+
+		throw { message: 'Comercio editado en tms7 ' };
+
+		const commerce: any = await getRepository(fm_commerce).findOne(id_commerce, {
+			relations: ['id_ident_type', 'id_activity', 'id_activity.id_afiliado'],
+		});
+		if (!commerce) throw { message: 'Commercio no existe call (Providers)' };
+
+		const newCommerce: any = await axios
+			.post(`${HOST}:${PORT_PROVIDERS}/tms7/commerce`, { id_commerce }, { headers: { Authorization: token } })
+			.catch((err) => {
+				console.log('Error al  editar comercio');
+				throw { message: 'Error al  editar comercio en TMS7' };
+			});
+
+		if (newCommerce.exist) {
+			console.log('Comercio editado en TMS7 si existe?');
+		} else console.log('Comercio no esta en TMS7');
+
+		return { ok: true };
+	} catch (err: any) {
+		console.log(err);
+		const resErr = {
+			err,
+			message: err?.message,
+			ok: false,
+		};
+		return resErr;
+	}
+};

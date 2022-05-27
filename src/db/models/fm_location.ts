@@ -54,9 +54,6 @@ export default class fm_location {
 	clients?: fm_client[];
 
 	@Column({ nullable: true })
-	sector!: string;
-
-	@Column({ nullable: true })
 	calle!: string;
 
 	@Column({ nullable: true })

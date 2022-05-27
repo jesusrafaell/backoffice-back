@@ -241,3 +241,83 @@ export const abono1000pagos = async (
 		next(err);
 	}
 };
+
+export const editCommerce = async (
+	req: Request<Api.params, Api.Resp, { id_commerce: number; rif: string }>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		//console.log('Comercio en 1000pagos editar', req.body.id_commerce, ' / ', req.body.rif);
+		const id_commerce: number = req.body.id_commerce;
+		const rif: string = req.body.rif;
+		const commerce: any = await getRepository(fm_commerce).findOne(id_commerce, {
+			relations: [
+				'id_ident_type',
+				'id_activity',
+				'id_activity.id_afiliado',
+				'id_location',
+				'id_location.id_direccion',
+			],
+		});
+		if (!commerce) throw { message: 'el commercio suministrado no existe', code: 400 };
+
+		const commerce1000pagos = await getRepository(Comercios).findOne({
+			where: {
+				comerRif: rif,
+			},
+		});
+
+		const { id_location }: any = commerce;
+		const dirCC = id_location.id_direccion;
+
+		const addressCommerce = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}. ${dirCC.sector}, ${id_location.calle}, ${id_location.local}`;
+
+		if (commerce1000pagos) {
+			const newDataCommerce: any = {
+				comerDesc: commerce.name,
+				comerTipoPer: [3, 4].includes(commerce.id_ident_type.id) ? 2 : 1,
+				comerRif: commerce.id_ident_type.name + commerce.ident_num,
+				comerCodTipoCont: commerce.special_contributor ? 2 : 1,
+				comerDireccion: addressCommerce,
+				comerCodAliado: commerce.id_aci,
+				comerDiasOperacion: commerce.days,
+				//comerCodigoBanco: bank_account_num.slice(0, 4),
+				//comerCuentaBanco: bank_account_num,
+			};
+
+			const comercioSave = await getRepository(Comercios).update(
+				{ comerCod: commerce1000pagos.comerCod },
+				newDataCommerce
+			);
+
+			console.log('Comercio editado en 1000pagos');
+
+			const cxaCodAfi = `${commerce.id_activity.id_afiliado.id}`.split('');
+			while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');
+			const cxaCod: string = cxaCodAfi.join('');
+
+			let comerXafiSave = await getRepository(ComerciosXafiliado).findOne({
+				where: { cxaCodComer: commerce1000pagos!.comerCod },
+			});
+
+			if (comerXafiSave) {
+				await getRepository(ComerciosXafiliado).update(
+					{ cxaId: comerXafiSave.cxaId },
+					{
+						cxaCodAfi: cxaCod,
+						cxaCodComer: commerce1000pagos!.comerCod,
+					}
+				);
+			}
+		} else {
+			console.log('El comercio no existe en 1000pagos');
+			throw { message: 'El Comercio no existe en el Aplicativo 1000pagos' };
+		}
+
+		res.status(200).json({ message: 'Comercio editado' });
+	} catch (err) {
+		console.log('Error al editar comercio en 1000pagos');
+		next(err);
+	}
+};
