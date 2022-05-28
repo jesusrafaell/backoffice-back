@@ -19,24 +19,6 @@ export default class fm_location {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
-	/*
-	@ManyToOne(() => fm_estado, (fm_estado) => fm_estado.locations)
-	@JoinColumn({ name: 'id_estado' })
-	id_estado!: number;
-
-	@ManyToOne(() => fm_municipio, (fm_municipio) => fm_municipio.locations)
-	@JoinColumn({ name: 'id_municipio' })
-	id_municipio!: number;
-
-	@ManyToOne(() => fm_ciudad, (fm_ciudad) => fm_ciudad.locations)
-	@JoinColumn({ name: 'id_ciudad' })
-	id_ciudad!: number;
-
-	@ManyToOne(() => fm_parroquia, (fm_parroquia) => fm_parroquia.locations)
-	@JoinColumn({ name: 'id_parroquia' })
-	id_parroquia!: number;
-	*/
-
 	@ManyToOne(() => fm_direccion)
 	@JoinColumn({ name: 'id_direccion' })
 	id_direccion!: number;

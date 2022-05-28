@@ -12,6 +12,7 @@ const worker = async (): Promise<void> => {
 			email: 'armando@example.com',
 			phone: '+584444848',
 			id_company: 1,
+			id_rol: 4,
 			id_department: 8,
 		},
 		{
@@ -23,6 +24,7 @@ const worker = async (): Promise<void> => {
 			email: 'work@correo.com',
 			phone: '+584444848',
 			id_company: 1,
+			id_rol: 4,
 			id_department: 8,
 		},
 		{
@@ -34,16 +36,18 @@ const worker = async (): Promise<void> => {
 			email: 'aetour.ca@gmail.com',
 			phone: '+584444848',
 			id_company: 1,
+			id_rol: 4,
 			id_department: 8,
 		},
 		{
-			name: 'Dimas',
+			name: 'Carlos',
 			last_name: 'test',
 			password: '$2b$10$4fYNDPFNI8TzB/scddXfV.hsgXtPfi8jFAp7MOujpeSfB0TbtO6fe', //Test123.
 			id_ident_type: 1,
-			ident_num: '12345670',
-			email: 'leomerida15@gmail.com',
-			phone: '+584444848',
+			ident_num: '123456777',
+			email: 'carlos@correo.com',
+			phone: '+584242552345',
+			id_rol: 4,
 			id_company: 1,
 			id_department: 8,
 		},

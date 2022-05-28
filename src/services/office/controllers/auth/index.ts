@@ -11,10 +11,11 @@ import { getRepository } from 'typeorm';
 // services and hooks and personal interface
 import { Api } from '../../../../interfaces';
 import { mail } from '../../../../helpers';
+import Resp from '../../Middlewares/res';
 
 // db talbes
 import fm_worker from '../../../../db/models/fm_worker';
-import Resp from '../../Middlewares/res';
+import fm_permissions from '../../../../db/models/fm_permissions';
 
 // getter a Client
 export const register = async (
@@ -38,8 +39,6 @@ export const register = async (
 		// encript password
 		const salt: string = await bcrypt.genSalt(10);
 		req.body.password = await bcrypt.hash(req.body.password, salt);
-
-		req.body.roles = [{ id: 2, name: 'worker' }];
 
 		await getRepository(fm_worker).save(req.body);
 		// encript password
@@ -117,19 +116,41 @@ const block = async (email: string): Promise<void> => {
 // getter a Client
 export const login = async (
 	req: Request<any, Api.Resp, fm_worker>,
-	res: Response<Api.Resp<{ token: string; data: any }>>,
+	res: Response<Api.Resp<{ token: string; data: any }> | any>,
 	next: NextFunction
 ): Promise<void> => {
 	const { email } = req.body;
 
 	try {
 		// encript password
-		const worker = await getRepository(fm_worker).findOne({
+		const resWorker = await getRepository(fm_worker).findOne({
 			where: { email },
-			relations: ['roles', 'id_department'],
+			relations: ['id_department', 'id_department.access_views', 'id_department.access_views.id_views'],
 		});
 
-		if (!worker) throw { message: 'correo o contraseña incorrecta', code: 400 };
+		if (!resWorker) throw { message: 'correo o contraseña incorrecta', code: 400 };
+
+		const { id_department, ...worker }: any = resWorker;
+		const { access_views }: any = id_department;
+
+		console.log('dep', id_department.id, 'rol', worker.id_rol);
+
+		console.log(access_views);
+
+		let permiss = null;
+
+		//buscar permisos
+		if (id_department.id !== 1) {
+			const resPermiss = await getRepository(fm_permissions).find({
+				where: { id_department: id_department.id, id_rol: worker.id_rol },
+				relations: ['id_perfil'],
+			});
+			if (!resPermiss) throw { message: 'Error Access Permisses', code: 400 };
+
+			permiss = resPermiss;
+
+			console.log(permiss);
+		}
 
 		// extraemos data
 		const { password, id, roles, block, ...data_user }: any = worker;
@@ -160,9 +181,17 @@ export const login = async (
 		const token = jwt.sign({ id, type: 2, email }, key, { expiresIn: process.env.TIME_TOKEN });
 
 		// Response
+
 		Resp(req, res, {
 			message: 'Usuario logeado con exito',
-			info: { data: { ...data_user, roles } },
+			info: {
+				data: {
+					...data_user,
+					roles,
+					routes: access_views,
+					permiss,
+				},
+			},
 			token,
 		});
 	} catch (err: any) {

@@ -71,8 +71,9 @@ export const editWorkerById = async (
 ): Promise<void> => {
 	try {
 		const { id } = req.params;
-		const { roles, ...edit } = req.body;
+		const { id_rol, ...edit } = req.body;
 
+		/*
 		if (roles) {
 			await getConnection().query(
 				'DELETE FROM [MilPagos].[dbo].[fm_worker_roles_fm_roles] WHERE fmWorkerId =' + id
@@ -80,7 +81,7 @@ export const editWorkerById = async (
 
 			const queryIds = roles
 				.map((rol) => {
-					return /*sql*/ `INSERT INTO [dbo].[fm_worker_roles_fm_roles] ([fmWorkerId] ,[fmRolesId]) VALUES (${id} ,${rol.id})`;
+					return `INSERT INTO [dbo].[fm_worker_roles_fm_roles] ([fmWorkerId] ,[fmRolesId]) VALUES (${id} ,${rol.id})`;
 				})
 				.join(' ');
 
@@ -89,7 +90,10 @@ export const editWorkerById = async (
 
 		await getRepository(fm_worker).update(id, edit);
 
-		const message: string = Msg('trabajador').edit;
+
+		*/
+
+		const message: string = Msg('Falta editar al worker').edit;
 
 		Resp(req, res, { message });
 	} catch (err) {

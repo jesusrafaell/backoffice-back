@@ -171,19 +171,11 @@ export const createCommerce = async (
 				'id_client',
 				'id_client.id_location',
 				'id_client.id_location.id_direccion',
-				// 'id_client.id_location.id_estado',
-				// 'id_client.id_location.id_municipio',
-				// 'id_client.id_location.id_ciudad',
-				// 'id_client.id_location.id_parroquia',
 				'id_client.id_ident_type',
 				//pos
 				'pos',
 				'pos.id_location',
 				'pos.id_location.id_direccion',
-				// 'pos.id_location.id_estado',
-				// 'pos.id_location.id_municipio',
-				// 'pos.id_location.id_ciudad',
-				// 'pos.id_location.id_parroquia',
 				// commerce
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -191,10 +183,6 @@ export const createCommerce = async (
 				'id_commerce.id_activity.id_afiliado',
 				'id_commerce.id_location',
 				'id_commerce.id_location.id_direccion',
-				// 'id_commerce.id_location.id_estado',
-				// 'id_commerce.id_location.id_municipio',
-				// 'id_commerce.id_location.id_ciudad',
-				// 'id_commerce.id_location.id_parroquia',
 			],
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
