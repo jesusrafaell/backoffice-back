@@ -1,20 +1,22 @@
 // modules
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import bcrypt from 'bcrypt';
-
-import jwt from 'jsonwebtoken';
-const key: string = '_secreto';
-
 import { getRepository } from 'typeorm';
+import { validationResult } from 'express-validator';
 
 // services and hooks and personal interface
 import { Api } from '../../../../interfaces';
 import { mail } from '../../../../helpers';
 
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
 // db talbes
 import fm_worker from '../../../../db/models/fm_worker';
 import Resp from '../../Middlewares/res';
+import fm_client from 'db/models/fm_client';
+
+const { transporter } = require('../../mail/mail.js');
+const key: string = '_secreto';
 
 // getter a Client
 export const register = async (
@@ -219,6 +221,137 @@ export const editPass = async (
 
 		// Response
 		res.status(200).json({ message: 'Contraseña actualizada con exito' });
+	} catch (err) {
+		next(err);
+	}
+};
+
+//Envio de correo para nuevo password
+export const getmail = async (
+	req: Request<
+		Api.params,
+		Api.Resp,
+		{ email: string; userWebTipoIdentificacion: string; userWebIdentificacion: string }
+	>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { email } = req.body;
+
+		// encript password
+		const worker = await getRepository(fm_worker).findOne({
+			where: { email },
+		});
+
+		if (!worker) throw { ok: false, message: 'La Informacion es invalida', code: 400 };
+
+		// extraemos data
+		const { id }: any = worker;
+
+		// Generar JWT
+		const token = jwt.sign({ id, type: 2, email }, key, { expiresIn: process.env.TIME_TOKEN });
+
+		//ya la query esta aqui phonesClientconst prod = process.argv[0] === '/root/.nvm/versions/node/v14.15.0/bin/node';
+		const prod = process.argv[0] === '/root/.nvm/versions/node/v14.15.0/bin/node';
+		const URL_WEB = prod
+			? `http://localhost:3000/auth/new-password/?token=`
+			: `http://localhost:3000/auth/new-password/?token=`;
+		const link = URL_WEB + token;
+
+		// Step 3
+		const info = await transporter.sendMail({
+			from: 'no-reply@1000pagos.com', // TODO: email sender
+			to: email, // TODO: email receiver
+			subject: 'Aldrin Informa',
+			//cc: 'aetours.ca@gmail.com',
+			// text: 'Wooohooo it works!!',
+			// template: '../apipuntoconsulta/views/forgetPass',
+			template: 'index',
+			context: {
+				link: link,
+			}, // send extra values to template
+		});
+
+		// const logs: any = {
+		// 	descript: `[method:POST]::[path:/passrenew]::[msg:Envio de correo por contrasena]`,
+		// 	email: email,
+		// 	id_origin_logs: 4,
+		// };
+
+		// await getRepository(General_Logs).save(logs); //Guardando en Punto ConSulta
+
+		res.status(200).json({
+			ok: true,
+			info: 'Mensaje enviado satisfactoriamente, revise su correo...',
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+//Coloca nuevo password
+export const newPass = async (
+	req: Request<Api.params, Api.Resp, { password: string; token: any }>,
+	res: Response<Api.Resp<{ token: string; data: any }>>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		// encript password
+		const salt: string = await bcrypt.genSalt(10);
+		req.body.password = await bcrypt.hash(`${req.body.password}`, salt);
+
+		// define email
+		const { password, token: token2 } = req.body;
+		// const { id }: any = req.headers.token;
+		const { id }: any = token2;
+
+		const worker = await getRepository(fm_worker).findOne({
+			where: { id },
+			relations: ['roles', 'id_department'],
+		});
+
+		if (!worker) throw { message: 'Error: Token Invalid', code: 400 };
+
+		// query for valid email
+		await getRepository(fm_worker)
+			.createQueryBuilder()
+			.update(fm_worker)
+			.set({ password })
+			.where('id = :id', { id })
+			.execute();
+
+		// const logs: any = {
+		// 	descript: `[method:POST]::[path:/new]::[msg:Registro de Usuario]`,
+		// 	email: name,
+		// 	id_origin_logs: 4,
+		// };
+
+		// await getRepository(General_Logs).save(logs); //Guardando en Punto ConSulta
+
+		// extraemos data
+		const { email, roles, block, ...data_user }: any = worker;
+
+		if (block > 2) throw { message: 'usuario bloqueado', code: 400 };
+		else if (block < 3 && block > 0) {
+			// validamos si esta bloqueado
+			await getRepository(fm_worker)
+				.createQueryBuilder()
+				.update(fm_worker)
+				.set({ block: 0 })
+				.where('email = :email', { email })
+				.execute();
+		}
+
+		//generamos token
+		const token = jwt.sign({ id, type: 2, email }, key, { expiresIn: process.env.TIME_TOKEN });
+
+		//Response
+		Resp(req, res, {
+			message: 'Usuario logeado con exito',
+			info: { data: { ...data_user, roles } },
+			token,
+		});
 	} catch (err) {
 		next(err);
 	}

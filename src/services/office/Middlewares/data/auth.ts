@@ -140,3 +140,16 @@ export const RegisterData2: ValidationChain[] = [
 		.isNumeric()
 		.custom(NoSQL),
 ];
+
+export const NewPass: ValidationChain[] = [
+	//
+	check('email', 'el correo no es valido').exists({ checkFalsy: true, checkNull: true }).isEmail().custom(NoSQL),
+];
+
+export const Renew: ValidationChain[] = [
+	//
+	check('password', 'la contraseña debe tener 1 numero, 1 mayuscula, 1 simbolo y un minimo de 6 caracteres')
+		.exists({ checkFalsy: true, checkNull: false })
+		.isStrongPassword({ minLength: 6, minNumbers: 1, minUppercase: 1, minSymbols: 1 })
+		.custom(NoSQL),
+];

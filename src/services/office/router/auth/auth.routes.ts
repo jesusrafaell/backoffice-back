@@ -1,10 +1,27 @@
 import { Router } from 'express';
-import { RegisterData, LoginData, PassMailData, RegisterData1, RegisterData2 } from '../../Middlewares/data/auth';
+import {
+	RegisterData,
+	LoginData,
+	PassMailData,
+	RegisterData1,
+	RegisterData2,
+	NewPass,
+	Renew,
+} from '../../Middlewares/data/auth';
 
 const Auth: Router = Router();
 
 // controllers
-import { editPass, login, passMail, register, registerValid1, registerValid2 } from '../../controllers/auth/index';
+import {
+	editPass,
+	getmail,
+	login,
+	newPass,
+	passMail,
+	register,
+	registerValid1,
+	registerValid2,
+} from '../../controllers/auth/index';
 
 // ? Auth
 //
@@ -20,4 +37,8 @@ Auth.route('/passMail').post(PassMailData, passMail);
 //
 Auth.route('/log/editPass').patch(editPass);
 //
+Auth.route('/newpass').post(NewPass, getmail);
+//
+Auth.route('/passrenew').post(Renew, newPass);
+
 export default Auth;
