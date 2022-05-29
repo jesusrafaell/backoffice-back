@@ -30,10 +30,6 @@ export default class fm_worker {
 	@Column({ nullable: true })
 	last_name!: string;
 
-	@ManyToMany(() => fm_roles)
-	@JoinTable()
-	roles?: fm_roles[];
-
 	@Column({ nullable: true })
 	password!: string;
 
@@ -45,9 +41,15 @@ export default class fm_worker {
 	@JoinColumn({ name: 'id_company' })
 	id_company!: number;
 
+	@Column({ nullable: false, default: 1 })
 	@ManyToOne(() => fm_department)
 	@JoinColumn({ name: 'id_department' })
-	id_department!: number;
+	id_department?: number;
+
+	@Column({ nullable: false, default: 1 })
+	@ManyToOne(() => fm_roles)
+	@JoinColumn({ name: 'id_rol' })
+	id_rol?: number;
 
 	@OneToMany(() => fm_aci_commerce, (fm_aci_commerce) => fm_aci_commerce.id_worker)
 	@JoinColumn({ name: 'commerces' })

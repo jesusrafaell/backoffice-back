@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import { Api } from 'interfaces';
+import generateToken from '../../../../utilis/generateToken';
 const Key: string = process.env.KEY || '_secreto';
 
 const Resp = (req: Request<any, Api.Resp>, res: Response<Api.Resp>, msg: Api.Resp<any>) => {
@@ -8,9 +8,11 @@ const Resp = (req: Request<any, Api.Resp>, res: Response<Api.Resp>, msg: Api.Res
 
 	msg.token = (() => {
 		if (!msg.token) {
-			const { id, type, email }: any = req.headers.token;
+			const { id, idDep, idRol }: any = req.headers.token;
 
-			return jwt.sign({ id, type, email }, Key, { expiresIn: process.env.TIME_TOKEN });
+			//console.log('generar token para ', id);
+
+			return generateToken(id, idDep, idRol);
 		} else {
 			return msg.token;
 		}

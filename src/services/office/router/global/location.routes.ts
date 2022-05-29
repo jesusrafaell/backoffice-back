@@ -1,9 +1,5 @@
 import { Router } from 'express';
 import {
-	getEstados,
-	getMunicipiosByEstado,
-	getParroquiasByMunicipio,
-	getCiudadByEstado,
 	getDireccionesEstado,
 	getDireccionesMunicipio,
 	getDireccionesCiudad,
@@ -19,13 +15,13 @@ const Location: Router = Router();
 //
 Location.route('/Location/:id').get();
 //
-Location.route('/Location/estado').get(getEstados);
+//Location.route('/Location/estado').get(getEstados);
 //
-Location.route('/Location/:id_estado/municipio').get(getMunicipiosByEstado);
+//Location.route('/Location/:id_estado/municipio').get(getMunicipiosByEstado);
 //
-Location.route('/Location/:id_municipio/parroquia').get(getParroquiasByMunicipio);
+//Location.route('/Location/:id_municipio/parroquia').get(getParroquiasByMunicipio);
 //
-Location.route('/Location/:id_estado/ciudad').get(getCiudadByEstado);
+//Location.route('/Location/:id_estado/ciudad').get(getCiudadByEstado);
 //
 Location.route('/direccion/estado').get(getDireccionesEstado);
 //

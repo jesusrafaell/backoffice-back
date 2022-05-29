@@ -20,15 +20,12 @@ import fm_request_origin from '../../../../db/models/fm_request_origin';
 import fm_valid_request from '../../../../db/models/fm_valid_request';
 import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
 import fm_product from '../../../../db/models/fm_product';
-import fm_commerce_constitutive_act from '../../../../db/models/fm_commerce_constitutive_act';
-import fm_planilla from '../../../../db/models/fm_planilla';
 import fm_photo from '../../../../db/models/fm_photo';
 import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
 import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
-import { createEncriptCode, desEncriptCode } from '../../../../utilis/createEncriptCodeFm';
-//import dotenv from '../../../../config/env';
-//const { HOST, PORT_PROVIDERS } = dotenv;
+import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
+import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -499,49 +496,14 @@ export const getFm = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const query = await getRepository(fm_status).findOne({
-			where: { id_status_request: 1, id_department: 4 },
-			order: {
-				id: 'ASC',
-			},
-			relations: [
-				'id_request',
-				'id_request.id_client',
-				'id_request.id_client.id_location',
-				// 'id_request.id_client.id_location.id_estado',
-				// 'id_request.id_client.id_location.id_municipio',
-				// 'id_request.id_client.id_location.id_ciudad',
-				// 'id_request.id_client.id_location.id_parroquia',
-				'id_request.id_client.id_ident_type',
-				'id_request.id_valid_request',
-				'id_request.pos',
-				'id_request.pos.id_location',
-				'id_request.rc_constitutive_act',
-				'id_request.rc_special_contributor',
-				'id_request.rc_ref_bank',
-				'id_request.rc_comp_dep',
-				'id_request.rc_rif',
-				'id_request.id_client.rc_ident_card',
-				'id_request.id_payment_method',
-				'id_request.id_type_payment',
-				'id_request.id_commerce',
-				'id_request.id_commerce.id_ident_type',
-				'id_request.id_commerce.id_activity',
-				'id_request.id_commerce.id_location',
-				// 'id_request.id_commerce.id_location.id_estado',
-				// 'id_request.id_commerce.id_location.id_municipio',
-				// 'id_request.id_commerce.id_location.id_ciudad',
-				// 'id_request.id_commerce.id_location.id_parroquia',
-				'id_request.id_commerce.banks',
-				'id_request.id_product',
-				'id_request.id_type_request',
-				'id_request.id_request_origin',
-			],
+		const { id_FM }: any = req.params;
+		const FM = await getRepository(fm_request).findOne(id_FM, {
+			relations: relationsFMFull,
 		});
 
-		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+		if (!FM) throw { message: 'no existe este fm', code: 400 };
 
-		const info = query.id_request;
+		let info = FM;
 
 		Resp(req, res, { message: 'FM respondida', info });
 	} catch (err) {
@@ -796,22 +758,44 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 		//------------------------------------------------------------
 
 		const FM_save = await getRepository(fm_request).save({
+			id_client,
+			id_commerce,
 			id_type_request,
 			number_post,
 			bank_account_num,
+			//Pago
 			id_payment_method,
-			id_client,
-			id_commerce,
-			id_request_origin,
 			id_type_payment,
-			ci_referred,
-			id_valid_request: valids.id,
-			id_product,
-			discount,
 			nro_comp_dep,
 			pagadero,
+			//
+			id_product,
+			id_valid_request: valids.id,
+			discount,
 			id_quotas_calculat: quotas.id,
+			//
+			id_request_origin,
+			ci_referred,
 		});
+
+		//Crear conneccion con el origen de la solicutd a que wallet que perteneces el comerico
+		if (id_request_origin === 5) {
+			try {
+				//const wallet: any = await getRepository(fm_wallet_bank).findOne({ id_cartera: ci_referred });
+				await getRepository(fm_wallet_commerce).save({ id_commerce, id_wallet_bank: ci_referred || 1 });
+				console.log('esta solicitud ya esta en esta wallet', ci_referred);
+			} catch (err) {
+				console.log('este comercio ya esta asociado a esa wallet', ci_referred);
+			}
+		} else {
+			//1000pagos tms7 = net2 desarrollo
+			try {
+				await getRepository(fm_wallet_commerce).save({ id_commerce, id_wallet_bank: 1 });
+				console.log('Este commercio se asocio a la wallet de 1000pagos');
+			} catch (err) {
+				console.log('Ya el comercio esta asociado a 1000pagos wallet');
+			}
+		}
 
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
 
@@ -1028,14 +1012,13 @@ export const editStatusAdmitionDiferido = async (
 		const files: any = req.files;
 
 		const dataFM: any = JSON.parse(fm);
-		let clientData: any = null;
-		let commerceData: any = null;
-		if (client) {
-			clientData = JSON.parse(client);
-		}
-		if (commerce) {
-			commerceData = JSON.parse(commerce);
-		}
+		let clientData: any = JSON.parse(client);
+		let commerceData: any = JSON.parse(commerce);
+
+		console.log('cliente', clientData);
+		console.log('commerce', commerceData);
+
+		//throw { message: 'vamos diferido' };
 
 		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },
@@ -1247,3 +1230,76 @@ const getImagen = (list: any[], op: string) => {
 			throw { message: 'el de docuemnto de identidad no coinside' };
 		}
 		*/
+
+// validar que el Cliente existea diferido
+export const valid_existin_client_diferido = async (
+	req: Request<any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		validationResult(req).throw();
+
+		const { id_client, email, id_ident_type, ident_num } = req.body;
+
+		let resp: Api.Resp = { message: ``, info: { matsh: false } };
+
+		//validar
+		const validIdent = await getRepository(fm_client).findOne({
+			where: { id: Not(id_client), id_ident_type, ident_num },
+		});
+
+		if (validIdent) throw { message: 'El Documento de Identidad ya esta afiliado a otro Cliente' };
+
+		const client = await getRepository(fm_client).findOne({
+			where: { id: Not(id_client), email },
+			relations: ['id_ident_type'],
+		});
+
+		if (
+			client &&
+			//
+			client.ident_num != ident_num &&
+			client.id_ident_type != id_ident_type
+		) {
+			throw { message: 'El Correo ya esta afiliado a otro Cliente' };
+		}
+
+		resp = {
+			message: 'El cliente no existe',
+		};
+
+		Resp(req, res, resp);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const valid_existin_commerce_diferido = async (
+	req: Request<any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		validationResult(req).throw();
+
+		const { id_commerce, id_ident_type, ident_num } = req.body;
+
+		let resp: Api.Resp = { message: ``, info: { matsh: false } };
+
+		//validar
+		const validIdent = await getRepository(fm_commerce).findOne({
+			where: { id: Not(id_commerce), id_ident_type, ident_num },
+		});
+
+		if (validIdent) throw { message: 'Rif ya esta registrado a otro comercio' };
+
+		resp = {
+			message: 'Comercio no existe',
+		};
+
+		Resp(req, res, resp);
+	} catch (err) {
+		next(err);
+	}
+};

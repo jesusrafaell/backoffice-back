@@ -3,7 +3,7 @@ import {
 	getAllIdent_type,
 	getAllActivity,
 	getAllTypeSolicts,
-	getAllTiposDeCarteras,
+	getAllBanks,
 	getAllTeleMarket,
 	getAllTypePayment,
 	getAllRequestSource,
@@ -38,7 +38,7 @@ global.route('/types_solict').get(getAllTypeSolicts);
 
 // ? tipo_de_carteras
 //
-global.route('/tipo_de_carteras').get(getAllTiposDeCarteras);
+global.route('/tipo_de_carteras').get(getAllBanks);
 
 // ? telemark
 //

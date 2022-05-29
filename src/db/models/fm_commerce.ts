@@ -21,6 +21,7 @@ import fm_ident_type from './fm_ident_type';
 import fm_commerce_constitutive_act from './fm_commerce_constitutive_act';
 import Aliados from './Aliados';
 import fm_posXcommerce from './fm_posXcommerce';
+import fm_wallet_commerce from './fm_wallet_commerce';
 
 @Entity()
 export default class fm_commerce {
@@ -90,6 +91,11 @@ export default class fm_commerce {
 	@OneToMany(() => fm_request, (fm_request) => fm_request.id_commerce)
 	@JoinColumn({ name: 'requests' })
 	requests?: fm_request[];
+
+	//Comercio puede ser de 1000pagos y de otro banco TMS7
+	@OneToMany(() => fm_wallet_commerce, (fm_wallet_commerce) => fm_wallet_commerce.id_commerce)
+	@JoinColumn({ name: 'wallet_commerce' })
+	wallet_commerce?: fm_wallet_commerce[];
 
 	@CreateDateColumn({ select: true })
 	createdAt?: Date;

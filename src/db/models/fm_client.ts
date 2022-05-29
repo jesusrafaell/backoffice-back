@@ -30,11 +30,6 @@ export default class fm_client {
 	@Column({ nullable: true })
 	last_name!: string;
 
-	@Column({ default: 1 })
-	@ManyToMany(() => fm_roles)
-	@JoinTable()
-	id_roles?: number;
-
 	@Column({ select: false })
 	password!: string;
 

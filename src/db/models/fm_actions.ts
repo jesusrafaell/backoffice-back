@@ -1,28 +1,31 @@
 import {
-	Column,
-	CreateDateColumn,
 	Entity,
-	JoinColumn,
-	JoinTable,
-	ManyToMany,
-	OneToMany,
 	PrimaryGeneratedColumn,
+	Column,
 	UpdateDateColumn,
+	OneToMany,
+	JoinColumn,
+	CreateDateColumn,
+	ManyToOne,
 } from 'typeorm';
-import fm_worker from './fm_worker';
+import fm_department from './fm_department';
 import fm_permissions from './fm_permissions';
 
 @Entity()
-export default class fm_roles {
+export default class fm_actions {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
 	@Column({ nullable: true })
 	name!: string;
 
-	@OneToMany(() => fm_permissions, (fm_permissions) => fm_permissions.id_rol)
+	@OneToMany(() => fm_permissions, (fm_permissions) => fm_permissions.id_action)
 	@JoinColumn({ name: 'permissions' })
 	permissions?: fm_permissions[];
+
+	@ManyToOne(() => fm_department, (fm_department) => fm_department.action)
+	@JoinColumn({ name: 'id_department' })
+	id_department!: number;
 
 	@Column({ default: 1 })
 	active?: number;

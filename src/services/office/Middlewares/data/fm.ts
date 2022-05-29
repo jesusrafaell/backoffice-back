@@ -63,3 +63,46 @@ export const fmForDataDiferido = multer(options).fields([
 	{ name: 'client' },
 	{ name: 'commerce' },
 ]);
+
+export const validExistingClientDiferido: ValidationChain[] = [
+	check('id_client', 'cliente no existe')
+		//
+		.exists({ checkFalsy: true, checkNull: true })
+		.isNumeric()
+		.custom(NoSQL),
+	//
+	check('email', 'el correo no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.normalizeEmail()
+		.isEmail()
+		.custom(NoSQL),
+	check('id_ident_type', 'el tipo de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isNumeric()
+		.custom(NoSQL),
+	//
+	check('ident_num', 'el numero de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isLength({ min: 6, max: 20 })
+		.isNumeric()
+		.custom(NoSQL),
+];
+
+export const validExistingCommerceDiferido: ValidationChain[] = [
+	check('id_commerce', 'cliente no existe')
+		//
+		.exists({ checkFalsy: true, checkNull: true })
+		.isNumeric()
+		.custom(NoSQL),
+	//
+	check('id_ident_type', 'el tipo de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isNumeric()
+		.custom(NoSQL),
+	//
+	check('ident_num', 'el numero de documento de identidad no es valido')
+		.exists({ checkFalsy: true, checkNull: true })
+		.isLength({ min: 6, max: 20 })
+		.isNumeric()
+		.custom(NoSQL),
+];
