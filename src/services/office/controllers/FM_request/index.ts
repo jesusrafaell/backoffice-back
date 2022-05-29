@@ -1008,17 +1008,19 @@ export const editStatusAdmitionDiferido = async (
 ): Promise<void> => {
 	try {
 		const { id_FM }: any = req.params;
-		const { fm, client, commerce } = req.body;
+		const { client, commerce, pos, solic } = req.body;
 		const files: any = req.files;
 
-		const dataFM: any = JSON.parse(fm);
 		let clientData: any = JSON.parse(client);
 		let commerceData: any = JSON.parse(commerce);
+		let posData: any = JSON.parse(pos);
+		const dataFM: any = JSON.parse(solic);
 
 		console.log('cliente', clientData);
 		console.log('commerce', commerceData);
+		console.log('commerce', posData);
 
-		//throw { message: 'vamos diferido' };
+		throw { message: 'vamos diferido' };
 
 		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },

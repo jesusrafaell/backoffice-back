@@ -59,9 +59,10 @@ export const fmForDataDiferido = multer(options).fields([
 	{ name: 'constitutive_act', maxCount: 20 },
 	{ name: 'planilla', maxCount: 20 },
 	{ name: 'id_fm' },
-	{ name: 'fm' },
 	{ name: 'client' },
 	{ name: 'commerce' },
+	{ name: 'pos' },
+	{ name: 'solic' },
 ]);
 
 export const validExistingClientDiferido: ValidationChain[] = [
