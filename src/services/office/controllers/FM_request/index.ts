@@ -26,6 +26,7 @@ import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
 import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
 import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
+import { updateClient } from '../updateData/client';
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -1011,14 +1012,20 @@ export const editStatusAdmitionDiferido = async (
 		const { client, commerce, pos, solic } = req.body;
 		const files: any = req.files;
 
-		let clientData: any = JSON.parse(client);
-		let commerceData: any = JSON.parse(commerce);
-		let posData: any = JSON.parse(pos);
-		const dataFM: any = JSON.parse(solic);
+		const clientData: any = JSON.parse(client);
+		const commerceData: any = JSON.parse(commerce);
+		const posData: any = JSON.parse(pos);
+		const dataSolic: any = JSON.parse(solic);
+		const dataFM = dataSolic;
 
-		console.log('cliente', clientData);
-		console.log('commerce', commerceData);
-		console.log('commerce', posData);
+		//console.log('cliente', clientData);
+		//console.log('commerce', commerceData);
+		//console.log('pos', posData);
+		//console.log('solic', dataSolic);
+
+		if (clientData) {
+			await updateClient(clientData);
+		}
 
 		throw { message: 'vamos diferido' };
 

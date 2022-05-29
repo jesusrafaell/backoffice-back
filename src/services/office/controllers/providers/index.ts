@@ -10,6 +10,7 @@ const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
 
 export const comercioToProviders = async (idFm: any, token: any) => {
+	//fatal revisar en 1000pagos cuando exista updatear commercio y contacto
 	try {
 		const FM: any = await getRepository(fm_request).findOne(idFm.id, {
 			relations: [
