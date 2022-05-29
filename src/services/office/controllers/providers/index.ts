@@ -56,6 +56,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 
 			console.log('bug1');
 
+			//Obtener el red de tms7 y el subacquier code
 			let net_id: number = 2;
 			let subacquirer_code: string = '';
 			if (id_request_origin === 5) {
@@ -63,6 +64,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 				net_id = wallet?.net_id || net_id;
 				subacquirer_code = wallet?.tms7_codSubacquirer || '';
 			} else {
+				//Obtener el primero en la lista si no viene de un banco el origen
 				const net1000pagos = await getRepository(fm_wallet_bank).findOne(1);
 				if (net1000pagos && net1000pagos.id) {
 					net_id = net1000pagos.id;
