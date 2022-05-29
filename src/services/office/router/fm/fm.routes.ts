@@ -9,13 +9,22 @@ import {
 	valid_existin_clientAndCommerce,
 	FM_extraPos,
 	editStatusAdmitionDiferido,
+	valid_existin_client_diferido,
+	valid_existin_commerce_diferido,
 } from '../../controllers/FM_request/index';
 
 import { getFmAdministration, editStatusByIdAdministration } from '../../controllers/adminitration/index';
 
 import { validExistingClient, validClientData, validBankAccount } from '../../Middlewares/data/auth';
 import { validCommerceData } from '../../Middlewares/data/commerce';
-import { fmForDataDiferido, fmForDataExtraPos, fmFormData, validFmData } from '../../Middlewares/data/fm';
+import {
+	fmForDataDiferido,
+	fmForDataExtraPos,
+	fmFormData,
+	validExistingClientDiferido,
+	validExistingCommerceDiferido,
+	validFmData,
+} from '../../Middlewares/data/fm';
 import { valid_bank_account } from '../../controllers/FM_request';
 import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_request/index';
 
@@ -35,12 +44,17 @@ FM.route('/FM/valid/extrapos').post(valid_existin_clientAndCommerce);
 //
 FM.route('/FM/bank/valid').post(validBankAccount, valid_bank_account);
 //
+//diferido
+FM.route('/FM/client/diferido/valid').post(validExistingClientDiferido, valid_existin_client_diferido);
+//
+FM.route('/FM/commerce/diferido/valid').post(validExistingCommerceDiferido, valid_existin_commerce_diferido);
+//
+FM.route('/FM/admition/:id_FM/diferido').put(fmForDataDiferido, editStatusAdmitionDiferido);
 //
 //Update FM
 //
 FM.route('/FM/admision/:id_FM/status').put(editStatusByIdAdmision);
 //
-FM.route('/FM/admition/:id_FM/diferido').put(fmForDataDiferido, editStatusAdmitionDiferido);
 //
 FM.route('/FM/origins').get(requestOrigin);
 //

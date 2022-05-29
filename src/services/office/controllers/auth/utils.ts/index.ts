@@ -1,6 +1,16 @@
 import fm_department from '../../../../../db/models/fm_department';
 import fm_roles from '../../../../../db/models/fm_roles';
 
+export const getPermiss = (value: any[]) => {
+	let list: { [key: string]: number } = {};
+	for (const key of value) {
+		let item: string = key.id_action.name;
+		//console.log(item);
+		list[item] = key.id_action.id;
+	}
+	return list;
+};
+
 export const getViews = (access_views: any[]) => {
 	let listViews: { [key: string]: number } = {};
 	for (const key of access_views) {

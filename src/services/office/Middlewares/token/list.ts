@@ -5,7 +5,6 @@ const list: string[] = [
 	'user',
 	'roles',
 	'worker',
-	'Location',
 	'FM',
 	'activity',
 	'department',
@@ -21,9 +20,8 @@ const list: string[] = [
 	'distribuidores',
 	'types_solict',
 	'aci&distribuidores',
-	'direccion',
-	'ident_type',
 	'edit',
+	'Location',
 ];
 
 export default list;

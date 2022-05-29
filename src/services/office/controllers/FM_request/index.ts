@@ -1018,7 +1018,7 @@ export const editStatusAdmitionDiferido = async (
 		console.log('cliente', clientData);
 		console.log('commerce', commerceData);
 
-		throw { message: 'vamos diferido' };
+		//throw { message: 'vamos diferido' };
 
 		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },
@@ -1230,3 +1230,76 @@ const getImagen = (list: any[], op: string) => {
 			throw { message: 'el de docuemnto de identidad no coinside' };
 		}
 		*/
+
+// validar que el Cliente existea diferido
+export const valid_existin_client_diferido = async (
+	req: Request<any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		validationResult(req).throw();
+
+		const { id_client, email, id_ident_type, ident_num } = req.body;
+
+		let resp: Api.Resp = { message: ``, info: { matsh: false } };
+
+		//validar
+		const validIdent = await getRepository(fm_client).findOne({
+			where: { id: Not(id_client), id_ident_type, ident_num },
+		});
+
+		if (validIdent) throw { message: 'El Documento de Identidad ya esta afiliado a otro Cliente' };
+
+		const client = await getRepository(fm_client).findOne({
+			where: { id: Not(id_client), email },
+			relations: ['id_ident_type'],
+		});
+
+		if (
+			client &&
+			//
+			client.ident_num != ident_num &&
+			client.id_ident_type != id_ident_type
+		) {
+			throw { message: 'El Correo ya esta afiliado a otro Cliente' };
+		}
+
+		resp = {
+			message: 'El cliente no existe',
+		};
+
+		Resp(req, res, resp);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const valid_existin_commerce_diferido = async (
+	req: Request<any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		validationResult(req).throw();
+
+		const { id_commerce, id_ident_type, ident_num } = req.body;
+
+		let resp: Api.Resp = { message: ``, info: { matsh: false } };
+
+		//validar
+		const validIdent = await getRepository(fm_commerce).findOne({
+			where: { id: Not(id_commerce), id_ident_type, ident_num },
+		});
+
+		if (validIdent) throw { message: 'Rif ya esta registrado a otro comercio' };
+
+		resp = {
+			message: 'Comercio no existe',
+		};
+
+		Resp(req, res, resp);
+	} catch (err) {
+		next(err);
+	}
+};

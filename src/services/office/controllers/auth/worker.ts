@@ -4,7 +4,7 @@ import Resp from '../../Middlewares/res';
 import { getConnection, getRepository, Not } from 'typeorm';
 import fm_worker from '../../../../db/models/fm_worker';
 import Msg from '../../../../hooks/messages/index.ts';
-import { dataWorker, getViews } from './utils.ts';
+import { dataWorker, getPermiss, getViews } from './utils.ts';
 import fm_permissions from '../../../../db/models/fm_permissions';
 //import fm_views from '../../../../db/models/fm_views';
 import fm_department from '../../../../db/models/fm_department';
@@ -30,17 +30,17 @@ export const worker = async (req: Request<any, Api.Resp>, res: Response, next: N
 
 		const views = getViews(access_views); //obtener lista de vistas
 
-		let permiss: any[] = [];
+		let permiss: any = [];
 
 		//buscar permisos
 		if (id_department.id !== 1) {
-			const resPermiss = await getRepository(fm_permissions).find({
+			const resPermiss: any = await getRepository(fm_permissions).find({
 				where: { id_department: idDep.id, id_rol: idRol.id },
 				relations: ['id_action'],
 			});
 			if (!resPermiss) throw { message: 'Error Access Permisses', code: 400 };
 
-			permiss = resPermiss;
+			permiss = getPermiss(resPermiss);
 
 			//console.log(permiss);
 		} else {

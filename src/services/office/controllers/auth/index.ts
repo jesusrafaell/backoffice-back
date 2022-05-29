@@ -13,7 +13,7 @@ import { mail } from '../../../../helpers';
 import fm_worker from '../../../../db/models/fm_worker';
 import fm_permissions from '../../../../db/models/fm_permissions';
 import generateToken from '../../../../utilis/generateToken';
-import { DataUser, dataWorker, getViews } from './utils.ts';
+import { DataUser, dataWorker, getPermiss, getViews } from './utils.ts';
 
 // getter a Client
 export const register = async (
@@ -143,7 +143,7 @@ export const login = async (
 		//console.log('dep', id_department.id, 'rol', id_rol.id);
 		const views = getViews(access_views); //obtener lista de vistas
 
-		let permiss: any[] = [];
+		let permiss: any = [];
 
 		//buscar permisos
 		if (id_department.id !== 1) {
@@ -153,7 +153,7 @@ export const login = async (
 			});
 			if (!resPermiss) throw { message: 'Error Access Permisses', code: 400 };
 
-			permiss = resPermiss;
+			permiss = getPermiss(resPermiss);
 
 			//console.log(permiss);
 		} else {
