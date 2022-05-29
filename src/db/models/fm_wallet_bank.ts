@@ -1,6 +1,17 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import Cartera from './Cartera';
-import fm_commerce from './fm_commerce';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	JoinColumn,
+	JoinTable,
+	ManyToMany,
+	ManyToOne,
+	OneToMany,
+	OneToOne,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from 'typeorm';
+import fm_wallet_commerce from './fm_wallet_commerce';
 
 @Entity()
 export default class fm_wallet_bank {
@@ -16,10 +27,16 @@ export default class fm_wallet_bank {
 	@Column({ nullable: false })
 	id_cartera!: number;
 
+	@OneToMany(() => fm_wallet_commerce, (fm_wallet_commerce) => fm_wallet_commerce.id_commerce)
+	@JoinColumn({ name: 'commerces' })
+	commerces?: fm_wallet_commerce[];
+
 	@Column({ default: 1 })
 	active?: number;
 
-	@ManyToMany(() => fm_commerce)
-	@JoinTable()
-	commerce?: fm_commerce[];
+	@CreateDateColumn({ select: false })
+	createdAt?: Date;
+
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }

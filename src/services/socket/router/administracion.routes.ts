@@ -1,6 +1,5 @@
 import {
 	administracion,
-	administracionTrabajndo,
 	disconectAdminis,
 	disconectsolicAdministra,
 	getFmAdministration,

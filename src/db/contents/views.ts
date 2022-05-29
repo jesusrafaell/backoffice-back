@@ -3,22 +3,32 @@ import { getRepository } from 'typeorm';
 
 export const listViews: fm_views[] = [
 	{
-		name: 'Formulario de Act',
+		//1
+		name: 'Home',
 	},
 	{
+		//2
+		name: 'Solicitud',
+	},
+	{
+		//3
 		name: 'Admision',
 	},
 	{
+		//4
 		name: 'Administracion',
 	},
 	{
+		//5
 		name: 'Cobranza',
 	},
 	{
-		name: 'Actulizar Informacion',
+		//6
+		name: 'EditarComercio',
 	},
 	{
-		name: 'Gestion de Usuarios',
+		//7
+		name: 'GestionUsuarios',
 	},
 ];
 

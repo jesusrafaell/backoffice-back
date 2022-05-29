@@ -8,7 +8,7 @@ import access_views from './access.views';
 import ger7_parametrization from './get7_parametrization';
 import ident_type from './ident_type';
 import payment_method from './payment_method';
-import perfils from './perfils';
+import actions from './actions';
 import permissions from './permissions';
 import Product from './product';
 import request_origin from './request_origin';
@@ -49,7 +49,7 @@ createConnection().then(async () => {
 	await roles();
 	await department();
 	await views();
-	await perfils();
+	await actions();
 	//relaciones
 	await access_views();
 	await permissions();

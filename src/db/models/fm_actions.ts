@@ -12,18 +12,18 @@ import fm_department from './fm_department';
 import fm_permissions from './fm_permissions';
 
 @Entity()
-export default class fm_perfil {
+export default class fm_actions {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
 	@Column({ nullable: true })
 	name!: string;
 
-	@OneToMany(() => fm_permissions, (fm_permissions) => fm_permissions.id_perfil)
+	@OneToMany(() => fm_permissions, (fm_permissions) => fm_permissions.id_action)
 	@JoinColumn({ name: 'permissions' })
 	permissions?: fm_permissions[];
 
-	@ManyToOne(() => fm_department, (fm_department) => fm_department.perfil)
+	@ManyToOne(() => fm_department, (fm_department) => fm_department.action)
 	@JoinColumn({ name: 'id_department' })
 	id_department!: number;
 

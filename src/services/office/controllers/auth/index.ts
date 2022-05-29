@@ -3,24 +3,22 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 
-import jwt from 'jsonwebtoken';
-const key: string = '_secreto';
-
 import { getRepository } from 'typeorm';
 
 // services and hooks and personal interface
 import { Api } from '../../../../interfaces';
 import { mail } from '../../../../helpers';
-import Resp from '../../Middlewares/res';
 
 // db talbes
 import fm_worker from '../../../../db/models/fm_worker';
 import fm_permissions from '../../../../db/models/fm_permissions';
+import generateToken from '../../../../utilis/generateToken';
+import { DataUser, dataWorker, getViews } from './utils.ts';
 
 // getter a Client
 export const register = async (
 	req: Request<any, Api.Resp, fm_worker>,
-	res: Response<Api.Resp<{ token: string; data: any }>>,
+	res: Response<Api.Resp<{ token: string; data: any }> | any>,
 	next: NextFunction
 ): Promise<void> => {
 	try {
@@ -40,22 +38,29 @@ export const register = async (
 		const salt: string = await bcrypt.genSalt(10);
 		req.body.password = await bcrypt.hash(req.body.password, salt);
 
-		await getRepository(fm_worker).save(req.body);
-		// encript password
-		const worker = await getRepository(fm_worker).findOne({ where: { email }, relations: ['roles'] });
+		//console.log(req.body);
 
-		const { password, id, roles, ...data_user }: any = worker;
+		await getRepository(fm_worker).save(req.body); //guardar user
+
+		//buscar el usuario guardado con sus relaciones
+		const worker = await getRepository(fm_worker).findOne({
+			where: { email },
+			relations: ['id_rol', 'id_department'],
+		});
+
+		const { id, password, id_rol, id_department, ...data_user }: any = worker;
 
 		// generar token
-		const token = jwt.sign({ id, roles }, key, { expiresIn: process.env.TIME_TOKEN });
+		const token = generateToken(id, id_department, id_rol);
 
 		// enviar correo de validacion
 		await mail.verify(req.body);
 
 		// Response
+
 		res.status(200).json({
 			message: 'Trabajador registrado Revise su correo por favor',
-			info: { ...data_user, roles },
+			info: dataWorker(data_user, id_rol, id_department, [], []),
 			token,
 		});
 	} catch (err) {
@@ -113,10 +118,12 @@ const block = async (email: string): Promise<void> => {
 		.where('email = :email', { email })
 		.execute();
 };
+
 // getter a Client
+
 export const login = async (
 	req: Request<any, Api.Resp, fm_worker>,
-	res: Response<Api.Resp<{ token: string; data: any }> | any>,
+	res: Response<Api.Resp<DataUser>>,
 	next: NextFunction
 ): Promise<void> => {
 	const { email } = req.body;
@@ -125,35 +132,36 @@ export const login = async (
 		// encript password
 		const resWorker = await getRepository(fm_worker).findOne({
 			where: { email },
-			relations: ['id_department', 'id_department.access_views', 'id_department.access_views.id_views'],
+			relations: ['id_rol', 'id_department', 'id_department.access_views', 'id_department.access_views.id_views'],
 		});
 
 		if (!resWorker) throw { message: 'correo o contraseña incorrecta', code: 400 };
 
-		const { id_department, ...worker }: any = resWorker;
-		const { access_views }: any = id_department;
+		const { id_department: dep, id_rol, ...worker }: any = resWorker;
+		const { access_views, ...id_department }: any = dep;
 
-		console.log('dep', id_department.id, 'rol', worker.id_rol);
+		//console.log('dep', id_department.id, 'rol', id_rol.id);
+		const views = getViews(access_views); //obtener lista de vistas
 
-		console.log(access_views);
-
-		let permiss = null;
+		let permiss: any[] = [];
 
 		//buscar permisos
 		if (id_department.id !== 1) {
 			const resPermiss = await getRepository(fm_permissions).find({
-				where: { id_department: id_department.id, id_rol: worker.id_rol },
-				relations: ['id_perfil'],
+				where: { id_department: id_department.id, id_rol: id_rol.id },
+				relations: ['id_action'],
 			});
 			if (!resPermiss) throw { message: 'Error Access Permisses', code: 400 };
 
 			permiss = resPermiss;
 
-			console.log(permiss);
+			//console.log(permiss);
+		} else {
+			console.log('usuario no posee nigun deparmento');
 		}
 
 		// extraemos data
-		const { password, id, roles, block, ...data_user }: any = worker;
+		const { password, id, block, ...data_user }: any = worker;
 
 		const validPassword = await bcrypt.compare(req.body.password, password);
 		if (!validPassword) {
@@ -177,21 +185,11 @@ export const login = async (
 				.execute();
 		}
 
-		//generamos token
-		const token = jwt.sign({ id, type: 2, email }, key, { expiresIn: process.env.TIME_TOKEN });
+		const token = generateToken(id, id_department, id_rol);
 
-		// Response
-
-		Resp(req, res, {
-			message: 'Usuario logeado con exito',
-			info: {
-				data: {
-					...data_user,
-					roles,
-					routes: access_views,
-					permiss,
-				},
-			},
+		res.status(200).json({
+			message: 'Info del trabajador',
+			info: dataWorker(data_user, id_department, id_rol, permiss, views),
 			token,
 		});
 	} catch (err: any) {

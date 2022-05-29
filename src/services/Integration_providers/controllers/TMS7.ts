@@ -187,7 +187,7 @@ export const createCommerce = async (
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const { id_commerce, id_client, pos, id }: any = fmData;
+		const { id_request_origin, ci_referred, id_commerce, id_client, pos, id }: any = fmData;
 		const { name, id_ident_type, ident_num, id_activity }: any = id_commerce;
 		const { estado, codigoPostal } = id_commerce.id_location.id_direccion;
 

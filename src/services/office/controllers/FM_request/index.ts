@@ -20,15 +20,12 @@ import fm_request_origin from '../../../../db/models/fm_request_origin';
 import fm_valid_request from '../../../../db/models/fm_valid_request';
 import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
 import fm_product from '../../../../db/models/fm_product';
-import fm_commerce_constitutive_act from '../../../../db/models/fm_commerce_constitutive_act';
-import fm_planilla from '../../../../db/models/fm_planilla';
 import fm_photo from '../../../../db/models/fm_photo';
 import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
 import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
-import { createEncriptCode, desEncriptCode } from '../../../../utilis/createEncriptCodeFm';
-//import dotenv from '../../../../config/env';
-//const { HOST, PORT_PROVIDERS } = dotenv;
+import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
+import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -796,22 +793,44 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 		//------------------------------------------------------------
 
 		const FM_save = await getRepository(fm_request).save({
+			id_client,
+			id_commerce,
 			id_type_request,
 			number_post,
 			bank_account_num,
+			//Pago
 			id_payment_method,
-			id_client,
-			id_commerce,
-			id_request_origin,
 			id_type_payment,
-			ci_referred,
-			id_valid_request: valids.id,
-			id_product,
-			discount,
 			nro_comp_dep,
 			pagadero,
+			//
+			id_product,
+			id_valid_request: valids.id,
+			discount,
 			id_quotas_calculat: quotas.id,
+			//
+			id_request_origin,
+			ci_referred,
 		});
+
+		//Crear conneccion con el origen de la solicutd a que wallet que perteneces el comerico
+		if (id_request_origin === 5) {
+			try {
+				//const wallet: any = await getRepository(fm_wallet_bank).findOne({ id_cartera: ci_referred });
+				await getRepository(fm_wallet_commerce).save({ id_commerce, id_wallet_bank: ci_referred || 1 });
+				console.log('esta solicitud ya esta en esta wallet', ci_referred);
+			} catch (err) {
+				console.log('este comercio ya esta asociado a esa wallet', ci_referred);
+			}
+		} else {
+			//1000pagos tms7 = net2 desarrollo
+			try {
+				await getRepository(fm_wallet_commerce).save({ id_commerce, id_wallet_bank: 1 });
+				console.log('Este commercio se asocio a la wallet de 1000pagos');
+			} catch (err) {
+				console.log('Ya el comercio esta asociado a 1000pagos wallet');
+			}
+		}
 
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request: FM_save.id });
 

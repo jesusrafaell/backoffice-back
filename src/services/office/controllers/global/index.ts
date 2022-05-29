@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { getRepository } from 'typeorm';
+import { getRepository, Not } from 'typeorm';
 import fm_ident_type from '../../../../db/models/fm_ident_type';
 import Resp from '../../Middlewares/res';
 import Msg from '../../../../hooks/messages/index.ts';
@@ -15,6 +15,7 @@ import fm_type_payment from '../../../../db/models/fm_type_payment';
 import fm_request_origin from '../../../../db/models/fm_request_origin';
 import Aliados from '../../../../db/models/Aliados';
 import fm_type_diferido from '../../../../db/models/fm_type_diferido';
+import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
 
 export const getAllIdent_type = async (
 	req: Request<any, any, Api.Resp>,
@@ -102,7 +103,17 @@ export const getAllDeparments = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const info = await getRepository(fm_department).find();
+		const { idDep }: any = req.headers.token;
+		//console.log(idDep);
+
+		const idIgnore: any =
+			idDep.name === 'God'
+				? { id: 0, name: '' } //Si es god no ignores
+				: await getRepository(fm_department).findOne({ where: { name: 'God' } }); //buscar el id god e ignoralo;
+
+		const info = await getRepository(fm_department).find({
+			where: { name: Not(idIgnore.name) },
+		});
 
 		const message: string = Msg('departamento').getAll;
 
@@ -112,15 +123,15 @@ export const getAllDeparments = async (
 	}
 };
 
-export const getAllTiposDeCarteras = async (
+export const getAllBanks = async (
 	req: Request<any, any, Api.Resp>,
 	res: Response<Api.Resp>,
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const info = await getRepository(Cartera).find();
+		const info = await getRepository(fm_wallet_bank).find();
 
-		const message: string = Msg('Carteras').getAll;
+		const message: string = Msg('Bancos (Carteras)').getAll;
 
 		Resp(req, res, { message, info });
 	} catch (err) {

@@ -20,12 +20,6 @@ import { valid_bank_account } from '../../controllers/FM_request';
 import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_request/index';
 
 const FM: Router = Router();
-// RC
-//
-//FM.route('/FM/client').post(validClientData, fm_create_client);
-//
-//FM.route('/FM/:id/commerce').post(validCommerceData, fm_create_commerce);
-//
 //-Creacion FM
 //
 FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
@@ -40,7 +34,6 @@ FM.route('/FM/valid/extrapos').post(valid_existin_clientAndCommerce);
 //
 FM.route('/FM/bank/valid').post(validBankAccount, valid_bank_account);
 //
-//FM.route('/FM').get(getFm);
 //
 //Update FM
 //

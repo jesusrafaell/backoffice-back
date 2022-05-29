@@ -20,19 +20,12 @@ export default class fm_roles {
 	@Column({ nullable: true })
 	name!: string;
 
-	@OneToMany(() => fm_worker, (fm_worker) => fm_worker.id_ident_type)
-	@JoinColumn({ name: 'workers' })
-	workers?: fm_worker[];
-
-	/*
-	@ManyToMany(() => fm_client)
-	@JoinTable()
-	clients?: fm_client[];
-	*/
-
 	@OneToMany(() => fm_permissions, (fm_permissions) => fm_permissions.id_rol)
 	@JoinColumn({ name: 'permissions' })
 	permissions?: fm_permissions[];
+
+	@Column({ default: 1 })
+	active?: number;
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;

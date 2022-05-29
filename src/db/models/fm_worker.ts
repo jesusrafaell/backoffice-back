@@ -44,10 +44,10 @@ export default class fm_worker {
 	@Column({ nullable: false, default: 1 })
 	@ManyToOne(() => fm_department)
 	@JoinColumn({ name: 'id_department' })
-	id_department!: number;
+	id_department?: number;
 
 	@Column({ nullable: false, default: 1 })
-	@ManyToOne(() => fm_roles, (fm_roles) => fm_roles.workers)
+	@ManyToOne(() => fm_roles)
 	@JoinColumn({ name: 'id_rol' })
 	id_rol?: number;
 

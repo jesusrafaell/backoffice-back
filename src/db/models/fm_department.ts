@@ -10,7 +10,7 @@ import {
 import fm_permissions from './fm_permissions';
 import fm_access_views from './fm_access_views';
 import fm_status from './fm_status';
-import fm_perfil from './fm_perfil';
+import fm_action from './fm_actions';
 
 @Entity()
 export default class fm_department {
@@ -29,12 +29,12 @@ export default class fm_department {
 	access_views?: fm_access_views[];
 
 	@OneToMany(() => fm_permissions, (fm_permissions) => fm_permissions.id_department)
-	@JoinColumn({ name: 'perfils' })
+	@JoinColumn({ name: 'permissions' })
 	permissions?: fm_permissions[];
 
-	@OneToMany(() => fm_perfil, (fm_perfil) => fm_perfil.id_department)
-	@JoinColumn({ name: 'perfil' })
-	perfil?: fm_perfil[];
+	@OneToMany(() => fm_action, (fm_action) => fm_action.id_department)
+	@JoinColumn({ name: 'action' })
+	action?: fm_action[];
 
 	@Column({ default: 1 })
 	active?: number;

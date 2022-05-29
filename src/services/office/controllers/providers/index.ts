@@ -1,8 +1,11 @@
 import axios from 'axios';
+import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
+import { getRepository } from 'typeorm';
 import fm_client from '../../../../db/models/fm_client';
 import fm_commerce from '../../../../db/models/fm_commerce';
 import fm_request from '../../../../db/models/fm_request';
-import { getRepository } from 'typeorm';
+import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
+
 const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
 
@@ -20,7 +23,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			],
 		});
 		if (!FM) throw { message: 'FM no existe call (Providers)' };
-		const { id_product } = FM;
+		const { id_product, id_request_origin, ci_referred } = FM;
 		const id_client = FM.id_client.id;
 		const id_commerce = FM.id_commerce.id;
 
@@ -52,6 +55,19 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			);
 
 			console.log('bug1');
+
+			let net_id: number = 2;
+			if (id_request_origin === 5) {
+				await getRepository(fm_wallet_bank).findOne({ id: ci_referred });
+			} else {
+				const net1000pagos = await getRepository(fm_wallet_bank).findOne(1);
+				if (net1000pagos && net1000pagos.id) net_id = net1000pagos.id;
+				else throw { message: 'Error Net_id de 1000pagos es requerida para Tms7' };
+			}
+
+			console.log('Net_id TMS7', net_id);
+
+			throw { message: 'vamos bien' };
 
 			//TMS7
 			const resCommerce = await axios

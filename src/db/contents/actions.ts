@@ -1,7 +1,7 @@
 import { getRepository } from 'typeorm';
-import fm_perfil from '../models/fm_perfil';
+import fm_actions from '../models/fm_actions';
 
-export const listPerfil: fm_perfil[] = [
+export const listActions: fm_actions[] = [
 	//admision
 	{
 		name: 'base', //se va a utilizar para solo consultar
@@ -29,7 +29,7 @@ export const listPerfil: fm_perfil[] = [
 		id_department: 3,
 	},
 	{
-		name: 'Creacion Perfiles',
+		name: 'Creacion de Accesos',
 		id_department: 3,
 	},
 	{
@@ -43,10 +43,10 @@ export const listPerfil: fm_perfil[] = [
 	},
 ];
 
-const perfils = async (): Promise<void> => {
+const actions = async (): Promise<void> => {
 	//
-	const valid = await getRepository(fm_perfil).find({ where: listPerfil });
-	if (!valid.length) await getRepository(fm_perfil).save(listPerfil);
+	const valid = await getRepository(fm_actions).find({ where: listActions });
+	if (!valid.length) await getRepository(fm_actions).save(listActions);
 };
 
-export default perfils;
+export default actions;

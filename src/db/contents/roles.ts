@@ -3,16 +3,16 @@ import fm_roles from '../models/fm_roles';
 
 export const listRoles: fm_roles[] = [
 	{
-		name: 'base',
+		name: 'Base',
 	},
 	{
-		name: 'worker',
+		name: 'Trabajador',
 	},
 	{
-		name: 'supervisor',
+		name: 'Supervisor',
 	},
 	{
-		name: 'admin',
+		name: 'Admin',
 	},
 ];
 
