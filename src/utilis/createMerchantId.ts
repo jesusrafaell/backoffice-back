@@ -1,4 +1,4 @@
-export const createMerchantId = (value1: number, id: number) => {
-	const merchantId = `7${value1}${11000 + (id + 400)}`;
+export const createMerchantId = (value1: string, id: number) => {
+	const merchantId = `7${Number(value1)}${11000 + (id + 200)}`;
 	return merchantId;
 };

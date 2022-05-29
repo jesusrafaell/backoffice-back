@@ -57,23 +57,26 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			console.log('bug1');
 
 			let net_id: number = 2;
+			let subacquirer_code: string = '';
 			if (id_request_origin === 5) {
-				await getRepository(fm_wallet_bank).findOne({ id: ci_referred });
+				const wallet = await getRepository(fm_wallet_bank).findOne({ id: ci_referred });
+				net_id = wallet?.net_id || net_id;
+				subacquirer_code = wallet?.tms7_codSubacquirer || '';
 			} else {
 				const net1000pagos = await getRepository(fm_wallet_bank).findOne(1);
-				if (net1000pagos && net1000pagos.id) net_id = net1000pagos.id;
-				else throw { message: 'Error Net_id de 1000pagos es requerida para Tms7' };
+				if (net1000pagos && net1000pagos.id) {
+					net_id = net1000pagos.id;
+					subacquirer_code = net1000pagos.tms7_codSubacquirer;
+				} else throw { message: 'Error Net_id de 1000pagos es requerida para Tms7' };
 			}
 
-			console.log('Net_id TMS7', net_id);
-
-			throw { message: 'vamos bien' };
+			console.log('Tms7 usar el net_id', net_id);
 
 			//TMS7
 			const resCommerce = await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
-					{ id_fm: FM.id, id_commerce, id_client },
+					{ id_fm: FM.id, id_commerce, id_client, net_id, subacquirer_code },
 					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {
@@ -86,7 +89,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			const resTerminalTms7 = await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce/terminal`,
-					{ id_fm: FM.id, id_commerce, id_client },
+					{ id_fm: FM.id, id_commerce, id_client, net_id },
 					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {

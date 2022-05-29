@@ -27,6 +27,9 @@ export default class fm_wallet_bank {
 	@Column({ nullable: false })
 	id_cartera!: number;
 
+	@Column({ nullable: false })
+	tms7_codSubacquirer!: string;
+
 	@OneToMany(() => fm_wallet_commerce, (fm_wallet_commerce) => fm_wallet_commerce.id_commerce)
 	@JoinColumn({ name: 'commerces' })
 	commerces?: fm_wallet_commerce[];

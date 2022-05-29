@@ -75,9 +75,9 @@ export const getAllCommerce = async (
 	}
 };
 
-const validarRif_tms7 = async (rif: string, access_token: string): Promise<boolean> => {
+const validarRif_tms7 = async (rif: string, net_id: number, access_token: string): Promise<boolean> => {
 	try {
-		await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=2&taxId=${rif}`, {
+		await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${net_id}&taxId=${rif}`, {
 			headers: {
 				Authorization: 'Bearer ' + access_token,
 			},
@@ -107,6 +107,7 @@ const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 			status: err?.response.status,
 			data: err?.response.data,
 		};
+		//console.log(err);
 		console.log('Tms7 error ', resError);
 		return resError;
 	}
@@ -135,10 +136,10 @@ const updateCommerceTMS7 = async (commerce: any, access_token: string): Promise<
 	}
 };
 
-const validCommerceTms7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
+const validCommerceTms7 = async (commerce: any, net_id: number, access_token: string): Promise<boolean | any> => {
 	try {
 		const comercio = await axios.get(
-			`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${commerce.net_id}&taxId=${commerce.taxId}`,
+			`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${net_id}&taxId=${commerce.taxId}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + access_token,
@@ -153,12 +154,17 @@ const validCommerceTms7 = async (commerce: any, access_token: string): Promise<b
 };
 
 export const createCommerce = async (
-	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
+	req: Request<
+		Api.params,
+		Api.Resp,
+		{ id_fm: number; id_commerce: number; id_client: number; net_id: number; subacquirer_code: string }
+	>,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
 		const { token }: any = req.headers;
+		const { net_id, subacquirer_code } = req.body;
 
 		const usar = users.find((user) => user.id === token.id);
 		if (!usar) throw { message: 'usuario no logeado', code: 401 };
@@ -187,7 +193,7 @@ export const createCommerce = async (
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const { id_request_origin, ci_referred, id_commerce, id_client, pos, id }: any = fmData;
+		const { id_commerce, id_client, pos, id }: any = fmData;
 		const { name, id_ident_type, ident_num, id_activity }: any = id_commerce;
 		const { estado, codigoPostal } = id_commerce.id_location.id_direccion;
 
@@ -203,11 +209,11 @@ export const createCommerce = async (
 
 		const address_line2 = `${dirPos.estado}`;
 
-		const merchantId = createMerchantId(id_activity.id_afiliado.id, id);
+		const merchantId = createMerchantId(subacquirer_code, id);
 
 		const commerce = {
-			net_id: 2,
-			subacquirer_code: `0${id_activity.id_afiliado.id}`,
+			net_id,
+			subacquirer_code,
 			merchantId,
 			company_name: name,
 			receipt_name: name,
@@ -221,11 +227,14 @@ export const createCommerce = async (
 			state: estado,
 			postalcode: codigoPostal,
 			status: 1,
-			group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
+			group: {
+				name: 'supermercados', //revisar error solo creas con
+			},
+			//group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
 			partner: null,
 		};
 
-		const resValidCommerceTsm7 = await validCommerceTms7(commerce, usar.access_token);
+		const resValidCommerceTsm7 = await validCommerceTms7(commerce, net_id, usar.access_token);
 		if (resValidCommerceTsm7) {
 			console.log('Comercio ya existe en TMS7 ');
 		} else {
@@ -247,7 +256,7 @@ export const getCommerceTerminals = async (
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
-	const { rif }: any = req.params;
+	const { rif, net_id }: any = req.params;
 	console.log('buscar este ', rif);
 	try {
 		console.log('Get Terminales from ', rif);
@@ -256,7 +265,7 @@ export const getCommerceTerminals = async (
 		const usar = users.find((user) => user.id === id);
 		// if (!usar) throw { message: 'usuario no logeado', code: 401 };
 
-		const merchant: any = await getMerchanId(rif, usar.access_token);
+		const merchant: any = await getMerchanId(rif, net_id, usar.access_token);
 		if (!merchant.ok) {
 			console.log('Comercio no esta en TMS7');
 			throw { message: 'Comercio no esta en TMS7' };
@@ -281,12 +290,13 @@ export const getCommerceTerminals = async (
 };
 
 export const createTerminal = async (
-	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
+	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number; net_id: number }>,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
 		const { token }: any = req.headers;
+		const { net_id } = req.body;
 		console.log('crear terminal en tms7');
 
 		const usar = users.find((user) => user.id === token.id);
@@ -313,17 +323,16 @@ export const createTerminal = async (
 		const { id_commerce, id, number_post }: any = fmData;
 		const { id_ident_type, ident_num, id_activity }: any = id_commerce;
 
-		const merchant: any = await getMerchanId(`${id_ident_type.name}${ident_num}`, usar.access_token);
+		const merchant: any = await getMerchanId(`${id_ident_type.name}${ident_num}`, net_id, usar.access_token);
 		if (!merchant.ok) {
 			console.log('No tiene merchatId el comercio');
 		}
 
-		//const merchantId2 = createMerchantId(id_activity.id_afiliado.id, id);
-
+		//new terminls
 		console.log(merchant.merchantId);
 
 		const terminal = {
-			net_id: 2,
+			net_id,
 			merchantId: merchant.merchantId,
 			parametrizationName: 'IP publico - Pruebas GER7',
 			parametrizationVersion: 12,
@@ -335,7 +344,7 @@ export const createTerminal = async (
 		let terminales: any = [];
 
 		for (let i = 0; i < number_post; i++) {
-			console.log('Terminal: ' + (i + 1) + ' creada para', id_commerce.name);
+			console.log('Terminal: ' + (i + 1) + ' creada para', id_commerce.name, ' en el net_id: ', net_id);
 			const saveTerminalTms7 = await createTerminalTms7(terminal, usar.access_token);
 			if (saveTerminalTms7.ok) {
 				terminales.push(saveTerminalTms7.terminal);
@@ -370,18 +379,21 @@ const createTerminalTms7 = async (terminal: any, access_token: string): Promise<
 			extra: err?.response.Message,
 			ok: false,
 		};
-		console.log('Tms7 error ', err);
+		//console.log('Tms7 error ', err);
 		return resError;
 	}
 };
 
-const getMerchanId = async (taxId: string, access_token: string): Promise<boolean | any> => {
+const getMerchanId = async (taxId: string, net_id: number, access_token: string): Promise<boolean | any> => {
 	try {
-		const res: any = await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=2&taxId=${taxId}`, {
-			headers: {
-				Authorization: 'Bearer ' + access_token,
-			},
-		});
+		const res: any = await axios.get(
+			`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${net_id}&taxId=${taxId}`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + access_token,
+				},
+			}
+		);
 		const merchantId = res.data.merchants[0].merchantId;
 		return {
 			merchantId,
@@ -404,7 +416,7 @@ export const getCommerceTms7 = async (
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
-	const { rif }: any = req.params;
+	const { rif, net_id }: any = req.params;
 	console.log('buscar este ', rif);
 	try {
 		console.log('llegue ', rif);
@@ -412,7 +424,7 @@ export const getCommerceTms7 = async (
 
 		const usar = users.find((user) => user.id === id);
 
-		const merchant: any = await getMerchanId(rif, usar.access_token);
+		const merchant: any = await getMerchanId(rif, net_id, usar.access_token);
 		if (!merchant.ok) {
 			console.log('Comercio no esta en TMS7', rif);
 			throw { message: 'Comercio no esta en TMS7', ok: false };
@@ -430,12 +442,13 @@ export const getCommerceTms7 = async (
 };
 
 export const editCommerceTMS7 = async (
-	req: Request<Api.params, Api.Resp, { id_commerce: number; rif: string }>,
+	req: Request<Api.params, Api.Resp, { id_commerce: number; rif: string; net_id: number }>,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
 		const { token }: any = req.headers;
+		const { net_id } = req.body;
 
 		const usar = users.find((user) => user.id === token.id);
 		if (!usar) throw { message: 'usuario no logeado', code: 401 };
@@ -453,7 +466,7 @@ export const editCommerceTMS7 = async (
 		});
 		if (!commerce) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const merchant: any = await getMerchanId(rif, usar.access_token);
+		const merchant: any = await getMerchanId(rif, net_id, usar.access_token);
 		if (merchant.ok && merchant.data) {
 			const { id_location } = commerce;
 			const { name, id_ident_type, ident_num, id_activity }: any = commerce;

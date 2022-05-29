@@ -21,6 +21,7 @@ import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_reque
 
 const FM: Router = Router();
 //-Creacion FM
+FM.route('/FM/:id_FM').get(getFm);
 //
 FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
 //
