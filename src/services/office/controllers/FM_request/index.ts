@@ -27,6 +27,9 @@ import { relationsFMFull } from '../../utilitis/relationsFMFull';
 import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
 import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
 import { updateClient } from '../updateData/client';
+import { updateCommerce } from '../updateData/commerce';
+import { updateSolic } from '../updateData/fm';
+import { updatePos } from '../updateData/pos';
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -804,12 +807,14 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 		const location = validlocation ? validlocation : await getRepository(fm_location).save(pos);
 		const id_request = FM_save.id;
 
-		await getRepository(fm_posXcommerce).save({
-			id_location: location.id,
-			id_commerce,
-			id_request,
-			id_product,
-		});
+		for (let i = 0; i < number_post; i++) {
+			await getRepository(fm_posXcommerce).save({
+				id_location: location.id,
+				id_commerce,
+				id_request,
+				id_product,
+			});
+		}
 
 		const codeFM = createCodeFM(FM_save.id!, id_client, id_commerce, 1);
 
@@ -1016,18 +1021,26 @@ export const editStatusAdmitionDiferido = async (
 		const commerceData: any = JSON.parse(commerce);
 		const posData: any = JSON.parse(pos);
 		const dataSolic: any = JSON.parse(solic);
-		const dataFM = dataSolic;
 
 		//console.log('cliente', clientData);
 		//console.log('commerce', commerceData);
 		//console.log('pos', posData);
 		//console.log('solic', dataSolic);
 
+		//siempre hay solicituyd
+		await updateSolic(dataSolic);
+
 		if (clientData) {
 			await updateClient(clientData);
 		}
 
-		throw { message: 'vamos diferido' };
+		if (commerceData) {
+			await updateCommerce(commerceData);
+		}
+
+		if (posData) {
+			await updatePos(posData, dataSolic.id);
+		}
 
 		const query: any = await getRepository(fm_request).findOne({
 			where: { id: id_FM },
@@ -1036,62 +1049,31 @@ export const editStatusAdmitionDiferido = async (
 
 		const validate = query.id_valid_request;
 
+		const { id_client, id_commerce }: any = query;
 		if (validate.id_typedif_client !== null) {
-			const { rc_ident_card, id_ident_type, ref_person_1, ref_person_2, phone, id, ...data } = clientData;
-			if (JSON.stringify(query.id_client) !== JSON.stringify(dataFM.id_client)) {
-				//console.log(dataClient);
-				console.log('Client1');
-				await getRepository(fm_client).update({ id }, data);
-				console.log('Client2');
-				//console.log(newClient);
-			}
-			console.log(phone);
-			console.log(query.id_client.phones[0].phone, phone.phone1);
-			if (query.id_client.phones[0].phone !== phone.phone1) {
-				console.log('Falta actulizar telefonos');
-			}
-			//Update imagen
-			//console.log(files.images);
 			if (getImagen(files.images, 'rc_ident_card')) {
 				//change bit id_status actual
 				await getRepository(fm_photo).update(
-					{ id: rc_ident_card.id },
+					{ id: id_client.rc_ident_card.id },
 					{
 						id_status: 2,
 					}
 				);
 			}
 		}
-
 		if (validate.id_typedif_commerce !== null) {
-			const {
-				id,
-				banks,
-				id_aci,
-				id_activity,
-				rc_constitutive_act,
-				id_ident_type,
-				id_location,
-				rc_rif,
-				rc_special_contributor,
-				...data
-			} = commerceData;
-			if (JSON.stringify(query.id_commerce) !== JSON.stringify(dataFM.id_commerce)) {
-				await getRepository(fm_commerce).update({ id }, data);
-				console.log('Commercio', data);
-			}
 			if (getImagen(files.images, 'rc_rif')) {
 				//change bit id_status actual
 				await getRepository(fm_photo).update(
-					{ id: rc_rif.id },
+					{ id: id_commerce.rc_rif.id },
 					{
 						id_status: 2,
 					}
 				);
 			}
-			if (getImagen(files.images, 'rc_special_contributor') && rc_special_contributor) {
+			if (getImagen(files.images, 'rc_special_contributor') && id_commerce.rc_special_contributor) {
 				await getRepository(fm_photo).update(
-					{ id: rc_special_contributor.id },
+					{ id: id_commerce.rc_special_contributor.id },
 					{
 						id_status: 2,
 					}
@@ -1099,15 +1081,7 @@ export const editStatusAdmitionDiferido = async (
 			}
 		}
 		if (validate.id_typedif_ref_bank !== null) {
-			const { bank_account_num, rc_ref_bank } = dataFM;
-			console.log((query.bank_account_num as string).trim() !== (bank_account_num as string).trim());
-			if ((query.bank_account_num as string).trim() !== (bank_account_num as string).trim()) {
-				await getRepository(fm_request).update(
-					{ id: id_FM },
-					{ bank_account_num: (bank_account_num as string).trim() }
-				);
-				console.log('request bank ref');
-			}
+			const { rc_ref_bank } = query;
 			//imagen
 			if (rc_ref_bank && getImagen(files.images, 'rc_ref_bank')) {
 				await getRepository(fm_photo).update(
@@ -1118,14 +1092,8 @@ export const editStatusAdmitionDiferido = async (
 				);
 			}
 		}
-		console.log('bug4');
 		if (validate.id_typedif_comp_num !== null) {
-			const { rc_comp_dep, nro_comp_dep, ...data } = dataFM;
-			if ((query.nro_comp_dep as string).trim() === (nro_comp_dep as string).trim()) {
-				await getRepository(fm_request).update({ id: id_FM }, { nro_comp_dep: (nro_comp_dep as string).trim() });
-				console.log('request comprobatne de pago');
-			}
-			//imagen
+			const { rc_comp_dep } = query;
 			if (rc_comp_dep && getImagen(files.images, 'rc_comp_dep')) {
 				await getRepository(fm_photo).update(
 					{ id: rc_comp_dep.id },
@@ -1139,7 +1107,7 @@ export const editStatusAdmitionDiferido = async (
 		if (validate.id_typedif_consitutive_acta !== null) {
 			//imagens acta
 			console.log('remove images acta');
-			const { rc_constitutive_act, ...data } = dataFM.id_commerce;
+			const { rc_constitutive_act } = commerce.rc_constitutive_act;
 			const old_constitutive_act = query.id_commerce.rc_constitutive_act;
 			//console.log('remover de acta', files);
 			const validListFile = (value: any) => {
@@ -1163,7 +1131,7 @@ export const editStatusAdmitionDiferido = async (
 		}
 		if (validate.id_typedif_planilla !== null) {
 			//imagens acta
-			const { rc_planilla, ...data } = dataFM;
+			const { rc_planilla } = dataSolic;
 			const old_rc_planilla = query.rc_planilla;
 
 			const validListFile = (value: any) => {
@@ -1185,11 +1153,8 @@ export const editStatusAdmitionDiferido = async (
 			}
 			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
 		}
-		if (validate.id_typedif_special_contributor !== null) {
-			//imagens acta
-			console.log('images special contributor');
-		}
 
+		//cargar nuevas imagenes
 		const resFiles: any = await updateFilesRecaudosFM(files, query.id_client.id, query.id_commerce.id, id_FM);
 		if (!resFiles.okey) {
 			throw { message: resFiles.message || 'Error: Guardar Images' };

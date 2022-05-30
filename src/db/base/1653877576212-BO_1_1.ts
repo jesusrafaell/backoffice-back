@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class BOV11653799955918 implements MigrationInterface {
-    name = 'BOV11653799955918'
+export class BO111653877576212 implements MigrationInterface {
+    name = 'BO111653877576212'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "fm_type_request" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_997f9cd296f703cf8a30433561f" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ead8c3227a188cc1ed07635d03d" DEFAULT getdate(), CONSTRAINT "PK_d7b52c340b7fa1d9ad9836bec84" PRIMARY KEY ("id"))`);
@@ -13,7 +13,7 @@ export class BOV11653799955918 implements MigrationInterface {
         await queryRunner.query(`CREATE UNIQUE INDEX "REL_b183d41df081e7522d1a1b770d" ON "fm_photo" ("rcPlanillaId") WHERE "rcPlanillaId" IS NOT NULL`);
         await queryRunner.query(`CREATE TABLE "fm_payment_method" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_bbe33904cbd49bf2ba040d5bbbe" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_ed257de8d6fdc6ede2f67e55ba3" DEFAULT getdate(), CONSTRAINT "PK_0bfd5127d1db6985eec810b3bf5" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_location" ("id" int NOT NULL IDENTITY(1,1), "calle" nvarchar(255), "local" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_606e17763afea82bcc8c6842275" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_8f15e5e70d357faad50dafcecd6" DEFAULT getdate(), "id_direccion" int, CONSTRAINT "PK_0192539649646c28258e50dfd76" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "fm_pos_xcommerce" ("id" int NOT NULL IDENTITY(1,1), "aboTerminal" nvarchar(255), "serial" nvarchar(255), "id_cartera" int, "id_cartera_ter" int, "id_location" int, "id_commerce" int, "id_request" int, "id_product" int, CONSTRAINT "PK_9312e1c3e356b5203edd445d376" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "fm_pos_xcommerce" ("id" int NOT NULL IDENTITY(1,1), "aboTerminal" nvarchar(255), "serial" nvarchar(255), "active" int NOT NULL CONSTRAINT "DF_880756ff1d0fbe1ddf67ba58947" DEFAULT 1, "id_cartera" int, "id_cartera_ter" int, "id_location" int, "id_commerce" int, "id_request" int, "id_product" int, CONSTRAINT "PK_9312e1c3e356b5203edd445d376" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_product" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "description" nvarchar(255), "price" int, "quota" int NOT NULL CONSTRAINT "DF_08fb1b0c802fc5a6038a7abf4a1" DEFAULT 50, "createdAt" datetime2 NOT NULL CONSTRAINT "DF_1ccb549470e9fee1573b1ea5972" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_defb269b26f4e3ef9cc32b14bc3" DEFAULT getdate(), CONSTRAINT "PK_74b9b940f9653db01b7117cffac" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_request_origin" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), CONSTRAINT "PK_46628188d2a3ec54075667a9d53" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "fm_status_request" ("id" int NOT NULL IDENTITY(1,1), "name" nvarchar(255), "createdAt" datetime2 NOT NULL CONSTRAINT "DF_3e0f814325cfb5d4656eced64f2" DEFAULT getdate(), "updatedAt" datetime2 NOT NULL CONSTRAINT "DF_2aca385c7abd727365e86629264" DEFAULT getdate(), CONSTRAINT "PK_f3dddb343c7adbc615c4cf28df6" PRIMARY KEY ("id"))`);

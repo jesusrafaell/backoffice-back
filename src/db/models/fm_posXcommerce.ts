@@ -38,6 +38,9 @@ export default class fm_posXcommerce {
 	@Column({ nullable: true, default: null })
 	serial?: string;
 
+	@Column({ default: 1 })
+	active?: number;
+
 	@Column({ nullable: true })
 	id_cartera?: number;
 
