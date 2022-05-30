@@ -4,8 +4,6 @@ import { getRepository } from 'typeorm';
 import fm_client from '../../../../db/models/fm_client';
 import fm_commerce from '../../../../db/models/fm_commerce';
 import fm_request from '../../../../db/models/fm_request';
-import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
-import redes_tms7 from 'db/contents/fm_redes_tms7';
 
 const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
@@ -56,12 +54,11 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 				{ headers: { Authorization: token } }
 			);
 
-			console.log('bug1');
-
 			//Obtener el red de tms7 y el subacquier code
 			let walletId: number = id_request_origin === 5 ? ci_referred : 1;
+			//console.log('walletId buscar', walletId);
 			const wallet: any = await getRepository(fm_wallet_bank).findOne({
-				where: { id: walletId },
+				where: { id_cartera: walletId },
 				relations: ['id_redes_tms7'],
 			});
 			if (!wallet) {

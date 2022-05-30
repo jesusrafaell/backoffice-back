@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import {
-	fm_create_client,
 	valid_existin_client,
-	fm_create_commerce,
 	FM_create,
 	getFm,
 	editStatusByIdAdmision,
@@ -15,22 +13,22 @@ import {
 
 import { getFmAdministration, editStatusByIdAdministration } from '../../controllers/adminitration/index';
 
-import { validExistingClient, validClientData, validBankAccount } from '../../Middlewares/data/auth';
-import { validCommerceData } from '../../Middlewares/data/commerce';
+import { validExistingClient, validBankAccount } from '../../Middlewares/data/auth';
 import {
 	fmForDataDiferido,
 	fmForDataExtraPos,
 	fmFormData,
 	validExistingClientDiferido,
 	validExistingCommerceDiferido,
-	validFmData,
 } from '../../Middlewares/data/fm';
 import { valid_bank_account } from '../../controllers/FM_request';
 import { requestOrigin, valid_exitin_commerce } from '../../controllers/FM_request/index';
 
 const FM: Router = Router();
-//-Creacion FM
+//
 FM.route('/FM/:id_FM').get(getFm);
+//
+//-Creacion FM
 //
 FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
 //
