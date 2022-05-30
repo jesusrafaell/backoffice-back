@@ -11,11 +11,10 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import fm_redes_tms7 from './fm_redes_tms7';
-import fm_wallet_commerce from './fm_wallet_commerce';
+import fm_wallet_bank from './fm_wallet_bank';
 
 @Entity()
-export default class fm_wallet_bank {
+export default class fm_redes_tms7 {
 	@PrimaryGeneratedColumn()
 	id?: number;
 
@@ -23,18 +22,20 @@ export default class fm_wallet_bank {
 	name!: string;
 
 	@Column({ nullable: false })
-	id_cartera!: number;
+	net_id!: number;
 
-	@ManyToOne(() => fm_redes_tms7, (fm_redes_tms7) => fm_redes_tms7.wallet)
-	@JoinColumn({ name: 'id_redes_tms7' })
-	id_redes_tms7!: number;
+	@Column({ nullable: false })
+	parametrization!: string;
 
-	@OneToMany(() => fm_wallet_commerce, (fm_wallet_commerce) => fm_wallet_commerce.id_commerce)
-	@JoinColumn({ name: 'commerces' })
-	commerces?: fm_wallet_commerce[];
+	@Column({ nullable: false })
+	version!: number;
 
 	@Column({ default: 1 })
 	active?: number;
+
+	@OneToMany(() => fm_wallet_bank, (fm_wallet_bank) => fm_wallet_bank.id_redes_tms7)
+	@JoinColumn({ name: 'wallet' })
+	wallet?: fm_wallet_bank[];
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;

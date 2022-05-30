@@ -22,37 +22,52 @@ import type_person from './type_person';
 import type_request from './type_request';
 import type_telemarket from './type_telemarket';
 import views from './views';
-import wallet_bank from './Wallet_bank';
+import wallet_bank from './wallet_bank';
 import worker from './worker';
+import redes_tms7 from './fm_redes_tms7';
 // init server
 
 createConnection().then(async () => {
+	console.log('Running PreData');
 	await type_request();
 	await ident_type();
 	await payment_method();
+	console.log('N: 3');
 	await type_payment();
 	await company();
 	await Product();
+	console.log('N: 6');
 	await bank();
 	await type_person();
 	await afiliados();
+	console.log('N: 9');
 	await activity();
 	await request_origin();
 	await type_telemarket();
+	console.log('N: 12');
 	await telemercadeo();
 	await type_diferido();
 	await ger7_parametrization();
+	console.log('N: 15');
 	await status_photo();
 	await status_request();
+	await redes_tms7();
+	console.log('N: 18');
 	await wallet_bank();
+	await status_photo();
+	console.log('N: 20');
 	//de ultimo
 	await roles();
 	await department();
+	console.log('N: 22');
 	await views();
 	await actions();
+	console.log('N: 24');
 	//relaciones
 	await access_views();
 	await permissions();
+	console.log('N: 26');
 	//nosotros prueba
 	await worker();
+	console.log('Listo');
 });

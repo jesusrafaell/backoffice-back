@@ -1,10 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
 import { getRepository } from 'typeorm';
 import fm_client from '../../../../db/models/fm_client';
 import fm_commerce from '../../../../db/models/fm_commerce';
 import fm_request from '../../../../db/models/fm_request';
 import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
+import redes_tms7 from 'db/contents/fm_redes_tms7';
 
 const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
@@ -58,33 +59,30 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			console.log('bug1');
 
 			//Obtener el red de tms7 y el subacquier code
-			let net_id: number = 2;
-			let subacquirer_code: string = '';
-			if (id_request_origin === 5) {
-				const wallet = await getRepository(fm_wallet_bank).findOne({ id: ci_referred });
-				net_id = wallet?.net_id || net_id;
-				subacquirer_code = wallet?.tms7_codSubacquirer || '';
-			} else {
-				//Obtener el primero en la lista si no viene de un banco el origen
-				const net1000pagos = await getRepository(fm_wallet_bank).findOne(1);
-				if (net1000pagos && net1000pagos.id) {
-					net_id = net1000pagos.id;
-					subacquirer_code = net1000pagos.tms7_codSubacquirer;
-				} else throw { message: 'Error Net_id de 1000pagos es requerida para Tms7' };
+			let walletId: number = id_request_origin === 5 ? ci_referred : 1;
+			const wallet: any = await getRepository(fm_wallet_bank).findOne({
+				where: { id: walletId },
+				relations: ['id_redes_tms7'],
+			});
+			if (!wallet) {
+				throw { message: 'Error no se encontraron los parametros para TMS7' };
 			}
 
-			console.log('Tms7 usar el net_id', net_id);
+			const redes_tms7 = wallet.id_redes_tms7;
+
+			const { net_id } = redes_tms7;
+
+			console.log('Data para tmst / nameBank:', wallet.name, ' /red ', redes_tms7);
 
 			//TMS7
-			const resCommerce = await axios
+			await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce`,
-					{ id_fm: FM.id, id_commerce, id_client, net_id, subacquirer_code },
+					{ id_fm: FM.id, id_commerce, net_id },
 					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {
-					console.log('Error al crear comercio');
-					throw { message: 'Error al crear comercio en TMS7' };
+					throw { message: { text: 'Error al crear comercio en TMS7', provider: err?.response?.data?.message } };
 				});
 
 			console.log('Comercio creado en TMS7');
@@ -92,12 +90,12 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			const resTerminalTms7 = await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/tms7/commerce/terminal`,
-					{ id_fm: FM.id, id_commerce, id_client, net_id },
+					{ id_fm: FM.id, id_commerce, red: redes_tms7 },
 					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {
 					console.log('Error al crear terminales ');
-					throw { message: 'Error al crear terminales en TMS7' };
+					throw { message: { text: 'Error al crear terminales en TMS7', provider: err?.response?.data?.message } };
 				});
 
 			console.log('Fin Ger7 terminales creadas', resTerminalTms7.data.terminales);

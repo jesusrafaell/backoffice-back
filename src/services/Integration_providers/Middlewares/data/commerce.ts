@@ -7,8 +7,7 @@ export const CreateCommerceData: ValidationChain[] = [
 	//
 	check('id_commerce', 'nombre invalido').exists({ checkFalsy: true, checkNull: true }).isNumeric().custom(NoSQL),
 	//
-	check('id_client', 'nombre invalido').exists({ checkFalsy: true, checkNull: true }).isNumeric().custom(NoSQL),
-	//
+	check('net_id', 'net_id invalida').exists({ checkFalsy: true, checkNull: true }).isNumeric().custom(NoSQL),
 ];
 
 export const CreateTerminalData: ValidationChain[] = [
@@ -17,6 +16,5 @@ export const CreateTerminalData: ValidationChain[] = [
 	//
 	check('id_commerce', 'nombre invalido').exists({ checkFalsy: true, checkNull: true }).isNumeric().custom(NoSQL),
 	//
-	check('id_client', 'nombre invalido').exists({ checkFalsy: true, checkNull: true }).isNumeric().custom(NoSQL),
-	//
+	check('red', 'red invalida').exists({ checkFalsy: true, checkNull: true }).custom(NoSQL),
 ];

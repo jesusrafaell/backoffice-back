@@ -7,45 +7,39 @@ const wallet_bank = async (): Promise<void> => {
 		{
 			//1
 			name: '1000pagos',
-			net_id: 2,
 			id_cartera: 1,
-			tms7_codSubacquirer: '0720004108',
+			id_redes_tms7: 1,
 		},
 		{
 			//2
 			name: 'Venezolano de Credito',
-			net_id: 11,
 			id_cartera: 2,
-			tms7_codSubacquirer: '0720004108',
+			id_redes_tms7: 1,
 		},
 		{
 			//3
 			name: 'Banco Exterior',
-			net_id: 11,
 			id_cartera: 3,
-			tms7_codSubacquirer: '0720004108',
+			id_redes_tms7: 2,
 		},
 		//No son 1000pagos tms7
 		{
 			//4
 			name: 'Banco Delsur',
-			net_id: 11,
 			id_cartera: 4,
-			tms7_codSubacquirer: '0720004108',
+			id_redes_tms7: 2,
 		},
 		{
 			//5
 			name: 'Banco del Tesoro',
-			net_id: 11,
 			id_cartera: 5,
-			tms7_codSubacquirer: '0720004108',
+			id_redes_tms7: 2,
 		},
 		{
 			//6
 			name: 'Bancrecer',
-			net_id: 11,
 			id_cartera: 7,
-			tms7_codSubacquirer: '0720004108',
+			id_redes_tms7: 2,
 		},
 	];
 	//

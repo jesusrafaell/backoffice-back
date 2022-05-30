@@ -154,23 +154,19 @@ const validCommerceTms7 = async (commerce: any, net_id: number, access_token: st
 };
 
 export const createCommerce = async (
-	req: Request<
-		Api.params,
-		Api.Resp,
-		{ id_fm: number; id_commerce: number; id_client: number; net_id: number; subacquirer_code: string }
-	>,
+	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; net_id: number }>,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
 		const { token }: any = req.headers;
-		const { net_id, subacquirer_code } = req.body;
+		const { net_id } = req.body;
 
 		const usar = users.find((user) => user.id === token.id);
 		if (!usar) throw { message: 'usuario no logeado', code: 401 };
 
 		const fmData = await getRepository(fm_request).findOne({
-			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
+			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce },
 			order: { id: 'ASC' },
 			relations: [
 				// client
@@ -178,10 +174,6 @@ export const createCommerce = async (
 				'id_client.id_location',
 				'id_client.id_location.id_direccion',
 				'id_client.id_ident_type',
-				//pos
-				'pos',
-				'pos.id_location',
-				'pos.id_location.id_direccion',
 				// commerce
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -189,6 +181,10 @@ export const createCommerce = async (
 				'id_commerce.id_activity.id_afiliado',
 				'id_commerce.id_location',
 				'id_commerce.id_location.id_direccion',
+				//pos
+				'pos',
+				'pos.id_location',
+				'pos.id_location.id_direccion',
 			],
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
@@ -197,23 +193,25 @@ export const createCommerce = async (
 		const { name, id_ident_type, ident_num, id_activity }: any = id_commerce;
 		const { estado, codigoPostal } = id_commerce.id_location.id_direccion;
 
+		//commerce
 		const dirCC = id_commerce.id_location.id_direccion;
-
 		const address = `${dirCC.estado}, ${dirCC.municipio}, ${dirCC.ciudad}, ${dirCC.parroquia}, ${dirCC.sector}; ${id_commerce.id_location.calle}, ${id_commerce.id_location.local}`;
 
+		//cliente
 		const dirC = id_client.id_location.id_direccion;
-
 		const address_line1 = `${dirC.estado}`;
 
+		//Pos
 		const dirPos = pos[0].id_location.id_direccion;
-
 		const address_line2 = `${dirPos.estado}`;
 
-		const merchantId = createMerchantId(subacquirer_code, id);
+		console.log('Comercio activad_afiliado:', id_commerce.id_activity.id_afiliado.id);
+
+		const merchantId = createMerchantId(id_commerce.id_activity.id_afiliado.id, id);
 
 		const commerce = {
 			net_id,
-			subacquirer_code,
+			subacquirer_code: `0${id_commerce.id_activity.id_afiliado.id}`,
 			merchantId,
 			company_name: name,
 			receipt_name: name,
@@ -228,9 +226,10 @@ export const createCommerce = async (
 			postalcode: codigoPostal,
 			status: 1,
 			group: {
-				name: 'supermercados', //revisar error solo creas con
+				//[3312 falta cambiar esto que se base solo en la activiad afiliado]
+				name: net_id === 2 ? `${id_activity.id_afiliado.name}` : 'backoffic',
+				installments: '1',
 			},
-			//group: { name: `${id_activity.id_afiliado.name}`, installments: '1' },
 			partner: null,
 		};
 
@@ -241,7 +240,11 @@ export const createCommerce = async (
 			console.log('Crear comercio en TMS7 --> ');
 			const saveComercioTMS7 = await createCommerceTMS7(commerce, usar.access_token);
 			if (saveComercioTMS7) {
-				throw { message: saveComercioTMS7?.message || 'Error en crear comercio en TMS7' };
+				console.log('mandar', saveComercioTMS7?.data?.Message);
+				throw {
+					message:
+						saveComercioTMS7?.data?.Message || saveComercioTMS7?.message || 'Error en crear comercio en TMS7',
+				};
 			}
 		}
 
@@ -290,42 +293,36 @@ export const getCommerceTerminals = async (
 };
 
 export const createTerminal = async (
-	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number; net_id: number }>,
+	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; red: any }>,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
 		const { token }: any = req.headers;
-		const { net_id } = req.body;
+		const { net_id, red } = req.body.red;
 		console.log('crear terminal en tms7');
 
 		const usar = users.find((user) => user.id === token.id);
 		if (!usar) throw { message: 'usuario no logeado', code: 401 };
 
-		const fmData = await getRepository(fm_request).findOne({
-			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
-			order: { id: 'ASC' },
+		const fm = await getRepository(fm_request).findOne({
+			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce },
 			relations: [
-				// client
-				'id_client',
-				'id_client.id_ident_type',
-				//pos
-				'pos',
 				// commerce
-				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
 				'id_commerce.id_activity.id_afiliado',
 			],
 		});
-		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
+		if (!fm) throw { message: 'el comercio suministrado no existe', code: 400 };
 
-		const { id_commerce, id, number_post }: any = fmData;
-		const { id_ident_type, ident_num, id_activity }: any = id_commerce;
+		const { id_commerce, number_post }: any = fm;
+		const { id_ident_type, ident_num }: any = id_commerce;
 
 		const merchant: any = await getMerchanId(`${id_ident_type.name}${ident_num}`, net_id, usar.access_token);
 		if (!merchant.ok) {
-			console.log('No tiene merchatId el comercio');
+			console.log('El comercio no tiene merchatId');
+			throw { message: 'El comercio no esta registrado en TMS7 no se pudo crear terminales' };
 		}
 
 		//new terminls
@@ -334,8 +331,8 @@ export const createTerminal = async (
 		const terminal = {
 			net_id,
 			merchantId: merchant.merchantId,
-			parametrizationName: 'IP publico - Pruebas GER7',
-			parametrizationVersion: 12,
+			parametrizationName: net_id === 2 ? 'IP publico - Pruebas GER7' : 'Comercio',
+			parametrizationVersion: net_id === 2 ? 12 : 1,
 			status: 7,
 		};
 
@@ -377,8 +374,11 @@ const createTerminalTms7 = async (terminal: any, access_token: string): Promise<
 			message: err?.response.statusText,
 			status: err?.response.status,
 			extra: err?.response.Message,
+			data: err?.response.data,
 			ok: false,
 		};
+		console.log('Tms7 error ', resError);
+		return resError;
 		//console.log('Tms7 error ', err);
 		return resError;
 	}
