@@ -332,7 +332,7 @@ export const createTerminal = async (
 		//new terminls
 		console.log(merchant.merchantId);
 
-		console.log('red', red);
+		//console.log('red', red);
 
 		const terminal = {
 			net_id: red.net_id,
@@ -347,7 +347,7 @@ export const createTerminal = async (
 		let terminales: any = [];
 
 		for (let i = 0; i < number_post; i++) {
-			console.log('Terminal: ' + (i + 1) + ' creada para', id_commerce.name, ' en el net_id: ', net_id);
+			console.log('Terminal: ' + (i + 1) + ' creada para', id_commerce.name, ' en el net_id: ', red.net_id);
 			const saveTerminalTms7 = await createTerminalTms7(terminal, usar.access_token);
 			if (saveTerminalTms7.ok) {
 				terminales.push(saveTerminalTms7.terminal);

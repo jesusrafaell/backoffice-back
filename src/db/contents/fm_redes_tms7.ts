@@ -12,7 +12,7 @@ export const listRedes: fm_redes_tms7[] = [
 	{
 		//2
 		name: 'otros bancos',
-		net_id: 2,
+		net_id: 11,
 		parametrization: 'Comercio',
 		version: 1,
 	},

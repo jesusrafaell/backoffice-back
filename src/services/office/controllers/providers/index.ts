@@ -253,23 +253,7 @@ export const EditComercioToProviders = async (rif: string, id_commerce: number, 
 				throw { message: 'Error al  editar comercio en TMS7' };
 			});
 
-		throw { message: 'Comercio editado en tms7 ' };
-
-		const commerce: any = await getRepository(fm_commerce).findOne(id_commerce, {
-			relations: ['id_ident_type', 'id_activity', 'id_activity.id_afiliado'],
-		});
-		if (!commerce) throw { message: 'Commercio no existe call (Providers)' };
-
-		const newCommerce: any = await axios
-			.post(`${HOST}:${PORT_PROVIDERS}/tms7/commerce`, { id_commerce }, { headers: { Authorization: token } })
-			.catch((err) => {
-				console.log('Error al  editar comercio');
-				throw { message: 'Error al  editar comercio en TMS7' };
-			});
-
-		if (newCommerce.exist) {
-			console.log('Comercio editado en TMS7 si existe?');
-		} else console.log('Comercio no esta en TMS7');
+		throw { message: 'Comercio editado en tms7 aun se trabaja' };
 
 		return { ok: true };
 	} catch (err: any) {

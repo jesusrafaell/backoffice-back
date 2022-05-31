@@ -492,8 +492,6 @@ export const upFilesRecaudosFM = async (files: any, id_client: number, id_commer
 
 				const route_ids: string = createRoutes(file.filename.split('@')[1].split('.')[0]);
 
-				//console.log(file.filename, route_ids);
-				//console.log(file.filename, route_ids);
 				await Doc.Move(file.filename, route_ids);
 				const path = `static/${route_ids}/${file.filename}`;
 
