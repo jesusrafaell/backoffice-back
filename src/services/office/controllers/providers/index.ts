@@ -79,7 +79,12 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 					{ headers: { Authorization: token } }
 				)
 				.catch((err) => {
-					throw { message: { text: 'Error al crear comercio en TMS7', provider: err?.response?.data?.message } };
+					throw {
+						message: {
+							text: 'Error al crear comercio en TMS7',
+							provider: err?.response?.data?.message || 'Error Provider',
+						},
+					};
 				});
 
 			console.log('Comercio creado en TMS7');

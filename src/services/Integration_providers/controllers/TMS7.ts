@@ -159,6 +159,7 @@ export const createCommerce = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		console.log('crear comercio');
 		const { token }: any = req.headers;
 		const { net_id } = req.body;
 
@@ -227,11 +228,14 @@ export const createCommerce = async (
 			status: 1,
 			group: {
 				//[3312 falta cambiar esto que se base solo en la activiad afiliado]
-				name: net_id === 2 ? `${id_activity.id_afiliado.name}` : 'backoffic',
-				installments: '1',
+				//name: net_id === 2 ? `${id_activity.id_afiliado.name}` : 'backoffico',
+				name: id_activity.id,
+				//installments: '1',
 			},
 			partner: null,
 		};
+
+		console.log('Mandar a tms7  ', commerce);
 
 		const resValidCommerceTsm7 = await validCommerceTms7(commerce, net_id, usar.access_token);
 		if (resValidCommerceTsm7) {
@@ -247,6 +251,10 @@ export const createCommerce = async (
 				};
 			}
 		}
+
+		throw {
+			message: 'tdoo ok' || 'Error en crear comercio en TMS7',
+		};
 
 		res.status(200).json({ message: 'Comercio creado' });
 	} catch (err) {

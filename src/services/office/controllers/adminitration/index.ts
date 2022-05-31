@@ -40,7 +40,7 @@ export const getFmAdministration = async (
 
 		const info = query2;
 
-		if (!query2.length) throw { message: 'no existen solicitudes en espera', code: 400 };
+		if (!query2.length) throw { message: 'no existen solicitudes en espera.', code: 400 };
 
 		Resp(req, res, { message: 'FM respondida', info });
 	} catch (err) {

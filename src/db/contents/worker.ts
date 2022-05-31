@@ -5,10 +5,10 @@ const worker = async (): Promise<void> => {
 	const data: fm_worker[] = [
 		{
 			name: 'Armando',
-			last_name: 'test',
+			last_name: 'Rivas',
 			password: '$2b$10$4fYNDPFNI8TzB/scddXfV.hsgXtPfi8jFAp7MOujpeSfB0TbtO6fe', //Test123.
 			id_ident_type: 1,
-			ident_num: '12345677',
+			ident_num: '24205909',
 			email: 'armando@example.com',
 			phone: '+584444848',
 			id_company: 1,
