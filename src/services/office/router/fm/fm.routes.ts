@@ -42,6 +42,13 @@ FM.route('/FM/valid/extrapos').post(valid_existin_clientAndCommerce);
 //
 FM.route('/FM/bank/valid').post(validBankAccount, valid_bank_account);
 //
+//Update FM
+//
+FM.route('/FM/admision/:id_FM/status').put(editStatusByIdAdmision);
+//
+//
+FM.route('/FM/origins').get(requestOrigin);
+//
 //diferido
 FM.route('/FM/client/diferido/valid').post(validExistingClientDiferido, valid_existin_client_diferido);
 //
@@ -49,12 +56,7 @@ FM.route('/FM/commerce/diferido/valid').post(validExistingCommerceDiferido, vali
 //
 FM.route('/FM/admition/:id_FM/diferido').put(fmForDataDiferido, editStatusAdmitionDiferido);
 //
-//Update FM
-//
-FM.route('/FM/admision/:id_FM/status').put(editStatusByIdAdmision);
-//
-//
-FM.route('/FM/origins').get(requestOrigin);
+//administraocin
 //
 FM.route('/FM/administration').get(getFmAdministration);
 //

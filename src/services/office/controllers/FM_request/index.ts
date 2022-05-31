@@ -1023,7 +1023,7 @@ export const editStatusAdmitionDiferido = async (
 		const dataSolic: any = JSON.parse(solic);
 
 		//console.log('cliente', clientData);
-		//console.log('commerce', commerceData);
+		console.log('commerce', commerceData);
 		//console.log('pos', posData);
 		//console.log('solic', dataSolic);
 
@@ -1106,28 +1106,35 @@ export const editStatusAdmitionDiferido = async (
 		console.log('bug5');
 		if (validate.id_typedif_consitutive_acta !== null) {
 			//imagens acta
-			console.log('remove images acta');
-			const { rc_constitutive_act } = commerce.rc_constitutive_act;
+			const { rc_constitutive_act } = commerceData;
+			console.log('act', rc_constitutive_act);
 			const old_constitutive_act = query.id_commerce.rc_constitutive_act;
-			//console.log('remover de acta', files);
-			const validListFile = (value: any) => {
-				return rc_constitutive_act.find((item: any) => {
-					return item.id === value.id;
-				})
-					? false
-					: true;
-			};
-			//
-			let files: any[] = old_constitutive_act.filter((file: fm_photo) => validListFile(file));
-			//
-			console.log('old acta', old_constitutive_act.length);
-			console.log('remover acta', files.length);
-			let filesIds: any[] = [];
-			for (let i = 0; i < files.length; i++) {
-				//console.log(files[i].id_photo.id);
-				filesIds.push({ id: files[i].id_photo.id });
+			if (rc_constitutive_act.length !== old_constitutive_act.length) {
+				console.log('remove images acta');
+				const validListFile = (value: any) => {
+					return rc_constitutive_act.find((item: any) => {
+						return item.id === value.id;
+					})
+						? false
+						: true;
+				};
+				//
+				let files: any[] = old_constitutive_act.filter((file: fm_photo) => validListFile(file));
+				//
+				console.log('old acta', old_constitutive_act.length);
+				console.log('remover acta', files.length);
+				let filesIds: any[] = [];
+				for (let i = 0; i < files.length; i++) {
+					//console.log(files[i].id_photo.id);
+					filesIds.push({ id: files[i].id_photo.id });
+				}
+				await getConnection()
+					.createQueryBuilder()
+					.update(fm_photo)
+					.set({ id_status: 2 })
+					.where(filesIds)
+					.execute();
 			}
-			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
 		}
 		if (validate.id_typedif_planilla !== null) {
 			//imagens acta
@@ -1154,6 +1161,7 @@ export const editStatusAdmitionDiferido = async (
 			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
 		}
 
+		console.log('cargar imagenes');
 		//cargar nuevas imagenes
 		const resFiles: any = await updateFilesRecaudosFM(files, query.id_client.id, query.id_commerce.id, id_FM);
 		if (!resFiles.okey) {

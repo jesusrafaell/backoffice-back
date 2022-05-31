@@ -726,7 +726,7 @@ export const updateFilesRecaudosFM = async (files: any, id_client: number, id_co
 			if (info.rc_special_contributor) data.rc_special_contributor = info.rc_special_contributor;
 			if (info.rc_rif) data.rc_rif = info.rc_rif;
 			await getRepository(fm_commerce).update(id_commerce, data);
-			console.log('imagen new comercio', info.rc_rif, '/', info.rc_special_contributor);
+			console.log('imagen new comercio', info.rc_rif, '/ special', info.rc_special_contributor);
 		}
 
 		if (files.constitutive_act) {
@@ -745,7 +745,7 @@ export const updateFilesRecaudosFM = async (files: any, id_client: number, id_co
 		if (getImagen(files.images, 'rc_comp_dep') || getImagen(files.images, 'rc_ref_bank')) {
 			let data: any = {};
 			if (info.rc_comp_dep) data.rc_comp_dep = info.rc_comp_dep;
-			if (info.rc_ref_bank) data.rc_rif = data.rc_ref_bank;
+			if (info.rc_ref_bank) data.rc_ref_bank = data.rc_ref_bank;
 			await getRepository(fm_request).update(id_fm, data);
 			console.log('imagen new fm comp', info.rc_comp_dep);
 			console.log('imagen new fm ref', info.rc_ref_bank);

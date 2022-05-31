@@ -235,8 +235,6 @@ export const createCommerce = async (
 			partner: null,
 		};
 
-		console.log('Mandar a tms7  ', commerce);
-
 		const resValidCommerceTsm7 = await validCommerceTms7(commerce, net_id, usar.access_token);
 		if (resValidCommerceTsm7) {
 			console.log('Comercio ya existe en TMS7 ');
@@ -251,10 +249,6 @@ export const createCommerce = async (
 				};
 			}
 		}
-
-		throw {
-			message: 'tdoo ok' || 'Error en crear comercio en TMS7',
-		};
 
 		res.status(200).json({ message: 'Comercio creado' });
 	} catch (err) {
@@ -307,7 +301,8 @@ export const createTerminal = async (
 ): Promise<void> => {
 	try {
 		const { token }: any = req.headers;
-		const { net_id, red } = req.body.red;
+		const { net_id } = req.body.red;
+		const { red } = req.body;
 		console.log('crear terminal en tms7');
 
 		const usar = users.find((user) => user.id === token.id);
@@ -317,6 +312,7 @@ export const createTerminal = async (
 			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce },
 			relations: [
 				// commerce
+				'id_commerce',
 				'id_commerce.id_ident_type',
 				'id_commerce.id_activity',
 				'id_commerce.id_activity.id_afiliado',
@@ -336,11 +332,13 @@ export const createTerminal = async (
 		//new terminls
 		console.log(merchant.merchantId);
 
+		console.log('red', red);
+
 		const terminal = {
-			net_id,
+			net_id: red.net_id,
 			merchantId: merchant.merchantId,
-			parametrizationName: net_id === 2 ? 'IP publico - Pruebas GER7' : 'Comercio',
-			parametrizationVersion: net_id === 2 ? 12 : 1,
+			parametrizationName: red.parametrization,
+			parametrizationVersion: red.version,
 			status: 7,
 		};
 
