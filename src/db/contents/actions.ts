@@ -21,7 +21,7 @@ export const listActions: fm_actions[] = [
 	//seguidad posision el siguente 6
 	{
 		name: 'Ver Usuarios',
-	}
+	},
 	{
 		name: 'Editar usuarios',
 	},
