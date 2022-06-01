@@ -65,6 +65,7 @@ createConnection().then(async () => {
 	console.log('N: 24');
 	//relaciones
 	await access_views();
+	console.log('N: 25');
 	await permissions();
 	console.log('N: 26');
 	//nosotros prueba

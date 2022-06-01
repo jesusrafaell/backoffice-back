@@ -6,33 +6,21 @@ import fm_department from '../models/fm_department';
 //
 import { listActions } from './actions';
 import { listRoles } from './roles';
-import { listDeparment } from './department';
 
 const permissions = async (): Promise<void> => {
 	//create Base para todo los departamentos
-	let dataPre: fm_permissions[] = [];
-	listDeparment.map((item: fm_department, index: number) => {
-		listRoles.map((rol: fm_department, indexRol: number) => {
-			dataPre.push({
-				id_department: index + 1,
-				id_rol: indexRol + 1, //base
-				id_action: 1, //base
-			});
-		});
-	});
-
 	let data: fm_permissions[] = [
 		//fuerza de venta
 		{
 			id_department: 2,
-			id_rol: 2,
-			id_action: 2,
+			id_rol: 2, //work
+			id_action: 2, //crear fm
 		},
 		//seguridad
 		{
-			id_department: 3,
-			id_rol: 2,
-			id_action: 6,
+			id_department: 3, //se
+			id_rol: 2, //work
+			id_action: 6, //
 		},
 		{
 			id_department: 3,
@@ -40,8 +28,18 @@ const permissions = async (): Promise<void> => {
 			id_action: 7,
 		},
 		{
+			id_department: 3, //se
+			id_rol: 4, //work
+			id_action: 6, //
+		},
+		{
 			id_department: 3,
-			id_rol: 6,
+			id_rol: 4,
+			id_action: 7,
+		},
+		{
+			id_department: 3,
+			id_rol: 4,
 			id_action: 8,
 		},
 		{
@@ -68,7 +66,7 @@ const permissions = async (): Promise<void> => {
 			id_action: 9,
 		},
 	];
-	data = dataPre.concat(data);
+	//data = dataPre.concat(data);
 
 	//admision worker/super/admin
 	listRoles.map((item: fm_roles, index: number) => {
@@ -95,18 +93,6 @@ const permissions = async (): Promise<void> => {
 					});
 			});
 	});
-
-	//Presidencia no permisos
-	/*
-	listActions.map((item: fm_actions, index: number) => {
-		if (index !== 0 && (index < 5 || index > 7))
-			data.push({
-				id_department: 10,
-				id_rol: 1, //
-				id_action: 1, //todos
-			});
-	});
-	*/
 
 	const valid = await getRepository(fm_permissions).find({ where: data });
 	if (!valid.length) await getRepository(fm_permissions).save(data);

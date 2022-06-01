@@ -827,6 +827,7 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 			5, //Cobranza
 			6, //Activacion
 			7, //Administracion
+			9, //Canales
 		];
 
 		const status = statusFm.map((dep: number) => {

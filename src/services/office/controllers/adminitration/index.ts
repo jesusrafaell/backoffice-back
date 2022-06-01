@@ -5,7 +5,6 @@ import Msg from '../../../../hooks/messages/index.ts';
 import Resp from '../../Middlewares/res';
 import fm_request from '../../../../db/models/fm_request';
 import fm_status from '../../../../db/models/fm_status';
-import axios from 'axios';
 import { comercioToProviders } from '../providers';
 
 const { HOST, PORT_PROVIDERS } = process.env;
@@ -83,11 +82,11 @@ export const editStatusByIdAdministration = async (
 			}
 		}
 
-		await getRepository(fm_status).update({ id_request: id_FM, id_department: 7 }, { id_status_request });
-
 		if (id_payment_method && id_type_payment) {
 			await getRepository(fm_request).update({ id: id_FM }, { id_payment_method, id_type_payment });
 		}
+
+		await getRepository(fm_status).update({ id_request: id_FM, id_department: 7 }, { id_status_request });
 
 		const message: string = Msg('Status del FM').edit;
 
