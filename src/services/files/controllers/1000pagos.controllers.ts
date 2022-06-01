@@ -662,10 +662,18 @@ export const updateFilesRecaudosFM = async (files: any, id_client: number, id_co
 					const route_ids: string = createRoutes(file.filename.split('@')[1].split('.')[0]);
 
 					//console.log(file.filename, route_ids);
-					await Doc.Move(file.filename, route_ids);
+
 					const path = `static/${route_ids}/${file.filename}`;
 
+					console.log('move', files.filename, route_ids);
+					console.log('db', file.filename, path);
+
+					throw { mesage: 'Todo ok' };
+
+					await Doc.Move(file.filename, route_ids);
+
 					const data = getRepository(fm_photo).create({ name: file.filename, path, descript });
+
 					const save = await getRepository(fm_photo).save(data);
 
 					//console.log(save.name, save.id);
@@ -756,7 +764,10 @@ export const updateFilesRecaudosFM = async (files: any, id_client: number, id_co
 			okey: true,
 		};
 	} catch (err) {
-		return err;
+		return {
+			okey: false,
+			err,
+		};
 	}
 };
 

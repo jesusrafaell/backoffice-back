@@ -41,8 +41,13 @@ const permissions = async (): Promise<void> => {
 		},
 		{
 			id_department: 3,
-			id_rol: 4,
+			id_rol: 6,
 			id_action: 8,
+		},
+		{
+			id_department: 3,
+			id_rol: 4,
+			id_action: 9,
 		},
 		//colear en admision
 		{
@@ -91,15 +96,17 @@ const permissions = async (): Promise<void> => {
 			});
 	});
 
-	//Presidencia
+	//Presidencia no permisos
+	/*
 	listActions.map((item: fm_actions, index: number) => {
 		if (index !== 0 && (index < 5 || index > 7))
 			data.push({
 				id_department: 10,
-				id_rol: 4, //administrativo
-				id_action: index + 1, //todos
+				id_rol: 1, //
+				id_action: 1, //todos
 			});
 	});
+	*/
 
 	const valid = await getRepository(fm_permissions).find({ where: data });
 	if (!valid.length) await getRepository(fm_permissions).save(data);

@@ -23,10 +23,6 @@ export default class fm_actions {
 	@JoinColumn({ name: 'permissions' })
 	permissions?: fm_permissions[];
 
-	@ManyToOne(() => fm_department, (fm_department) => fm_department.action)
-	@JoinColumn({ name: 'id_department' })
-	id_department!: number;
-
 	@Column({ default: 1 })
 	active?: number;
 
