@@ -4,9 +4,11 @@ import fm_roles from '../../../../../db/models/fm_roles';
 export const getPermiss = (value: any[]) => {
 	let list: { [key: string]: number } = {};
 	for (const key of value) {
-		let item: string = key.id_action.name;
-		//console.log(item);
-		list[item] = key.id_action.id;
+		if (key.active) {
+			let item: string = key.id_action.name;
+			//console.log(item);
+			list[item] = key.id_action.id;
+		}
 	}
 	return list;
 };
@@ -14,9 +16,11 @@ export const getPermiss = (value: any[]) => {
 export const getViews = (access_views: any[]) => {
 	let listViews: { [key: string]: number } = {};
 	for (const key of access_views) {
-		let item: string = key.id_views.name;
-		//console.log(item);
-		listViews[item] = key.id_views.id;
+		if (key.active) {
+			let item: string = key.id_views.name;
+			//console.log(item);
+			listViews[item] = key.id_views.id;
+		}
 	}
 	return listViews;
 };

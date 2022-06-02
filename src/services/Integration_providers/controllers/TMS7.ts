@@ -44,11 +44,16 @@ export const Login = async (
 		if (i >= 0) users[i].access_token = resp.data.access_token;
 		else users.push({ id: token.id, access_token });
 
-		res.status(200).json({ message: 'Auth OK' });
+		res.status(200).json({ message: 'Auth OK', ok: true });
 	} catch (err) {
 		console.log('err', err);
 
-		next(err);
+		const resErr = {
+			ok: false,
+			err,
+		};
+
+		next(resErr);
 	}
 };
 

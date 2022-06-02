@@ -44,15 +44,19 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 
 		if (id_product.id === 1) {
 			console.log('Comenzar en Tms7', HOST, ':', PORT_PROVIDERS);
-			await axios.post(
-				`${HOST}:${PORT_PROVIDERS}/auth/login`,
-				{
-					grant_type: 'password',
-					username: 'acesso.teste',
-					password: '@ger7123',
-				},
-				{ headers: { Authorization: token } }
-			);
+			await axios
+				.post(
+					`${HOST}:${PORT_PROVIDERS}/auth/login`,
+					{
+						grant_type: 'password',
+						username: 'acesso.teste',
+						password: '@ger7123',
+					},
+					{ headers: { Authorization: token } }
+				)
+				.catch((err) => {
+					throw { message: { text: 'Problemas de conexion con TMS7', provider: 'TMS7' } };
+				});
 
 			//Obtener el red de tms7 y el subacquier code
 			let walletId: number = id_request_origin === 5 ? ci_referred : 1;

@@ -22,6 +22,7 @@ const list: string[] = [
 	'aci&distribuidores',
 	'edit',
 	'Location',
+	'seguridad',
 ];
 
 export default list;

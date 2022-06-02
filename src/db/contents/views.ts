@@ -28,7 +28,7 @@ export const listViews: fm_views[] = [
 	},
 	{
 		//7
-		name: 'GestionUsuarios',
+		name: 'Seguridad',
 	},
 ];
 

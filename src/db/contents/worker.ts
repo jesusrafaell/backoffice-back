@@ -21,7 +21,7 @@ const worker = async (): Promise<void> => {
 			password: '$2b$10$4fYNDPFNI8TzB/scddXfV.hsgXtPfi8jFAp7MOujpeSfB0TbtO6fe', //Test123.
 			id_ident_type: 1,
 			ident_num: '25523204',
-			email: 'jesus@tranred.com.ve',
+			email: 'jhernandez@tranred.com.ve',
 			phone: '+584444848',
 			id_company: 1,
 			id_rol: 4,
@@ -33,7 +33,7 @@ const worker = async (): Promise<void> => {
 			password: '$2b$10$4fYNDPFNI8TzB/scddXfV.hsgXtPfi8jFAp7MOujpeSfB0TbtO6fe', //Test123.
 			id_ident_type: 1,
 			ident_num: '24111111',
-			email: 'aetour.ca@gmail.com',
+			email: 'amendoza@tranred.com.ve',
 			phone: '+54241111111',
 			id_company: 1,
 			id_rol: 4,
@@ -94,6 +94,18 @@ const worker = async (): Promise<void> => {
 			phone: '+584165186697',
 			id_company: 1,
 			id_department: 4,
+		},
+		{
+			name: 'Jesus',
+			last_name: 'Hernandez',
+			password: '$2b$10$4fYNDPFNI8TzB/scddXfV.hsgXtPfi8jFAp7MOujpeSfB0TbtO6fe', //Test123.
+			id_ident_type: 1,
+			ident_num: '255232041',
+			email: 'work@correo.com',
+			phone: '+584444848',
+			id_company: 1,
+			id_rol: 4,
+			id_department: 8,
 		},
 	];
 	const valid = await getRepository(fm_worker).find();

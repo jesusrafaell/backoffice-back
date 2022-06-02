@@ -23,10 +23,9 @@ export default class Contactos {
 	@Column({ nullable: true })
 	contTelefMov!: string;
 
-    @Column({ nullable: true })
+	@Column({ nullable: true })
 	contMail!: string;
 
 	@Column({ nullable: true })
 	contFreg!: string;
-
 }

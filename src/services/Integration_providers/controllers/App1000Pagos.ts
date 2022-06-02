@@ -59,49 +59,53 @@ export const createCommerce = async (
 		const address_Client = `${dirC.estado}, ${dirC.municipio}, ${dirC.ciudad}, ${dirC.parroquia}. ${dirC.sector}, ${id_client.id_location.calle}, ${id_client.id_location.local}`;
 		const address_Pos1 = `${dirPos.estado}, ${dirPos.municipio}, ${dirPos.ciudad}, ${dirPos.parroquia}. ${dirPos.sector}, ${pos[0].id_location.calle}, ${pos[0].id_location.local}`;
 
-		if (!fmCommerce1000pagos) {
-			const commerce: any = {
-				comerDesc: id_commerce.name,
-				comerTipoPer: [3, 4].includes(id_commerce.id_ident_type.id) ? 2 : 1,
-				comerCodigoBanco: bank_account_num.slice(0, 4),
-				comerCuentaBanco: bank_account_num,
-				comerPagaIva: 'SI',
-				comerCodUsuario: null,
-				comerCodPadre: 0,
-				comerRif: id_commerce.id_ident_type.name + id_commerce.ident_num,
-				comerFreg: null,
-				comerCodTipoCont: id_commerce.special_contributor ? 2 : 1,
-				comerInicioContrato: DateTime.local().toISODate(),
-				comerFinContrato: DateTime.local().plus({ years: 1 }).toISODate(),
-				comerExcluirPago: 0,
-				comerCodCategoria: 5411,
-				comerGarantiaFianza: 1,
-				comerModalidadGarantia: 1,
-				comerMontoGarFian: 7.77,
-				comerModalidadPos: 3,
-				comerTipoPos: id_product,
-				comerRecaudos: null,
-				comerDireccion: addressCommerce,
-				//
-				comerObservaciones: '',
-				comerCodAliado: id_commerce.id_aci,
-				comerEstatus: 5,
-				comerHorario: null,
-				comerImagen: null,
-				comerPuntoAdicional: 0,
-				comerCodigoBanco2: '',
-				comerCuentaBanco2: '',
-				comerCodigoBanco3: '',
-				comerCuentaBanco3: '',
-				//
-				comerDireccionHabitacion: address_Client,
-				//
-				comerDireccionPos: address_Pos1,
-				//
-				comerDiasOperacion: id_commerce.days,
-				comerFechaGarFian: null,
-			};
+		const commerce: any = {
+			comerDesc: id_commerce.name,
+			comerTipoPer: [3, 4].includes(id_commerce.id_ident_type.id) ? 2 : 1,
+			comerCodigoBanco: bank_account_num.slice(0, 4),
+			comerCuentaBanco: bank_account_num,
+			comerPagaIva: 'SI',
+			comerCodUsuario: null,
+			comerCodPadre: 0,
+			comerRif: id_commerce.id_ident_type.name + id_commerce.ident_num,
+			comerFreg: null,
+			comerCodTipoCont: id_commerce.special_contributor ? 2 : 1,
+			comerInicioContrato: DateTime.local().toISODate(),
+			comerFinContrato: DateTime.local().plus({ years: 1 }).toISODate(),
+			comerExcluirPago: 0,
+			comerCodCategoria: 5411,
+			comerGarantiaFianza: 1,
+			comerModalidadGarantia: 1,
+			comerMontoGarFian: 7.77,
+			comerModalidadPos: 3,
+			comerTipoPos: id_product,
+			comerRecaudos: null,
+			comerDireccion: addressCommerce,
+			//
+			comerObservaciones: '',
+			comerCodAliado: id_commerce.id_aci,
+			comerEstatus: 5,
+			comerHorario: null,
+			comerImagen: null,
+			comerPuntoAdicional: 0,
+			comerCodigoBanco2: '',
+			comerCuentaBanco2: '',
+			comerCodigoBanco3: '',
+			comerCuentaBanco3: '',
+			//
+			comerDireccionHabitacion: address_Client,
+			//
+			comerDireccionPos: address_Pos1,
+			//
+			comerDiasOperacion: id_commerce.days,
+			comerFechaGarFian: null,
+		};
 
+		const cxaCodAfi = `${id_commerce.id_activity.id_afiliado.id}`.split('');
+		while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');
+		const cxaCod: string = cxaCodAfi.join('');
+
+		if (!fmCommerce1000pagos) {
 			const comercioSave = await getRepository(Comercios).save(commerce);
 
 			console.log('Comercio creado en 1000pagos');
@@ -119,11 +123,7 @@ export const createCommerce = async (
 
 			await getRepository(Contactos).save(contacto);
 
-			console.log('contacto creado en 1000pago', contacto);
-
-			const cxaCodAfi = `${id_commerce.id_activity.id_afiliado.id}`.split('');
-			while (cxaCodAfi.length < 15) cxaCodAfi.unshift('0');
-			const cxaCod: string = cxaCodAfi.join('');
+			console.log('contacto creado en 1000pago');
 
 			let comerXafiSave = await getRepository(ComerciosXafiliado).findOne({
 				where: { cxaCodComer: comercioSave!.comerCod },
@@ -137,7 +137,35 @@ export const createCommerce = async (
 			} else {
 				console.log('ComercioXafiliado ', contacto.contMail, ' ya existe');
 			}
-		} else console.log('El comercio ya existe en 1000pagos falta updatear si existe');
+		} else {
+			console.log('El comercio ya existe en 1000pagos updatear info');
+
+			await getRepository(Comercios).update(fmCommerce1000pagos.comerCod, commerce);
+
+			console.log('Comercio updateado en 1000pagos');
+
+			const contacto: any = {
+				contCodUsuario: null,
+				contNombres: id_client.name,
+				contApellidos: id_client.last_name,
+				contTelefLoc: '0' + id_client.phones[0].phone.slice(3, id_client.phones[0].phone.length),
+				contTelefMov: '0' + id_client.phones[1].phone.slice(3, id_client.phones[1].phone.length),
+				contMail: id_client.email,
+				contFreg: null,
+			};
+
+			await getRepository(Contactos).update(
+				{
+					contMail: id_client.email,
+					contCodComer: fmCommerce1000pagos.comerCod,
+				},
+				contacto
+			);
+
+			//console.log('contacto updateado en 1000pago');
+		}
+
+		console.log('Listo 1000pagos');
 
 		res.status(200).json({ message: 'Comercio creado' });
 	} catch (err) {
