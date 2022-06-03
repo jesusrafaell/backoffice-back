@@ -35,7 +35,7 @@ export const worker = async (req: Request<any, Api.Resp>, res: Response, next: N
 		//buscar permisos
 		if (id_department.id !== 1) {
 			const resPermiss: any = await getRepository(fm_permissions).find({
-				where: { id_department: idDep.id, id_rol: idRol.id },
+				where: { id_department: idDep.id, id_rol: idRol.id, active: 1 },
 				relations: ['id_action'],
 			});
 			if (!resPermiss) throw { message: 'Error Access Permisses', code: 400 };

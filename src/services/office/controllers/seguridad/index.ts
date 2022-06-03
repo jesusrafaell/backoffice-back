@@ -17,7 +17,12 @@ export const getDepartments = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const info = await getRepository(fm_department).find({ active: 1, name: Not('God') });
+		const { idDep }: any = req.headers.token;
+		const ignore: string = idDep.name === 'God' ? '' : 'God';
+
+		console.log('g', ignore);
+
+		const info = await getRepository(fm_department).find({ active: 1, name: Not(ignore) });
 
 		const message: string = Msg('deparments').getAll;
 
@@ -68,7 +73,7 @@ export const getPermissions = async (
 						list.push({
 							id: action[j].id,
 							name: action[j].name,
-							status: true,
+							status: perm[i].active ? true : false,
 						});
 					}
 				}
@@ -176,20 +181,17 @@ export const getViews = async (
 			let list: any = [];
 			for (let j = 0; j < item_views.length; j++) {
 				let flag = false;
-				console.log(j, ' ', item_views[j]);
 				for (let i = 0; i < item_access.length; i++) {
 					if (item_views[j].id === item_access[i].id_views.id) {
-						console.log(j, ' ', item_views[j].id, item_views[j].name, true);
 						flag = true;
 						list.push({
 							id: item_views[j].id,
 							name: item_views[j].name,
-							status: true,
+							status: item_access[i].active ? true : false,
 						});
 					}
 				}
 				if (!flag) {
-					console.log(j, ' ', item_views[j].id, item_views[j].name, false);
 					list.push({
 						id: item_views[j].id,
 						name: item_views[j].name,
@@ -216,48 +218,46 @@ export const getViews = async (
 };
 
 export const updateViews = async (
-	req: Request<Api.params, Api.Resp, { id_dep: number; id_rol: number }, any>,
+	req: Request<Api.params, Api.Resp, { id_dep: number }, any>,
 	res: Response<Api.Resp>,
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { id_dep, id_rol }: any = req.params;
-		const newAction: any = req.body;
+		const { id_dep }: any = req.params;
+		const newViews: any = req.body;
 
-		const perm = await getRepository(fm_permissions).find({
-			where: { id_rol, id_department: id_dep },
-			relations: ['id_action'],
+		const accessList = await getRepository(fm_access_views).find({
+			where: { id_department: id_dep },
+			relations: ['id_views'],
 		});
 
-		console.log(newAction);
+		console.log(newViews);
 
-		const saveListPermiss = async (perm: any[], action: any[]) => {
+		const saveListViews = async (access: any[], views: any[]) => {
 			let listSave: any[] = [];
 			let listUpdate: any[] = [];
-			for (let j = 0; j < action.length; j++) {
+			for (let j = 0; j < views.length; j++) {
 				let flag = false;
-				for (let i = 0; i < perm.length; i++) {
-					if (action[j].id === perm[i].id_action.id) {
+				for (let i = 0; i < access.length; i++) {
+					if (views[j].id === access[i].id_views.id) {
 						flag = true;
 						listUpdate.push({
-							id: perm[i].id,
+							id: access[i].id,
 							id_deparment: id_dep,
-							id_rol,
-							id_action: action[j].id,
-							active: action[j].status ? 1 : 0,
+							id_views: views[j].id,
+							active: views[j].status ? 1 : 0,
 						});
-						await getRepository(fm_permissions).update(perm[i].id, {
-							active: action[j].status ? 1 : 0,
+						await getRepository(fm_access_views).update(access[i].id, {
+							active: views[j].status ? 1 : 0,
 						});
 					}
 				}
 				if (!flag) {
-					if (action[j].status)
+					if (views[j].status)
 						listSave.push({
 							id_department: id_dep,
-							id_rol: id_rol,
-							id_action: action[j].id,
-							active: action[j].status ? 1 : 0,
+							id_views: views[j].id,
+							active: views[j].status ? 1 : 0,
 						});
 				}
 			}
@@ -266,14 +266,14 @@ export const updateViews = async (
 			console.log('crear', listSave);
 
 			//if (listUpdate.length) await getRepository(fm_permissions).update(listUpdate, listUpdate);
-			if (listSave.length) await getRepository(fm_permissions).save(listSave);
+			if (listSave.length) await getRepository(fm_access_views).save(listSave);
 		};
 
-		await saveListPermiss(perm, newAction);
+		await saveListViews(accessList, newViews);
 
 		//console.log(perm);
 
-		Resp(req, res, { message: 'update permiss' });
+		Resp(req, res, { message: 'update views' });
 	} catch (err) {
 		next(err);
 	}

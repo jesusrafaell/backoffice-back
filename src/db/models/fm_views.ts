@@ -6,10 +6,12 @@ import {
 	OneToMany,
 	JoinColumn,
 	CreateDateColumn,
+	Index,
 } from 'typeorm';
 import fm_acces_views from './fm_access_views';
 
 @Entity()
+@Index(['root'], { unique: true })
 export default class fm_views {
 	@PrimaryGeneratedColumn()
 	id?: number;

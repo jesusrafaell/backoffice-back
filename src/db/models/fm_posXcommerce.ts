@@ -41,20 +41,7 @@ export default class fm_posXcommerce {
 	@Column({ default: 1 })
 	active?: number;
 
-	@Column({ nullable: true })
-	id_cartera?: number;
-
-	@Column({ nullable: true })
-	id_cartera_ter?: number;
-
 	@ManyToOne(() => fm_product, (fm_product) => fm_product.pos)
 	@JoinColumn({ name: 'id_product' })
 	id_product!: number;
-
-	/*
-	@Column({ name: 'id_status', default: 1 })
-	@ManyToMany(() => fm_status_pos)
-	@JoinTable()
-	id_status!: fm_status_pos[];
-	*/
 }

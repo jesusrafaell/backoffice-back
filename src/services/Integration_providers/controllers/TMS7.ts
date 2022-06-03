@@ -361,6 +361,8 @@ export const createTerminal = async (
 			}
 		}
 
+		console.log('terminales creadas', terminales);
+
 		res.status(200).json({ message: 'Terminales creadas', terminales });
 	} catch (err) {
 		next(err);
