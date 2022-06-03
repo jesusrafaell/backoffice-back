@@ -17,6 +17,9 @@ export default class fm_views {
 	@Column({ nullable: true })
 	name!: string;
 
+	@Column({ nullable: true })
+	root!: string;
+
 	@OneToMany(() => fm_acces_views, (fm_acces_views) => fm_acces_views.id_views)
 	@JoinColumn({ name: 'acces_views' })
 	acces_views?: fm_acces_views[];

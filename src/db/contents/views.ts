@@ -4,31 +4,38 @@ import { getRepository } from 'typeorm';
 export const listViews: fm_views[] = [
 	{
 		//1
-		name: 'Home',
+		name: 'Inicio',
+		root: 'home',
 	},
 	{
 		//2
-		name: 'Solicitud',
+		name: 'Formualrio de Act.',
+		root: 'solicitud',
 	},
 	{
 		//3
 		name: 'Admision',
+		root: 'admision',
 	},
 	{
 		//4
 		name: 'Administracion',
+		root: 'administracion',
 	},
 	{
 		//5
 		name: 'Cobranza',
+		root: 'cobranza',
 	},
 	{
 		//6
-		name: 'EditarComercio',
+		name: 'Editar Comercio',
+		root: 'editar_commerce',
 	},
 	{
 		//7
-		name: 'Seguridad',
+		name: 'Gestion de Seguridad',
+		root: 'seguridad',
 	},
 ];
 

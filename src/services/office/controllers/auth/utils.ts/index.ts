@@ -17,7 +17,7 @@ export const getViews = (access_views: any[]) => {
 	let listViews: { [key: string]: number } = {};
 	for (const key of access_views) {
 		if (key.active) {
-			let item: string = key.id_views.name;
+			let item: string = key.id_views.root;
 			//console.log(item);
 			listViews[item] = key.id_views.id;
 		}
