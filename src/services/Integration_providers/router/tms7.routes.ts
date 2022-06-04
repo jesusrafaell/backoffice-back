@@ -7,7 +7,7 @@ import {
 	getCommerceTerminals,
 	getCommerceTms7,
 	editCommerceTMS7,
-} from '../controllers/TMS7';
+} from '../controllers/TMS7/TMS7';
 import { CreateCommerceData, CreateTerminalData } from '../Middlewares/data/commerce';
 
 const Commerce: Router = Router();

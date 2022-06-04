@@ -1,16 +1,16 @@
-import fm_request from '../../../db/models/fm_request';
-import fm_phone from '../../../db/models/fm_phone';
+import fm_request from '../../../../db/models/fm_request';
+import fm_phone from '../../../../db/models/fm_phone';
 import { NextFunction, Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { DateTime } from 'luxon';
-import Comercios from '../../../db/models/Comercios';
-import Contactos from '../../../db/models/Contactos';
-import { Api } from '../../../interfaces';
-import ComerciosXafiliado from '../../../db/models/ComerciosXafliado';
-import fm_commerce from '../../../db/models/fm_commerce';
-import commerces from 'services/office/router/commerces';
-import Abonos from '../../../db/models/Abonos';
-import { Terminal } from '../../../interfaces/general';
+import Comercios from '../../../../db/models/Comercios';
+import Contactos from '../../../../db/models/Contactos';
+import { Api } from '../../../../interfaces';
+import ComerciosXafiliado from '../../../../db/models/ComerciosXafliado';
+import fm_commerce from '../../../../db/models/fm_commerce';
+import Abonos from '../../../../db/models/Abonos';
+import { Terminal } from '../../../../interfaces/general';
+import PlanPago from '../../../../db/models/PlanPago';
 
 export const createCommerce = async (
 	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
@@ -19,7 +19,6 @@ export const createCommerce = async (
 ): Promise<void> => {
 	try {
 		console.log('Comercio en 1000pagos');
-		console.log(req.body.id_fm, req.body.id_commerce, req.body.id_client);
 		const fmData = await getRepository(fm_request).findOne({
 			where: { id: req.body.id_fm, id_commerce: req.body.id_commerce, id_client: req.body.id_client },
 			order: { id: 'ASC' },
@@ -43,7 +42,7 @@ export const createCommerce = async (
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const { id_commerce, id_client, bank_account_num, id_product, pos, number_post }: any = fmData;
+		const { id_commerce, id_client, bank_account_num, id_product, pos }: any = fmData;
 
 		const fmCommerce1000pagos = await getRepository(Comercios).findOne({
 			where: {
@@ -108,7 +107,11 @@ export const createCommerce = async (
 		if (!fmCommerce1000pagos) {
 			const comercioSave = await getRepository(Comercios).save(commerce);
 
-			console.log('Comercio creado en 1000pagos');
+			console.log('Comercio creado en 1000pagos', comercioSave.comerRif);
+
+			//console.log('comercio en backoffice', id_commerce.id);
+
+			await getRepository(fm_commerce).update(id_commerce.id, { codComer_1000pagos: comercioSave.comerCod });
 
 			const contacto: any = {
 				contCodComer: comercioSave.comerCod,
@@ -142,7 +145,12 @@ export const createCommerce = async (
 
 			await getRepository(Comercios).update(fmCommerce1000pagos.comerCod, commerce);
 
-			console.log('Comercio updateado en 1000pagos');
+			//console.log('comercio en backoffice', id_commerce.id, fmCommerce1000pagos.comerCod);
+			await getRepository(fm_commerce).update(id_commerce.id, {
+				codComer_1000pagos: fmCommerce1000pagos.comerCod,
+			});
+
+			console.log('Comercio updateado en 1000pagos', fmCommerce1000pagos.comerRif);
 
 			const contacto: any = {
 				contCodUsuario: null,
@@ -184,73 +192,51 @@ export const abono1000pagos = async (
 
 	try {
 		//console.log('abono lo que llego', terminals.length, commerce);
-		const resComercio: any = await getRepository(Comercios).findOne({
+		const comercio1000pagos: any = await getRepository(Comercios).findOne({
 			where: { comerRif: commerce.id_ident_type.name + commerce!.ident_num },
 		});
-		if (!resComercio) throw { message: 'el commercio suministrado no existe', code: 400 };
+		if (!comercio1000pagos) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const resTermAbono: any = await getRepository(Abonos).find({
-			where: { aboCodComercio: resComercio.comerCod },
-		});
-
+		//console.log(`${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'));
 		//buscar terminals en abono
 		let abono: Abonos[] = [];
-		if (resTermAbono.length) {
-			console.log('Tiene abonos tengo que recorrer');
-			//remover los terminales existentes[3312]
-			for (let i = 0; i < terminals.length; i++) {
-				let flag = true;
-				for (let j = 0; j < resTermAbono.length; j++) {
-					if (terminals[i].terminalId === resTermAbono[j].aboTerminal) {
-						flag = false;
-						break;
-					}
-				}
-				//console.log(terminals[i].terminalId);
-
-				if (flag) {
-					abono.push({
-						//aboCod: 1458,
-						aboCodAfi: `${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'),
-						aboTerminal: terminals[i].terminalId,
-						aboCodComercio: resComercio.comerCod,
-						aboCodBanco: resComercio.comerCodigoBanco,
-						aboNroCuenta: resComercio.comerCuentaBanco,
-						aboTipoCuenta: '01',
-						estatusId: 23,
-						pagoContado: 0,
-					});
-				}
-			}
-		} else {
-			console.log('No tiene abonos');
-			//console.log(commerce);
-			//console.log(commerce.id_activity.id_afiliado);
-			console.log(`${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'));
-			for (let i = 0; i < terminals.length; i++) {
-				abono.push({
-					//aboCod: 1458,
-					aboCodAfi: `${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'),
-					aboTerminal: terminals[i].terminalId,
-					aboCodComercio: resComercio.comerCod,
-					aboCodBanco: resComercio.comerCodigoBanco,
-					aboNroCuenta: resComercio.comerCuentaBanco,
-					aboTipoCuenta: '01',
-					estatusId: 23,
-					pagoContado: 0,
-				});
-			}
-		}
+		let planPago: PlanPago[] = [];
+		//
+		terminals.map((terminal: any) => {
+			abono.push({
+				aboCodAfi: `${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'),
+				aboTerminal: terminal.terminalId,
+				aboCodComercio: comercio1000pagos.comerCod,
+				aboCodBanco: comercio1000pagos.comerCodigoBanco,
+				aboNroCuenta: comercio1000pagos.comerCuentaBanco,
+				aboTipoCuenta: '01',
+				estatusId: 23,
+				pagoContado: 0,
+			});
+			planPago.push({
+				planId: 15,
+				aboCodAfi: `${commerce.id_activity.id_afiliado.id}`.padStart(15, '0'),
+				aboCodComercio: comercio1000pagos.comerCod,
+				aboTerminal: terminal.terminalId,
+				estatusId: 23,
+			});
+		});
 
 		//console.log('save this abono', abono);
 
-		await getRepository(Abonos).save(abono);
+		//crear abonos
+		const resAbonos = await getRepository(Abonos).save(abono);
+		//console.log('listo abonos');
+		//asinar plan default De uso
+		console.log(planPago);
+		await getRepository(PlanPago).save(planPago);
+		console.log('listo asignacion de planes base');
 
 		//console.log('save abono', abono);
 
-		res.status(200).json({ message: 'Abonos creados' });
+		res.status(200).json({ message: 'Abonos creados', abonos: resAbonos });
 	} catch (err) {
-		console.log('Error al crear abono en 1000pagos');
+		console.log('Error al crear abono o asginar planes en 1000pagos');
 		next(err);
 	}
 };

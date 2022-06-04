@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { abono1000pagos, createCommerce, editCommerce } from '../controllers/App1000Pagos';
+import { abono1000pagos, createCommerce, editCommerce } from '../controllers/1000pagos/App1000Pagos';
 import { CreateCommerceData } from '../Middlewares/data/commerce';
 
 const Commerce: Router = Router();

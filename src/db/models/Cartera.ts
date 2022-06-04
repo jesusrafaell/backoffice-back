@@ -1,13 +1,4 @@
-import {
-	Column,
-	Entity,
-	JoinColumn,
-	JoinTable,
-	ManyToMany,
-	OneToMany,
-	OneToOne,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import fm_posXcommerce from './fm_posXcommerce';
 
 @Entity({ synchronize: false })

@@ -1,14 +1,5 @@
-import {
-	Column,
-	Entity,
-	PrimaryGeneratedColumn,
-	OneToMany,
-	JoinColumn,
-	ManyToMany,
-	ManyToOne,
-	OneToOne,
-	JoinTable,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
+import Abonos from './Abonos';
 import Cartera_Ter from './Cartera_Ter';
 import fm_commerce from './fm_commerce';
 import fm_location from './fm_location';
@@ -33,7 +24,7 @@ export default class fm_posXcommerce {
 	id_request?: number;
 
 	@Column({ nullable: true, default: null })
-	aboTerminal?: string;
+	terminal?: string;
 
 	@Column({ nullable: true, default: null })
 	serial?: string;

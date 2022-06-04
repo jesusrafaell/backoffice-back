@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { NextFunction, Request, response, Response } from 'express';
 import { getRepository } from 'typeorm';
-import { createMerchantId } from '../../../utilis/createMerchantId';
-import fm_request from '../../../db/models/fm_request';
-import { Api } from '../../../interfaces';
-import fm_commerce from '../../../db/models/fm_commerce';
+import createMerchantId from '../../../../utilis/createMerchantId';
+import fm_request from '../../../../db/models/fm_request';
+import { Api } from '../../../../interfaces';
+import fm_commerce from '../../../../db/models/fm_commerce';
+import { createTerminalTms7 } from './utilis/terminals';
+import { createCommerceTMS7, getMerchanId, updateCommerceTMS7 } from './utilis/commerce';
 
 let users: any[] = [];
 
@@ -80,67 +82,6 @@ export const getAllCommerce = async (
 	}
 };
 
-const validarRif_tms7 = async (rif: string, net_id: number, access_token: string): Promise<boolean> => {
-	try {
-		await axios.get(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${net_id}&taxId=${rif}`, {
-			headers: {
-				Authorization: 'Bearer ' + access_token,
-			},
-		});
-		return true;
-	} catch (err) {
-		let error: any = err;
-
-		console.log(error);
-
-		return false;
-	}
-};
-
-const createCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
-	console.log(commerce);
-	try {
-		await axios.post(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant`, commerce, {
-			headers: {
-				Authorization: 'Bearer ' + access_token,
-			},
-		});
-		return null;
-	} catch (err: any) {
-		const resError = {
-			message: err?.response.statusText,
-			status: err?.response.status,
-			data: err?.response.data,
-		};
-		//console.log(err);
-		console.log('Tms7 error ', resError);
-		return resError;
-	}
-};
-
-const updateCommerceTMS7 = async (commerce: any, access_token: string): Promise<boolean | any> => {
-	console.log(commerce);
-	try {
-		await axios.put(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant`, commerce, {
-			headers: {
-				Authorization: 'Bearer ' + access_token,
-			},
-		});
-		return {
-			ok: true,
-		};
-	} catch (err: any) {
-		const resError = {
-			message: err?.response.statusText,
-			status: err?.response.status,
-			data: err?.response.data,
-			ok: false,
-		};
-		console.log('Tms7 error ', resError);
-		return resError;
-	}
-};
-
 const validCommerceTms7 = async (commerce: any, net_id: number, access_token: string): Promise<boolean | any> => {
 	try {
 		const comercio = await axios.get(
@@ -164,7 +105,7 @@ export const createCommerce = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		console.log('crear comercio');
+		console.log('Crear comercio TMS7');
 		const { token }: any = req.headers;
 		const { net_id } = req.body;
 
@@ -211,9 +152,10 @@ export const createCommerce = async (
 		const dirPos = pos[0].id_location.id_direccion;
 		const address_line2 = `${dirPos.estado}`;
 
-		console.log('Comercio activad_afiliado:', id_commerce.id_activity.id_afiliado.id);
+		//console.log('Comercio activad_afiliado:', id_commerce.id_activity.id_afiliado.id);
 
-		const merchantId = createMerchantId(id_commerce.id_activity.id_afiliado.id, id);
+		//el codigo de afiliacion, id del comercio en 1000pagos
+		const merchantId = createMerchantId(id_commerce.id_activity.id_afiliado.id, id_commerce.codComer_1000pagos);
 
 		const commerce = {
 			net_id,
@@ -344,7 +286,7 @@ export const createTerminal = async (
 			merchantId: merchant.merchantId,
 			parametrizationName: red.parametrization,
 			parametrizationVersion: red.version,
-			status: 7,
+			status: 7, //activo: 1, //inactivo: 2, nuevo: 7
 		};
 
 		console.log('terminal:', terminal);
@@ -366,61 +308,6 @@ export const createTerminal = async (
 		res.status(200).json({ message: 'Terminales creadas', terminales });
 	} catch (err) {
 		next(err);
-	}
-};
-
-const createTerminalTms7 = async (terminal: any, access_token: string): Promise<boolean | any> => {
-	try {
-		const res: any = await axios.post(`${process.env.HOST_TMS7}/TMS7API/v1/Terminal`, terminal, {
-			headers: {
-				Authorization: 'Bearer ' + access_token,
-			},
-		});
-		//console.log('terminal', res);
-		console.log('creacion de termianl:', res.data);
-		return {
-			ok: true,
-			terminal: res.data,
-		};
-	} catch (err: any) {
-		const resError = {
-			message: err?.response.statusText,
-			status: err?.response.status,
-			extra: err?.response.Message,
-			data: err?.response.data,
-			ok: false,
-		};
-		console.log('Tms7 error ', resError);
-		return resError;
-		//console.log('Tms7 error ', err);
-		return resError;
-	}
-};
-
-const getMerchanId = async (taxId: string, net_id: number, access_token: string): Promise<boolean | any> => {
-	try {
-		const res: any = await axios.get(
-			`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${net_id}&taxId=${taxId}`,
-			{
-				headers: {
-					Authorization: 'Bearer ' + access_token,
-				},
-			}
-		);
-		const merchantId = res.data.merchants[0].merchantId;
-		return {
-			merchantId,
-			data: res.data.merchants[0],
-			ok: true,
-		};
-	} catch (err: any) {
-		const resError = {
-			message: err?.response.statusText,
-			status: err?.response.status,
-			ok: false,
-		};
-		console.log('Tms7 error ', resError);
-		return resError;
 	}
 };
 

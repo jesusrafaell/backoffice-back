@@ -3,8 +3,6 @@ import {
 	CreateDateColumn,
 	Entity,
 	JoinColumn,
-	JoinTable,
-	ManyToMany,
 	ManyToOne,
 	OneToMany,
 	OneToOne,
@@ -22,6 +20,7 @@ import fm_commerce_constitutive_act from './fm_commerce_constitutive_act';
 import Aliados from './Aliados';
 import fm_posXcommerce from './fm_posXcommerce';
 import fm_wallet_commerce from './fm_wallet_commerce';
+import Comercios from './Comercios';
 
 @Entity()
 export default class fm_commerce {
@@ -37,6 +36,11 @@ export default class fm_commerce {
 
 	@Column({ nullable: true })
 	ident_num!: string;
+
+	@Column({ nullable: true, default: null })
+	@OneToOne(() => Comercios)
+	@JoinColumn({ name: 'codComer_1000pagos' })
+	codComer_1000pagos?: number;
 
 	@Column({ default: 1 })
 	special_contributor!: number;

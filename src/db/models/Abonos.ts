@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
-import TarifaAliado from './TarifaAliado';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ synchronize: false })
 export default class Abonos {

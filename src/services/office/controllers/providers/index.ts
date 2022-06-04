@@ -4,6 +4,9 @@ import { getRepository } from 'typeorm';
 import fm_client from '../../../../db/models/fm_client';
 import fm_commerce from '../../../../db/models/fm_commerce';
 import fm_request from '../../../../db/models/fm_request';
+import res from 'services/Integration_providers/Middlewares/res';
+import fm_posXcommerce from '../../../../db/models/fm_posXcommerce';
+import Abonos from '../../../../db/models/Abonos';
 
 const HOST = 'http://localhost';
 const PORT_PROVIDERS = 8000;
@@ -18,6 +21,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
+				'pos',
 				'id_commerce.id_activity',
 				'id_commerce.id_activity.id_afiliado',
 			],
@@ -115,9 +119,24 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 
 			const resAbono: any = await createAbono1000pagos(FM.id_commerce, token, terminals);
 			if (!resAbono.ok) {
-				throw { message: 'Error al crear Abono en 1000pagos' };
+				throw { message: 'Error al crear Abono o asignar planes en 1000pagos' };
 			}
-			console.log('Abono creado en 1000pagos');
+
+			//guardar nro_terminal in pos
+			const { pos }: any = FM;
+			let aux = 0;
+			if (terminals.length) {
+				terminals.map(async (terminal: any) => {
+					for (let i = aux; i < pos.length; i++) {
+						if (pos[i].active === 1 && pos[i].terminal === null) {
+							await getRepository(fm_posXcommerce).update(pos[i].id, {
+								terminal: terminal.terminalId,
+							});
+							aux = i + 1;
+						}
+					}
+				});
+			}
 		} else if (id_product.id === 2) {
 			console.log('create in pagina de terminales');
 
@@ -179,6 +198,7 @@ const createAbono1000pagos = async (commerce: any, token: any, terminals: any) =
 			});
 		return {
 			ok: true,
+			abonos: res.data.abonos,
 		};
 	} catch (err: any) {
 		console.log(err);

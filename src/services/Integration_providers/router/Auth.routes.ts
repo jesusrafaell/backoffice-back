@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Login } from '../controllers/TMS7';
+import { Login } from '../controllers/TMS7/TMS7';
 
 const Auth: Router = Router();
 

@@ -112,12 +112,6 @@ export default class fm_request {
 	@JoinColumn({ name: 'rc_planilla' })
 	rc_planilla?: fm_planilla[]; //planilla fm
 
-	/*
-	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_request)
-	@JoinColumn({ name: 'pos' })
-	pos?: number;
-	*/
-
 	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_request)
 	@JoinColumn({ name: 'pos' })
 	pos?: fm_posXcommerce[];

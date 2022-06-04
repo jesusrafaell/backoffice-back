@@ -406,7 +406,7 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 			idClient = resClient.idClient;
 		}
 
-		console.log('saveC ', idClient);
+		//console.log('saveC ', idClient);
 
 		const dataCommerce = JSON.parse(commerce);
 		const dataPos = JSON.parse(posX);
@@ -417,14 +417,14 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 			throw { message: resCommerce.message || 'Error: Creacion de Comercio' };
 		}
 
-		console.log('saveCom ', resCommerce.idCom);
+		//console.log('saveCom ', resCommerce.idCom);
 
 		const resPos: any = await fmCreateFM(dataPos, idClient, resCommerce.idCom);
 		if (!resPos.idFM) {
 			throw { message: resPos.message || 'Error: Creacion del Formulario' };
 		}
 
-		console.log('FM', resPos.idFM);
+		//console.log('FM', resPos.idFM);
 
 		//Files
 		const resFiles: any = await upFilesRecaudosFM(files, idClient, resCommerce.idCom, resPos.idFM);
@@ -433,7 +433,7 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 		}
 
 		//Pos
-		console.log('images', resFiles);
+		//console.log('images', resFiles);
 
 		res.status(200).json({ message: 'FM creada', info: { id: resPos.idFM, code: resPos.codeFM } });
 	} catch (err) {
@@ -459,7 +459,7 @@ export const FM_extraPos = async (
 			where: { id: id_client },
 		});
 
-		console.log(id_client, id_commerce);
+		//console.log(id_client, id_commerce);
 
 		//validations Images
 		if (!client?.rc_ident_card)
@@ -476,7 +476,7 @@ export const FM_extraPos = async (
 			throw { message: resPos.message || 'Error: Creacion del Formulario' };
 		}
 
-		console.log('FM', resPos.idFM);
+		//console.log('FM', resPos.idFM);
 
 		//Files
 		const resFiles: any = await upFilesRecaudosFM(files, id_client, id_commerce, resPos.idFM);
@@ -485,7 +485,7 @@ export const FM_extraPos = async (
 		}
 
 		//Pos
-		console.log('images', resFiles);
+		//console.log('images', resFiles);
 
 		res.status(200).json({ message: 'FM creada', info: { id: resPos.idFM, code: resPos.codeFM } });
 	} catch (err) {
@@ -524,7 +524,7 @@ export const editStatusByIdAdmision = async (
 		const { id_FM }: any = req.params;
 		const { id_status_request, valids, id_aci } = req.body;
 
-		console.log(valids);
+		//console.log(valids);
 
 		const FM: any = await getRepository(fm_request).findOne(id_FM, {
 			relations: [
@@ -539,7 +539,7 @@ export const editStatusByIdAdmision = async (
 		});
 		if (!FM) throw { message: 'FM no existe' };
 
-		console.log('comenzar');
+		//console.log('comenzar');
 
 		if (id_status_request === 3) {
 			const { pagadero } = FM;
@@ -551,7 +551,7 @@ export const editStatusByIdAdmision = async (
 					throw { message: resProviders.message || 'Error en API Providers' };
 				}
 			}
-			console.log('Comercio creado, terminales y abonos');
+			//console.log('Comercio creado, terminales y abonos');
 		}
 
 		if (id_status_request === 4) {
@@ -565,7 +565,7 @@ export const editStatusByIdAdmision = async (
 		await getRepository(fm_commerce).update(FM.id_commerce, { id_aci });
 
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request });
-		console.log('Status update FM:', id_FM, 'Status:', id_status_request);
+		//console.log('Status update FM:', id_FM, 'Status:', id_status_request);
 
 		const message: string = Msg('Status del FM').edit;
 
@@ -604,7 +604,7 @@ export const fmCreateClient = async (fmCliente: ClientInterface) => {
 			const salt: string = await bcrypt.genSalt(10);
 			const password = await bcrypt.hash(type[0].name + ident_num + '.', salt);
 
-			console.log(location);
+			//console.log(location);
 			const reslocation = await getRepository(fm_location).save(location);
 			const id_location = reslocation.id;
 
@@ -628,10 +628,10 @@ export const fmCreateClient = async (fmCliente: ClientInterface) => {
 			message = Msg('client', client.id).create;
 		} else message = Msg('client', client.id).get;
 
-		console.log('client id ', client.id);
+		//console.log('client id ', client.id);
 		return { idClient: client.id };
 	} catch (err) {
-		console.log(err);
+		//console.log(err);
 		return err;
 	}
 };
@@ -721,7 +721,7 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 			valid_pos: '',
 		});
 
-		console.log('saved');
+		//console.log('saved');
 
 		//Cuotas ----------------------------------------
 		const initial = ((): number => {
@@ -787,17 +787,17 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 			try {
 				//const wallet: any = await getRepository(fm_wallet_bank).findOne({ id_cartera: ci_referred });
 				await getRepository(fm_wallet_commerce).save({ id_commerce, id_wallet_bank: ci_referred || 1 });
-				console.log('esta solicitud ya esta en esta wallet', ci_referred);
+				//console.log('esta solicitud ya esta en esta wallet', ci_referred);
 			} catch (err) {
-				console.log('este comercio ya esta asociado a esa wallet', ci_referred);
+				//console.log('este comercio ya esta asociado a esa wallet', ci_referred);
 			}
 		} else {
 			//1000pagos tms7 = net2 desarrollo
 			try {
 				await getRepository(fm_wallet_commerce).save({ id_commerce, id_wallet_bank: 1 });
-				console.log('Este commercio se asocio a la wallet de 1000pagos');
+				//console.log('Este commercio se asocio a la wallet de 1000pagos');
 			} catch (err) {
-				console.log('Ya el comercio esta asociado a 1000pagos wallet');
+				//console.log('Ya el comercio esta asociado a 1000pagos wallet');
 			}
 		}
 
@@ -818,7 +818,7 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 
 		const codeFM = createCodeFM(FM_save.id!, id_client, id_commerce, 1);
 
-		console.log('codeFM ', codeFM);
+		//console.log('codeFM ', codeFM);
 
 		await getRepository(fm_request).update({ id: FM_save.id }, { code: codeFM });
 
@@ -977,7 +977,7 @@ export const fmCreateFMExtraPos = async (fmPos: any, id_client: number, id_comme
 
 		const codeFM = createCodeFM(FM_save.id!, id_client, id_commerce, 2);
 
-		console.log('codeFM ', codeFM);
+		//console.log('codeFM ', codeFM);
 
 		await getRepository(fm_request).update({ id: FM_save.id }, { code: codeFM });
 
@@ -1024,7 +1024,7 @@ export const editStatusAdmitionDiferido = async (
 		const dataSolic: any = JSON.parse(solic);
 
 		//console.log('cliente', clientData);
-		console.log('commerce', commerceData);
+		//console.log('commerce', commerceData);
 		//console.log('pos', posData);
 		//console.log('solic', dataSolic);
 
@@ -1104,14 +1104,14 @@ export const editStatusAdmitionDiferido = async (
 				);
 			}
 		}
-		console.log('bug5');
+		//console.log('bug5');
 		if (validate.id_typedif_consitutive_acta !== null) {
 			//imagens acta
 			const { rc_constitutive_act } = commerceData;
-			console.log('act', rc_constitutive_act);
+			//console.log('act', rc_constitutive_act);
 			const old_constitutive_act = query.id_commerce.rc_constitutive_act;
 			if (rc_constitutive_act.length !== old_constitutive_act.length) {
-				console.log('remove images acta');
+				//console.log('remove images acta');
 				const validListFile = (value: any) => {
 					return rc_constitutive_act.find((item: any) => {
 						return item.id === value.id;
@@ -1122,8 +1122,8 @@ export const editStatusAdmitionDiferido = async (
 				//
 				let files: any[] = old_constitutive_act.filter((file: fm_photo) => validListFile(file));
 				//
-				console.log('old acta', old_constitutive_act.length);
-				console.log('remover acta', files.length);
+				//console.log('old acta', old_constitutive_act.length);
+				//console.log('remover acta', files.length);
 				let filesIds: any[] = [];
 				for (let i = 0; i < files.length; i++) {
 					//console.log(files[i].id_photo.id);
@@ -1152,8 +1152,8 @@ export const editStatusAdmitionDiferido = async (
 			//
 			let files: any[] = old_rc_planilla.filter((file: fm_photo) => validListFile(file));
 			//
-			console.log('old planilla', old_rc_planilla.length);
-			console.log('remover de planilla', files.length);
+			//console.log('old planilla', old_rc_planilla.length);
+			//console.log('remover de planilla', files.length);
 			let filesIds: any[] = [];
 			for (let i = 0; i < files.length; i++) {
 				//console.log(files[i].id_photo.id);
@@ -1162,7 +1162,7 @@ export const editStatusAdmitionDiferido = async (
 			await getConnection().createQueryBuilder().update(fm_photo).set({ id_status: 2 }).where(filesIds).execute();
 		}
 
-		console.log('cargar imagenes');
+		//console.log('cargar imagenes');
 		//cargar nuevas imagenes
 		const resFiles: any = await updateFilesRecaudosFM(files, query.id_client.id, query.id_commerce.id, id_FM);
 		if (!resFiles.okey) {
@@ -1170,7 +1170,7 @@ export const editStatusAdmitionDiferido = async (
 		}
 
 		//Images
-		console.log('images', resFiles);
+		//console.log('images', resFiles);
 
 		const { pagadero } = query;
 
@@ -1181,7 +1181,7 @@ export const editStatusAdmitionDiferido = async (
 			}
 		}
 
-		console.log('Toda ok Diferido solic');
+		//console.log('Toda ok Diferido solic');
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 4 }, { id_status_request: 3 });
 
 		Resp(req, res, { message: 'ready update' });
