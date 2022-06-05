@@ -37,6 +37,11 @@ export const listViews: fm_views[] = [
 		name: 'Gestion de Seguridad',
 		root: 'seguridad',
 	},
+	{
+		//8
+		name: 'Lista de Terminales',
+		root: 'terminales',
+	},
 ];
 
 const views = async (): Promise<void> => {

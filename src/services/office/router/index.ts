@@ -8,6 +8,7 @@ import global from './global';
 import commerces from './commerces';
 import updateData from './updateData';
 import seguridad from './seguridad';
+import activacion from './activacion';
 //
 export default (app: Application) => {
 	auth(app);
@@ -17,5 +18,6 @@ export default (app: Application) => {
 	commerces(app);
 	updateData(app);
 	seguridad(app);
+	activacion(app);
 	//
 };

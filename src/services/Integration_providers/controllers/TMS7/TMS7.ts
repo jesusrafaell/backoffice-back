@@ -7,6 +7,7 @@ import { Api } from '../../../../interfaces';
 import fm_commerce from '../../../../db/models/fm_commerce';
 import { createTerminalTms7 } from './utilis/terminals';
 import { createCommerceTMS7, getMerchanId, updateCommerceTMS7 } from './utilis/commerce';
+import fm_redes_tms7 from '../../../../db/models/fm_redes_tms7';
 
 let users: any[] = [];
 
@@ -419,5 +420,122 @@ export const editCommerceTMS7 = async (
 	} catch (err) {
 		console.log('Error al editar comercio en tms7');
 		next(err);
+	}
+};
+
+export const getAllTerminals = async (
+	req: Request<any, Api.Resp, any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		console.log('buscar terminales');
+		const { id }: any = req.headers.token;
+
+		const usar = users.find((user) => user.id === id);
+		// if (!usar) throw { message: 'usuario no logeado', code: 401 };
+		const net_ids = await getRepository(fm_redes_tms7).find();
+
+		let listTerminals: any[] = [];
+
+		let routes: string[] = [];
+
+		net_ids.map((net: fm_redes_tms7) => {
+			routes.push(`${process.env.HOST_TMS7}/TMS7API/v1/Terminal?net_id=${net.net_id}`);
+		});
+
+		console.log('routas', routes);
+
+		const getListTerminals: any = await multiGetterAxios(routes, usar.access_token)
+			.then((responses) => {
+				return {
+					ok: true,
+					responses,
+				};
+			})
+			.catch((errors) => {
+				console.log('error multi axos', errors);
+				throw { message: 'Error al buscar teminales en las redes de tms7' };
+			});
+
+		net_ids.map((net: fm_redes_tms7, index: number) => {
+			console.log('Terminales:', getListTerminals.responses[index].data.terminals.length, 'en la red', net.net_id);
+			listTerminals = listTerminals.concat(getListTerminals.responses[index].data.terminals);
+		});
+
+		console.log('Total terminales', listTerminals.length);
+
+		res.status(200).json({ message: 'Lista de Terminales', info: listTerminals });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getAllCommerces = async (
+	req: Request<any, Api.Resp, any>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		console.log('buscar terminales');
+		const { id }: any = req.headers.token;
+
+		const usar = users.find((user) => user.id === id);
+		// if (!usar) throw { message: 'usuario no logeado', code: 401 };
+		const net_ids = await getRepository(fm_redes_tms7).find();
+
+		let listCommerces: any[] = [];
+
+		let routes: string[] = [];
+
+		net_ids.map((net: fm_redes_tms7) => {
+			routes.push(`${process.env.HOST_TMS7}/TMS7API/v1/Merchant?net_id=${net.net_id}`);
+		});
+
+		console.log('routas', routes);
+
+		const getListCommerces: any = await multiGetterAxios(routes, usar.access_token)
+			.then((responses) => {
+				return {
+					ok: true,
+					responses,
+				};
+			})
+			.catch((errors) => {
+				console.log('error multi axos', errors);
+				throw { message: 'Error al buscar comercios en las redes de tms7' };
+			});
+
+		net_ids.map((net: fm_redes_tms7, index: number) => {
+			console.log('Comercios:', getListCommerces.responses[index].data.merchants.length, 'en la red', net.net_id);
+			listCommerces = listCommerces.concat(getListCommerces.responses[index].data.merchants);
+		});
+
+		console.log('Total comercios', listCommerces.length);
+
+		res.status(200).json({ message: 'Lista de comercios', info: listCommerces });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const multiGetterAxios = async (routes: string[], token: string) => {
+	try {
+		const stop = routes.map(async (route: string) => {
+			return await axios.get(route, {
+				baseURL: process.env.REACT_APP_API_API,
+				headers: {
+					Authorization: 'Bearer ' + token,
+				},
+			});
+		});
+
+		const resps = await Promise.all(stop);
+
+		return resps;
+	} catch (err) {
+		console.error('en getters', err);
+
+		return [];
 	}
 };
