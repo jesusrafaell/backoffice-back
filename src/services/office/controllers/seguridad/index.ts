@@ -7,7 +7,6 @@ import fm_department from '../../../../db/models/fm_department';
 import fm_roles from '../../../../db/models/fm_roles';
 import fm_permissions from '../../../../db/models/fm_permissions';
 import fm_actions from '../../../../db/models/fm_actions';
-import actions from 'db/contents/actions';
 import fm_access_views from '../../../../db/models/fm_access_views';
 import fm_views from '../../../../db/models/fm_views';
 
@@ -56,7 +55,10 @@ export const getPermissions = async (
 	try {
 		const { id_dep, id_rol }: any = req.params;
 
-		const actions = await getRepository(fm_actions).find({ active: 1 });
+		const actions = await getRepository(fm_actions).find({
+			where: { active: 1 },
+			relations: ['id_views'],
+		});
 
 		const permiss = await getRepository(fm_permissions).find({
 			where: { id_rol, id_department: id_dep },

@@ -2,7 +2,7 @@ import { colearOneSolic } from 'services/socket/controllers/admition';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import origin_logs from './origin_logs';
 
-@Entity({ synchronize: true })
+@Entity({ synchronize: false })
 export default class general_logs {
 	@PrimaryGeneratedColumn()
 	id?: number;

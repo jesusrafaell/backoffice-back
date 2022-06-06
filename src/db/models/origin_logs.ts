@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany } from 'typeorm';
 import general_logs from './general_logs';
 
-@Entity({ synchronize: true })
+@Entity({ synchronize: false })
 export default class origin_logs {
 	@PrimaryGeneratedColumn()
 	id?: number;
