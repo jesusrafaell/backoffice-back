@@ -158,7 +158,7 @@ const renderDiferidoTrabajandoUI = (note) => {
 
 const dashUI = (data) => {
 	// console.log(data);
-	const { diferidos, diferidosTranbajando, solictudes, solictudesTrabajando } = data;
+	const { diferidos, diferidosTranbajando, solicitudes, solicitudesTrabajando } = data;
 
 	const div = document.createElement('div');
 	div.innerHTML = `
@@ -172,8 +172,8 @@ const dashUI = (data) => {
       <div class="d-flex justify-content-between">
           <h1 class="card-title h3">${diferidos}</h1>
 		  <h1 class="card-title h3">${diferidosTranbajando}</h1>
-		  <h1 class="card-title h3">${solictudes}</h1>
-		  <h1 class="card-title h3">${solictudesTrabajando}</h1>
+		  <h1 class="card-title h3">${solicitudes}</h1>
+		  <h1 class="card-title h3">${solicitudesTrabajando}</h1>
       </div>
       
   </div>
@@ -192,23 +192,23 @@ const renderNotes = (notes) => {
 };
 
 //Solicitudes
-const renderSolic = (solictudes) => {
+const renderSolic = (solicitudes) => {
 	savedId = '';
 	notesList.innerHTML = '';
-	// console.log(solictudes);
-	solictudes.forEach((note) => {
+	// console.log(solicitudes);
+	solicitudes.forEach((note) => {
 		notesList.append(solicUI(note));
 	});
 };
 
 //Solicitud Trabajndo
-const renderSolicTrabajando = (solictudes) => {
-	if (solictudes.code !== 400) {
+const renderSolicTrabajando = (solicitudes) => {
+	if (solicitudes.code !== 400) {
 		savedId = '';
 		notesList2.innerHTML = '';
-		console.log(solictudes.code);
+		console.log(solicitudes.code);
 
-		notesList2.append(solicTrabajandoUI(solictudes));
+		notesList2.append(solicTrabajandoUI(solicitudes));
 	} else {
 		// console.log('No hay Solicitudes');
 		alert('No hay Solicitudes');
@@ -216,21 +216,21 @@ const renderSolicTrabajando = (solictudes) => {
 };
 
 //Solicitudes Trabajndo
-const renderSolicitudesTrabajando = (solictudes) => {
+const renderSolicitudesTrabajando = (solicitudes) => {
 	savedId = '';
 	solicitudesTrabajando.innerHTML = '';
-	// console.log(solictudes);
-	solictudes.forEach((note) => {
+	// console.log(solicitudes);
+	solicitudes.forEach((note) => {
 		solicitudesTrabajando.append(solicitudesTrabajandoUI(note));
 	});
 };
 
 //Solicitudes Diferidas Trabajndo
-const renderSolicitudesDIferidasTrabajando = (solictudes) => {
+const renderSolicitudesDIferidasTrabajando = (solicitudes) => {
 	savedId = '';
 	solicitudesTrabajando2.innerHTML = '';
-	// console.log(solictudes);
-	solictudes.forEach((note) => {
+	// console.log(solicitudes);
+	solicitudes.forEach((note) => {
 		solicitudesTrabajando2.append(solicitudesTrabajandoUI(note));
 	});
 };
@@ -239,26 +239,26 @@ const renderSolicitudesDIferidasTrabajando = (solictudes) => {
 const renderDiferido = (data) => {
 	savedId = '';
 	diferido.innerHTML = '';
-	// console.log(solictudes);
+	// console.log(solicitudes);
 	data.forEach((note) => {
 		diferido.append(renderDiferidoUI(note));
 	});
 };
 
 //Diferido Trabajndo
-const renderDiferidoTrabajando = (solictudes) => {
-	// console.log(solictudes);
+const renderDiferidoTrabajando = (solicitudes) => {
+	// console.log(solicitudes);
 	savedId = '';
 	diferidoTrabajando.innerHTML = '';
 
-	diferidoTrabajando.append(renderDiferidoTrabajandoUI(solictudes));
+	diferidoTrabajando.append(renderDiferidoTrabajandoUI(solicitudes));
 };
 
 //dashdata 4 cuadras de datas
 const renderDashData = (data) => {
 	savedId = '';
 	dashData.innerHTML = '';
-	// console.log(solictudes);
+	// console.log(solicitudes);
 
 	dashData.append(dashUI(data));
 };

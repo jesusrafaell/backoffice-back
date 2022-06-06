@@ -2,7 +2,7 @@ const models: any = {
 	allTerm: [],
 	diferido: [],
 	diferidoTranbajando: [],
-	solictudes: [],
-	solictudesTrabajando: [],
+	solicitudes: [],
+	solicitudesTrabajando: [],
 };
 export default models;

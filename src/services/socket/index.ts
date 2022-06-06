@@ -45,7 +45,7 @@ Sockets(io);
 
 	await All_Info();
 
-	// console.log(solictudes);
+	// console.log(solicitudes);
 })();
 
 app.use(express.static(__dirname + '/public'));

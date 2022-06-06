@@ -43,7 +43,7 @@ socket.on('server:solicitudes', renderSolic);
 socket.on('server:atrabajar', renderSolicTrabajando);
 
 //Solicitudes Trabajando incluso con Diferidos
-socket.on('server:solictudesTrabajando', renderSolicitudesTrabajando);
+socket.on('server:solicitudesTrabajando', renderSolicitudesTrabajando);
 socket.on('server:diferidoTranbajando', renderSolicitudesDIferidasTrabajando);
 
 //DashData
@@ -94,11 +94,11 @@ socket.on('server:selectednote', (note) => {
 	savedId = note.id;
 });
 
-// socket.on('server:solicitudes', (solictudes) => {
+// socket.on('server:solicitudes', (solicitudes) => {
 // 	const title = document.getElementById('id');
 // 	const description = document.getElementById('description');
 
-// 	title.value = solictudes.title;
+// 	title.value = solicitudes.title;
 // 	description.value = note.description;
 
 // 	savedId = note.id;
