@@ -25,10 +25,13 @@ import views from './views';
 import wallet_bank from './wallet_bank';
 import worker from './worker';
 import redes_tms7 from './fm_redes_tms7';
+import direccion from './direccion';
 // init server
 
 createConnection().then(async () => {
 	console.log('Running PreData');
+	await direccion();
+	console.log('Direcciones cargadas');
 	await type_request();
 	await ident_type();
 	await payment_method();

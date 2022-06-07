@@ -25,11 +25,11 @@ import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/control
 import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
 import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
-import fm_wallet_bank from '../../../../db/models/fm_wallet_bank';
 import { updateClient } from '../updateData/client';
 import { updateCommerce } from '../updateData/commerce';
 import { updateSolic } from '../updateData/fm';
 import { updatePos } from '../updateData/pos';
+import { saveLogs } from '../../../../utilis/logs';
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -435,7 +435,11 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 		//Pos
 		//console.log('images', resFiles);
 
-		res.status(200).json({ message: 'FM creada', info: { id: resPos.idFM, code: resPos.codeFM } });
+		//log
+		const { id }: any = req.headers.token;
+		await saveLogs(id, 'POST', req.url, `Creacion del FM: ${resPos.id_FM}`);
+
+		Resp(req, res, { message: 'FM creada', info: { id: resPos.idFM, code: resPos.codeFM } });
 	} catch (err) {
 		next(err);
 	}
@@ -484,10 +488,11 @@ export const FM_extraPos = async (
 			throw { message: resFiles.message || 'Error: Guardar Images' };
 		}
 
-		//Pos
-		//console.log('images', resFiles);
+		//logs
+		const { id }: any = req.headers.token;
+		await saveLogs(id, 'POST', req.url, `Creacion del FMExtrapos: ${resPos.id_FM}`);
 
-		res.status(200).json({ message: 'FM creada', info: { id: resPos.idFM, code: resPos.codeFM } });
+		Resp(req, res, { message: 'FM extrapos creada', info: { id: resPos.idFM, code: resPos.codeFM } });
 	} catch (err) {
 		next(err);
 	}
@@ -529,7 +534,8 @@ export const editStatusByIdAdmision = async (
 		const FM: any = await getRepository(fm_request).findOne(id_FM, {
 			relations: [
 				'id_valid_request',
-				'id_product',
+				'pos',
+				'pos.id_product',
 				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -568,6 +574,10 @@ export const editStatusByIdAdmision = async (
 		//console.log('Status update FM:', id_FM, 'Status:', id_status_request);
 
 		const message: string = Msg('Status del FM').edit;
+
+		//logs
+		const { id }: any = req.headers.token;
+		await saveLogs(id, 'POST', req.url, `Cambio de estatus FM: ${id_FM}/${id_status_request}`);
 
 		Resp(req, res, { message });
 	} catch (err) {
@@ -773,7 +783,6 @@ export const fmCreateFM = async (fmPos: any, id_client: number, id_commerce: num
 			nro_comp_dep,
 			pagadero,
 			//
-			id_product,
 			id_valid_request: valids.id,
 			discount,
 			id_quotas_calculat: quotas.id,
@@ -935,8 +944,6 @@ export const fmCreateFMExtraPos = async (fmPos: any, id_client: number, id_comme
 			id_type_request,
 			number_post,
 			bank_account_num,
-			//rc_comp_dep,
-			//rc_ref_bank,
 			id_payment_method,
 			id_client,
 			id_commerce,
@@ -944,15 +951,11 @@ export const fmCreateFMExtraPos = async (fmPos: any, id_client: number, id_comme
 			id_type_payment,
 			ci_referred,
 			id_valid_request: valids.id,
-			id_product,
 			discount,
 			nro_comp_dep,
 			pagadero,
 			id_quotas_calculat: quotas.id,
 		});
-
-		//const rc_planilla = planilla.map((id_photo: number) => ({ id_request: FM_save.id, id_photo }));
-		//await getRepository(fm_planilla).save(rc_planilla);
 
 		const preDirPos: any = await getRepository(fm_posXcommerce).find({
 			where: { id_commerce: id_commerce },
@@ -966,12 +969,14 @@ export const fmCreateFMExtraPos = async (fmPos: any, id_client: number, id_comme
 
 		const id_request = FM_save.id;
 
-		await getRepository(fm_posXcommerce).save({
-			id_location: idLocationDirPos,
-			id_commerce,
-			id_request,
-			id_product,
-		});
+		for (let i = 0; i < number_post; i++) {
+			await getRepository(fm_posXcommerce).save({
+				id_location: idLocationDirPos,
+				id_commerce,
+				id_request,
+				id_product,
+			});
+		}
 
 		await getRepository(fm_quotas_calculated).update({ id: quotas.id }, { id_request });
 
@@ -1201,18 +1206,6 @@ const getImagen = (list: any[], op: string) => {
 	}
 	return null;
 };
-
-/*
-		const validIdentType: any = await getRepository(fm_client)
-			.createQueryBuilder('fm_clinet')
-			.leftJoinAndSelect('fm_clinet.id_ident_type', 'id_ident_type')
-			.where(`fm_clinet.ident_num = ${ident_num}`)
-			.getOne();
-
-		if (validIdentType && validIdentType.id_ident_type.id != id_ident_type) {
-			throw { message: 'el de docuemnto de identidad no coinside' };
-		}
-		*/
 
 // validar que el Cliente existea diferido
 export const valid_existin_client_diferido = async (

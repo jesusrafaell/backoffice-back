@@ -16,6 +16,7 @@ import fm_worker from '../../../../db/models/fm_worker';
 import fm_permissions from '../../../../db/models/fm_permissions';
 import generateToken from '../../../../utilis/generateToken';
 import { DataUser, dataWorker, getPermiss, getViews } from './utils.ts';
+import { saveLogs } from '../../../../utilis/logs';
 
 const { transporter } = require('../../mail/mail.js');
 
@@ -61,6 +62,7 @@ export const register = async (
 		await mail.verify(req.body);
 
 		// Response
+		await saveLogs(id, 'POST', '/auth/register', `Registro de usuario: ${email}`);
 
 		res.status(200).json({
 			message: 'Trabajador registrado Revise su correo por favor',
@@ -190,6 +192,8 @@ export const login = async (
 		}
 
 		const token = generateToken(id, id_department, id_rol);
+
+		await saveLogs(id, 'POST', '/auth/login', `Login de usuario: ${email}`);
 
 		res.status(200).json({
 			message: 'Info del trabajador',
@@ -387,6 +391,9 @@ export const newPass = async (
 
 		const token = generateToken(id, id_department, id_rol);
 		console.log('token ', token);
+
+		await saveLogs(id, 'POST', '/auth/login', `Cambio de contrasena: ${email}`);
+
 		res.status(200).json({
 			message: 'Info del trabajador',
 			info: dataWorker(data_user, id_department, id_rol, permiss, views),

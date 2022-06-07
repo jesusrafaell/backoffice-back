@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { abono1000pagos, createCommerce, editCommerce } from '../controllers/1000pagos/App1000Pagos';
+import {
+	abono1000pagos,
+	createCommerce,
+	createTerminalInPagina,
+	editCommerce,
+} from '../controllers/1000pagos/App1000Pagos';
 import { CreateCommerceData } from '../Middlewares/data/commerce';
 
 const Commerce: Router = Router();
@@ -10,7 +15,7 @@ Commerce.route('/app1000pagos/commerce').post(CreateCommerceData, createCommerce
 //
 Commerce.route('/app1000pagos/abonoTms7').post(abono1000pagos);
 //
-//Commerce.route('/app1000pagos/pagina_terminales').post(createTerminal);
+Commerce.route('/app1000pagos/pagina_terminales').post(createTerminalInPagina);
 
 //
 export default Commerce;

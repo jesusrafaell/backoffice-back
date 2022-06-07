@@ -10,8 +10,6 @@ const Resp = (req: Request<any, Api.Resp>, res: Response<Api.Resp>, msg: Api.Res
 		if (!msg.token) {
 			const { id, idDep, idRol }: any = req.headers.token;
 
-			//console.log('generar token para ', id);
-
 			return generateToken(id, idDep, idRol);
 		} else {
 			return msg.token;

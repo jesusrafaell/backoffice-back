@@ -9,6 +9,8 @@ import fm_permissions from '../../../../db/models/fm_permissions';
 import fm_actions from '../../../../db/models/fm_actions';
 import fm_access_views from '../../../../db/models/fm_access_views';
 import fm_views from '../../../../db/models/fm_views';
+import { saveLogs } from '../../../../utilis/logs';
+import access_views from 'db/contents/access.views';
 
 export const getDepartments = async (
 	req: Request<any, any, Api.Resp>,
@@ -55,10 +57,34 @@ export const getPermissions = async (
 	try {
 		const { id_dep, id_rol }: any = req.params;
 
-		const actions = await getRepository(fm_actions).find({
-			where: { active: 1 },
-			relations: ['id_views'],
+		let info = [];
+
+		const viewsXdep = await getRepository(fm_department).findOne({
+			where: { active: 1, id: id_dep },
+			relations: ['access_views', 'access_views.id_views', 'access_views.id_views.actions'],
 		});
+
+		const { access_views }: any = viewsXdep;
+
+		if (!access_views.length) {
+			throw { message: 'No tiene niguna vista asignada' };
+		}
+
+		let actions: any = [];
+
+		const ac: any = await access_views.forEach((item: any) => {
+			//console.log(...item.id_views.actions);
+			const { actions: acc, ...vis } = item.id_views;
+			if (vis.id !== 1)
+				item.id_views.actions.forEach((el: any) => {
+					actions.push({
+						...el,
+						id_views: vis,
+					});
+				});
+		});
+
+		//console.log('actions', actions);
 
 		const permiss = await getRepository(fm_permissions).find({
 			where: { id_rol, id_department: id_dep },
@@ -74,6 +100,7 @@ export const getPermissions = async (
 						flag = true;
 						list.push({
 							id: action[j].id,
+							view: action[j].id_views,
 							name: action[j].name,
 							status: perm[i].active ? true : false,
 						});
@@ -83,6 +110,7 @@ export const getPermissions = async (
 					list.push({
 						id: action[j].id,
 						name: action[j].name,
+						view: action[j].id_views,
 						status: false,
 					});
 				}
@@ -90,7 +118,7 @@ export const getPermissions = async (
 			return list;
 		};
 
-		const info = getListFormat(permiss, actions);
+		info = getListFormat(permiss, actions);
 
 		const message: string = Msg('permissions').getAll;
 
@@ -157,6 +185,10 @@ export const updatePermissions = async (
 		await saveListPermiss(perm, newAction);
 
 		//console.log(perm);
+
+		//logs
+		const { id }: any = req.headers.token;
+		await saveLogs(id, 'POST', req.url, `Cambio de permisos dep: ${id_dep}/ rol: ${id_rol}`);
 
 		Resp(req, res, { message: 'update permiss' });
 	} catch (err) {
@@ -273,7 +305,9 @@ export const updateViews = async (
 
 		await saveListViews(accessList, newViews);
 
-		//console.log(perm);
+		//logs
+		const { id }: any = req.headers.token;
+		await saveLogs(id, 'POST', req.url, `Cambio de vistas al dep: ${id_dep} `);
 
 		Resp(req, res, { message: 'update views' });
 	} catch (err) {

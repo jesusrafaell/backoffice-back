@@ -8,6 +8,7 @@ import { dataWorker, getPermiss, getViews } from './utils.ts';
 import fm_permissions from '../../../../db/models/fm_permissions';
 //import fm_views from '../../../../db/models/fm_views';
 import fm_department from '../../../../db/models/fm_department';
+import { saveLogs } from '../../../../utilis/logs';
 
 export const worker = async (req: Request<any, Api.Resp>, res: Response, next: NextFunction): Promise<void> => {
 	try {
@@ -124,9 +125,6 @@ export const editWorkerById = async (
 			throw { message: 'No tienes permisos para ejecutar esta acción' }; //Err[3312] //pasar a crear listas para las diferentes aciones
 		}
 
-		//console.log('dep', idDep);
-		//console.log(id, id_rol, id_department, block);
-
 		if (id && id_rol && id_department) {
 			await getRepository(fm_worker).update(id, {
 				id_rol,
@@ -137,6 +135,15 @@ export const editWorkerById = async (
 			throw { message: 'Error al editar el usuario' };
 		}
 		const message: string = Msg('Usuario Editado').edit;
+
+		//logs
+		const { id: id_user }: any = req.headers.token;
+		await saveLogs(
+			id_user,
+			'POST',
+			req.url,
+			`Cambio al usuario:${id}/dep: ${id_department}/rol: ${id_rol} /block: ${block}`
+		);
 
 		Resp(req, res, { message });
 	} catch (err) {

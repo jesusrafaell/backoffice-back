@@ -28,6 +28,12 @@ export default class fm_product {
 	@Column({ nullable: true })
 	price!: number;
 
+	@Column({ nullable: true })
+	modelo!: string;
+
+	@Column({ nullable: true })
+	provedor!: number;
+
 	@ManyToMany(() => fm_photo)
 	@JoinTable()
 	photos?: fm_photo[];
@@ -38,10 +44,6 @@ export default class fm_product {
 	@OneToMany(() => fm_posXcommerce, (fm_posXcommerce) => fm_posXcommerce.id_product)
 	@JoinColumn({ name: 'pos' })
 	pos?: number;
-
-	@OneToMany(() => fm_request, (fm_request) => fm_request.id_commerce)
-	@JoinColumn({ name: 'requests' })
-	requests?: fm_request[];
 
 	@CreateDateColumn({ select: false })
 	createdAt?: Date;

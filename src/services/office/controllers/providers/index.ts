@@ -17,7 +17,8 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 		const FM: any = await getRepository(fm_request).findOne(idFm.id, {
 			relations: [
 				'id_valid_request',
-				'id_product',
+				'pos',
+				'pos.id_product',
 				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -27,7 +28,8 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			],
 		});
 		if (!FM) throw { message: 'FM no existe call (Providers)' };
-		const { id_product, id_request_origin, ci_referred } = FM;
+		const { pos, id_request_origin, ci_referred } = FM;
+		const { id_product }: any = pos[0];
 		const id_client = FM.id_client.id;
 		const id_commerce = FM.id_commerce.id;
 
@@ -151,15 +153,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 					throw { message: 'Error al crear terminal en pagina de terminales' };
 				});
 
-			/*
-			await getRepository(fm_worker)
-				.createQueryBuilder()
-				.update(fm_worker)
-				.set({ block: 0 })
-				.where('email = :email', { email })
-				.execute();
-				*/
-			//throw { message: 'pagina de terminales' };
+			console.log('creado en pagina de termianles');
 		}
 
 		//validate cliente y commerce
@@ -213,7 +207,6 @@ const createAbono1000pagos = async (commerce: any, token: any, terminals: any) =
 
 export const merchantCommerceTms7 = async (rif: string, token: any) => {
 	try {
-		await axios;
 		await axios.post(
 			`${HOST}:${PORT_PROVIDERS}/auth/login`,
 			{

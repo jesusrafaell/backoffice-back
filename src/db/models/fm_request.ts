@@ -75,11 +75,6 @@ export default class fm_request {
 	id_commerce!: number | fm_commerce;
 
 	@Column({ nullable: true })
-	@ManyToOne(() => fm_product, (fm_product) => fm_product.requests)
-	@JoinColumn({ name: 'id_product' })
-	id_product!: number | fm_product;
-
-	@Column({ nullable: true })
 	@ManyToOne(() => fm_type_request, (fm_type_request) => fm_type_request.requests)
 	@JoinColumn({ name: 'id_type_request' })
 	id_type_request!: number | fm_type_request;

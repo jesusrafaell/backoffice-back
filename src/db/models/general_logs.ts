@@ -14,8 +14,8 @@ export default class general_logs {
 	descript!: string;
 
 	@ManyToOne(() => origin_logs, (origin_logs) => origin_logs.general_logs)
-	@JoinColumn({ name: 'id_origin_logs_carropago' })
-	id_origin_logs_carropago!: number;
+	@JoinColumn({ name: 'id_origin_logs' })
+	id_origin_logs!: number;
 
 	@CreateDateColumn()
 	createdAt?: Date;

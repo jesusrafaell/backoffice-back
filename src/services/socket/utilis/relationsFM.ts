@@ -25,7 +25,8 @@ export const relationsFM = [
 	'id_request.pos.id_location',
 	'id_request.pos.id_location.id_direccion',
 	//
-	'id_request.id_product',
+	'pos',
+	'pos.id_product',
 	'id_request.id_type_request',
 	'id_request.id_request_origin',
 	//

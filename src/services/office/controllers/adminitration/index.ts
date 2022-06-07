@@ -6,8 +6,7 @@ import Resp from '../../Middlewares/res';
 import fm_request from '../../../../db/models/fm_request';
 import fm_status from '../../../../db/models/fm_status';
 import { comercioToProviders } from '../providers';
-
-const { HOST, PORT_PROVIDERS } = process.env;
+import { saveLogs } from '../../../../utilis/logs';
 
 // responder FM por id
 export const getFmAdministration = async (
@@ -63,7 +62,8 @@ export const editStatusByIdAdministration = async (
 		const FM: any = await getRepository(fm_request).findOne(id_FM, {
 			relations: [
 				'id_valid_request',
-				'id_product',
+				'pos.',
+				'pos.id_product',
 				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -73,7 +73,8 @@ export const editStatusByIdAdministration = async (
 		});
 		if (!FM) throw { message: 'FM no existe' };
 
-		const { pagadero, id_product } = FM;
+		const { pagadero, pos } = FM;
+		const { id_product }: any = pos[0];
 
 		if (!pagadero) {
 			const resProviders: any = await comercioToProviders(FM, req.headers.token_text);
@@ -89,6 +90,9 @@ export const editStatusByIdAdministration = async (
 		await getRepository(fm_status).update({ id_request: id_FM, id_department: 7 }, { id_status_request });
 
 		const message: string = Msg('Status del FM').edit;
+
+		const { id }: any = req.headers.token;
+		await saveLogs(id, 'POST', req.url, `Cambio de estatus FM: ${id_FM}/${id_status_request}`);
 
 		Resp(req, res, { message });
 	} catch (err) {

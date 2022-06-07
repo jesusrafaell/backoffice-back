@@ -9,7 +9,7 @@ export default class origin_logs {
 	@Column()
 	name!: string;
 
-	@OneToMany(() => general_logs, (general_logs) => general_logs.id_origin_logs_carropago)
+	@OneToMany(() => general_logs, (general_logs) => general_logs.id_origin_logs)
 	@JoinColumn({ name: 'general_logs' })
 	general_logs?: general_logs[];
 }

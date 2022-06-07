@@ -460,7 +460,8 @@ export const colearOneSolic = async (key: any) => {
 				'id_request.id_commerce.rc_special_contributor',
 				'id_request.id_commerce.id_aci',
 				//
-				'id_request.id_product',
+				'pos.',
+				'pos.id_product',
 				'id_request.id_type_request',
 				'id_request.id_request_origin',
 				//

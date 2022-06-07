@@ -1,7 +1,7 @@
 import fm_request from '../../../../db/models/fm_request';
 import fm_phone from '../../../../db/models/fm_phone';
 import { NextFunction, Request, Response } from 'express';
-import { getRepository } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { DateTime } from 'luxon';
 import Comercios from '../../../../db/models/Comercios';
 import Contactos from '../../../../db/models/Contactos';
@@ -30,6 +30,7 @@ export const createCommerce = async (
 				'id_client.id_ident_type',
 				'id_client.phones',
 				'pos',
+				'pos.id_product',
 				'pos.id_location',
 				'pos.id_location.id_direccion',
 				'id_commerce',
@@ -42,7 +43,8 @@ export const createCommerce = async (
 		});
 		if (!fmData) throw { message: 'el commercio suministrado no existe', code: 400 };
 
-		const { id_commerce, id_client, bank_account_num, id_product, pos }: any = fmData;
+		const { id_commerce, id_client, bank_account_num, pos }: any = fmData;
+		const { id_product }: any = pos[0];
 
 		const fmCommerce1000pagos = await getRepository(Comercios).findOne({
 			where: {
@@ -317,6 +319,52 @@ export const editCommerce = async (
 		res.status(200).json({ message: 'Comercio editado' });
 	} catch (err) {
 		console.log('Error al editar comercio en 1000pagos');
+		next(err);
+	}
+};
+
+export const createTerminalInPagina = async (
+	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	const { id_fm } = req.body;
+	try {
+		const fm = await getRepository(fm_request).findOne({
+			where: { id: id_fm },
+			relations: [
+				//
+				'id_commerce',
+				'id_commerce.id_activity',
+				'id_commerce.id_activity.id_afiliado',
+				'pos',
+				'pos.id_product',
+			],
+		});
+
+		const { id_commerce: commerce, pos }: any = fm;
+
+		const { id_product }: any = pos[0];
+
+		if (!fm) throw { message: 'No existe la solicitud' };
+
+		const terminales = await getConnection().query(
+			`EXEC SP_new_terminal 
+			@Cant_Term = ${fm.number_post || 1},
+			@Afiliado = '720004108',
+			@NombreComercio = '${commerce.name}',
+			@Proveedor = 6,
+			@TipoPos = id_product,
+			@Modo = 'Comercio',
+			@TecladoAbierto = 0,
+			@Observaciones = '${'Terminal creado por el backoffice'}',
+			@UsuarioResponsable = 'backoffice'`
+		);
+
+		//console.log('abono lo que llego', terminals.length, commerce);
+		res.status(200).json({ message: 'Exec para crear en pagina de termianles' });
+	} catch (err) {
+		console.log('Error al crear terminales en pagina de terminales');
 		next(err);
 	}
 };
