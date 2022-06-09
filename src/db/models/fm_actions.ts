@@ -19,6 +19,9 @@ export default class fm_actions {
 	@Column({ nullable: true })
 	name!: string;
 
+	@Column({ nullable: true })
+	description!: string;
+
 	@ManyToOne(() => fm_views, (fm_views) => fm_views.actions)
 	@JoinColumn({ name: 'id_views' })
 	id_views!: number;

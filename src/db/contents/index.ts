@@ -26,10 +26,12 @@ import wallet_bank from './wallet_bank';
 import worker from './worker';
 import redes_tms7 from './fm_redes_tms7';
 import direccion from './direccion';
+import intermediario from './intermediario';
 // init server
 
 createConnection().then(async () => {
 	console.log('Running PreData');
+	await intermediario();
 	await direccion();
 	console.log('Direcciones cargadas');
 	await type_request();

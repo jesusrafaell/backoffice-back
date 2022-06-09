@@ -1279,3 +1279,20 @@ export const valid_existin_commerce_diferido = async (
 		next(err);
 	}
 };
+
+export const getAllFM = async (req: Request<any>, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		// validacion de data
+		validationResult(req).throw();
+
+		const fms = await getRepository(fm_request).find({
+			relations: relationsFMFull,
+		});
+
+		if (!fms.length) throw { message: 'No hay Solicitudes' };
+
+		Resp(req, res, { message: 'FM creada', info: fms });
+	} catch (err) {
+		next(err);
+	}
+};

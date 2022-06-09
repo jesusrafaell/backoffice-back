@@ -6,12 +6,16 @@ import {
 	updatePermissions,
 	getViews,
 	updateViews,
+	updateDepartment,
+	createDepartment,
 } from '../../controllers/seguridad';
 
 const Seguridad: Router = Router();
 //
 //Permisos
-Seguridad.route('/departments').get(getDepartments);
+Seguridad.route('/departments').get(getDepartments).put(updateDepartment);
+//
+Seguridad.route('/department/create').post(createDepartment);
 //
 Seguridad.route('/roles').get(getRoles);
 //

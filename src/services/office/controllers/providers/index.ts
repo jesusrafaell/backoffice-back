@@ -48,7 +48,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 
 		console.log('comercio creado 1000pagos');
 
-		if (id_product.id === 1) {
+		if (id_product.id_intermediario === 1) {
 			console.log('Comenzar en Tms7', HOST, ':', PORT_PROVIDERS);
 			await axios
 				.post(
@@ -139,7 +139,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 					}
 				});
 			}
-		} else if (id_product.id === 2) {
+		} else if (id_product.id_intermediario === 2) {
 			console.log('create in pagina de terminales');
 
 			await axios

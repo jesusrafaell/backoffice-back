@@ -222,9 +222,7 @@ export const listSolic = async () => {
 			relations: relationsFM,
 		});
 
-		// console.log('Query para SOlicitud', query);
-
-		if (!query) throw { message: 'no existen solicitudes en espera', code: 400 };
+		if (!query) throw { message: 'No existen solicitudes en espera', code: 400 };
 
 		const info: any = query.map((item: any) => item.id_request);
 

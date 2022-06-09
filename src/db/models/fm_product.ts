@@ -8,11 +8,13 @@ import {
 	JoinColumn,
 	ManyToMany,
 	JoinTable,
+	ManyToOne,
 } from 'typeorm';
 import fm_photo from './fm_photo';
 import fm_request from './fm_request';
 import fm_payment_method from './fm_payment_method';
 import fm_posXcommerce from './fm_posXcommerce';
+import fm_intermediario from './fm_intermediario';
 
 @Entity()
 export default class fm_product {
@@ -24,6 +26,10 @@ export default class fm_product {
 
 	@Column({ nullable: true })
 	description!: string;
+
+	@ManyToOne(() => fm_intermediario, (fm_intermediario) => fm_intermediario.products)
+	@JoinColumn({ name: 'id_intermediario' })
+	id_intermediario!: number;
 
 	@Column({ nullable: true })
 	price!: number;

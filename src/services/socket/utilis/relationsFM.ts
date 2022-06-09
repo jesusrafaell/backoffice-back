@@ -22,11 +22,10 @@ export const relationsFM = [
 	'id_request.rc_planilla',
 	'id_request.rc_planilla.id_photo',
 	'id_request.pos',
+	'id_request.pos.id_product',
 	'id_request.pos.id_location',
 	'id_request.pos.id_location.id_direccion',
 	//
-	'pos',
-	'pos.id_product',
 	'id_request.id_type_request',
 	'id_request.id_request_origin',
 	//

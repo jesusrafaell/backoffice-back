@@ -9,6 +9,7 @@ import {
 	editStatusAdmitionDiferido,
 	valid_existin_client_diferido,
 	valid_existin_commerce_diferido,
+	getAllFM,
 } from '../../controllers/FM_request/index';
 
 import { getFmAdministration, editStatusByIdAdministration } from '../../controllers/adminitration/index';
@@ -34,7 +35,7 @@ FM.route('/FM/client/valid').post(validExistingClient, valid_existin_client);
 //
 FM.route('/FM/:id/commerce/valid').post(valid_exitin_commerce);
 //
-FM.route('/FM').post(fmFormData, FM_create);
+FM.route('/FM').get(getAllFM).post(fmFormData, FM_create);
 //
 FM.route('/FM/extraPos').post(fmForDataExtraPos, FM_extraPos);
 //

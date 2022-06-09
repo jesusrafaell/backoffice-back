@@ -6,6 +6,7 @@ import {
 	OneToMany,
 	JoinColumn,
 	CreateDateColumn,
+	Index,
 } from 'typeorm';
 import fm_permissions from './fm_permissions';
 import fm_access_views from './fm_access_views';
@@ -13,6 +14,7 @@ import fm_status from './fm_status';
 import fm_action from './fm_actions';
 
 @Entity()
+@Index(['name'], { unique: true })
 export default class fm_department {
 	@PrimaryGeneratedColumn()
 	id?: number;

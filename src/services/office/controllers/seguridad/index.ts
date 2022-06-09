@@ -10,7 +10,7 @@ import fm_actions from '../../../../db/models/fm_actions';
 import fm_access_views from '../../../../db/models/fm_access_views';
 import fm_views from '../../../../db/models/fm_views';
 import { saveLogs } from '../../../../utilis/logs';
-import access_views from 'db/contents/access.views';
+import access_views from '../../../../db/contents/access.views';
 
 export const getDepartments = async (
 	req: Request<any, any, Api.Resp>,
@@ -23,7 +23,7 @@ export const getDepartments = async (
 
 		console.log('g', ignore);
 
-		const info = await getRepository(fm_department).find({ active: 1, name: Not(ignore) });
+		const info = await getRepository(fm_department).find({ name: Not(ignore) });
 
 		const message: string = Msg('deparments').getAll;
 
@@ -72,11 +72,11 @@ export const getPermissions = async (
 
 		let actions: any = [];
 
-		const ac: any = await access_views.forEach((item: any) => {
+		await access_views.forEach((item: any) => {
 			//console.log(...item.id_views.actions);
-			const { actions: acc, ...vis } = item.id_views;
+			const { actions: acc, ...vis }: any = item.id_views;
 			if (vis.id !== 1)
-				item.id_views.actions.forEach((el: any) => {
+				item.id_views.actions.forEach((el: fm_actions) => {
 					actions.push({
 						...el,
 						id_views: vis,
@@ -310,6 +310,60 @@ export const updateViews = async (
 		await saveLogs(id, 'POST', req.url, `Cambio de vistas al dep: ${id_dep} `);
 
 		Resp(req, res, { message: 'update views' });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const updateDepartment = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { idDep }: any = req.headers.token;
+		const ignore: string = idDep.name === 'God' ? '' : 'God';
+		const { listDeps }: any = req.body;
+
+		if (!listDeps || !listDeps.length)
+			throw {
+				message: 'No hay departmentos que editar',
+			};
+
+		console.log(listDeps);
+
+		listDeps.forEach(async (value: any) => {
+			await getRepository(fm_department).update(value.id, { active: value.active });
+		});
+
+		const message: string = Msg('update Departments').getAll;
+
+		Resp(req, res, { message });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const createDepartment = async (
+	req: Request<any, any, Api.Resp>,
+	res: Response<Api.Resp>,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { department }: any = req.body;
+
+		if (!department)
+			throw {
+				message: 'No hay departmento a crear',
+			};
+
+		const newDep = await getRepository(fm_department).save({
+			name: department,
+		});
+
+		const message: string = Msg('department creado').getAll;
+
+		Resp(req, res, { message, info: newDep });
 	} catch (err) {
 		next(err);
 	}

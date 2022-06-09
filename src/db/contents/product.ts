@@ -6,6 +6,7 @@ const product = async (): Promise<void> => {
 		{
 			name: 'WP PAR-I',
 			modelo: 'IWL250 GPRS',
+			id_intermediario: 1,
 			provedor: 6,
 			price: 350,
 			description: 'El mejor equipo',
@@ -14,6 +15,7 @@ const product = async (): Promise<void> => {
 		{
 			name: 'DIAL-UP DUAL',
 			modelo: 'ICT220 DUAL',
+			id_intermediario: 2,
 			provedor: 8,
 			price: 350,
 			description: 'El mejor equipo',
@@ -22,6 +24,7 @@ const product = async (): Promise<void> => {
 		{
 			name: 'DIAL-UP GPRS',
 			modelo: 'IWL250 GPRS',
+			id_intermediario: 2,
 			provedor: 9,
 			price: 200,
 			description: 'El mejor equipo',
