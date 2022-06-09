@@ -65,6 +65,11 @@ export const listActions: fm_actions[] = [
 		id_views: 7,
 		description: 'Modificar las vistas que tiene acceso un departamento',
 	},
+	{
+		name: 'Editar Departamentos',
+		id_views: 7,
+		description: 'Activar o inactivar un departamento',
+	},
 ];
 
 const actions = async (): Promise<void> => {

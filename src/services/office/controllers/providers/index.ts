@@ -283,3 +283,30 @@ export const EditComercioToProviders = async (rif: string, id_commerce: number, 
 		return resErr;
 	}
 };
+
+export const comercio1000pagos = async (rif: string, id_commerce: number, token: any) => {
+	try {
+		await axios
+			.post(
+				`${HOST}:${PORT_PROVIDERS}/app1000pagos/commerce/exist`,
+				{ id_commerce, rif },
+				{ headers: { Authorization: token } }
+			)
+			.catch((err) => {
+				console.log('Error al revisar el comercio en 1000pagos');
+				throw { message: 'Error  al revisar el comercio en en 1000pagos' };
+			});
+
+		console.log('comercio editado en 1000pagos');
+
+		return { ok: true };
+	} catch (err: any) {
+		console.log(err);
+		const resErr = {
+			err,
+			message: err?.message,
+			ok: false,
+		};
+		return resErr;
+	}
+};

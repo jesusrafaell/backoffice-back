@@ -22,7 +22,7 @@ import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
 import fm_product from '../../../../db/models/fm_product';
 import fm_photo from '../../../../db/models/fm_photo';
 import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
-import { comercioToProviders } from '../providers';
+import { comercio1000pagos, comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
 import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
 import { updateClient } from '../updateData/client';
@@ -30,6 +30,7 @@ import { updateCommerce } from '../updateData/commerce';
 import { updateSolic } from '../updateData/fm';
 import { updatePos } from '../updateData/pos';
 import { saveLogs } from '../../../../utilis/logs';
+import Comercios from '../../../../db/models/Comercios';
 
 export const createCodeFM = (item1: number, item2: number, item3: number, op: number) => {
 	let aux;
@@ -416,7 +417,6 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 		if (!resCommerce.idCom) {
 			throw { message: resCommerce.message || 'Error: Creacion de Comercio' };
 		}
-
 		//console.log('saveCom ', resCommerce.idCom);
 
 		const resPos: any = await fmCreateFM(dataPos, idClient, resCommerce.idCom);
@@ -668,15 +668,11 @@ export const fmCreateCommerce = async (fmCommerce: any, id_client: number) => {
 				id_client,
 				days,
 			});
-
-			return {
-				idCom: commerce.id,
-			};
-		} else {
-			return {
-				idCom: commerce.id,
-			};
 		}
+
+		return {
+			idCom: commerce.id,
+		};
 	} catch (err) {
 		return err;
 	}

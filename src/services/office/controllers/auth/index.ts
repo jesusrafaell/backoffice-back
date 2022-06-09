@@ -147,6 +147,8 @@ export const login = async (
 		const { access_views, ...id_department }: any = dep;
 
 		//console.log('dep', id_department.id, 'rol', id_rol.id);
+		if (!id_department.active)
+			throw { message: `El departamento de ${id_department.name} esta Bloqueado`, code: 401 };
 		const views = getViews(access_views); //obtener lista de vistas
 
 		let permiss: any = [];
@@ -183,12 +185,9 @@ export const login = async (
 		if (block > 2) throw { message: 'usuario bloqueado', code: 400 };
 		else if (block < 3 && block > 0) {
 			// validamos si esta bloqueado
-			await getRepository(fm_worker)
-				.createQueryBuilder()
-				.update(fm_worker)
-				.set({ block: 0 })
-				.where('email = :email', { email })
-				.execute();
+			await getRepository(fm_worker).update(id, {
+				block: 0,
+			});
 		}
 
 		const token = generateToken(id, id_department, id_rol);

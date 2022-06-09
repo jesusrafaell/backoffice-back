@@ -10,7 +10,7 @@ import fm_actions from '../../../../db/models/fm_actions';
 import fm_access_views from '../../../../db/models/fm_access_views';
 import fm_views from '../../../../db/models/fm_views';
 import { saveLogs } from '../../../../utilis/logs';
-import access_views from '../../../../db/contents/access.views';
+import list from 'services/office/Middlewares/token/list';
 
 export const getDepartments = async (
 	req: Request<any, any, Api.Resp>,
@@ -102,6 +102,7 @@ export const getPermissions = async (
 							id: action[j].id,
 							view: action[j].id_views,
 							name: action[j].name,
+							description: action[j].description,
 							status: perm[i].active ? true : false,
 						});
 					}
@@ -110,6 +111,7 @@ export const getPermissions = async (
 					list.push({
 						id: action[j].id,
 						name: action[j].name,
+						description: action[j].description,
 						view: action[j].id_views,
 						status: false,
 					});
@@ -187,8 +189,8 @@ export const updatePermissions = async (
 		//console.log(perm);
 
 		//logs
-		const { id }: any = req.headers.token;
-		await saveLogs(id, 'POST', req.url, `Cambio de permisos dep: ${id_dep}/ rol: ${id_rol}`);
+		const { id: id_user }: any = req.headers.token;
+		await saveLogs(id_user, 'POST', req.url, `Cambio los permisos del departamento:${id_dep}/rol:${id_rol}`);
 
 		Resp(req, res, { message: 'update permiss' });
 	} catch (err) {
@@ -265,7 +267,7 @@ export const updateViews = async (
 			relations: ['id_views'],
 		});
 
-		console.log(newViews);
+		//console.log(newViews);
 
 		const saveListViews = async (access: any[], views: any[]) => {
 			let listSave: any[] = [];
@@ -296,8 +298,8 @@ export const updateViews = async (
 				}
 			}
 
-			console.log('existente', listUpdate);
-			console.log('crear', listSave);
+			//console.log('existente', listUpdate);
+			//console.log('crear', listSave);
 
 			//if (listUpdate.length) await getRepository(fm_permissions).update(listUpdate, listUpdate);
 			if (listSave.length) await getRepository(fm_access_views).save(listSave);
@@ -330,11 +332,13 @@ export const updateDepartment = async (
 				message: 'No hay departmentos que editar',
 			};
 
-		console.log(listDeps);
-
 		listDeps.forEach(async (value: any) => {
 			await getRepository(fm_department).update(value.id, { active: value.active });
 		});
+
+		//logs
+		const { id: id_user }: any = req.headers.token;
+		await saveLogs(id_user, 'POST', req.url, `Cambio el status de los departamentos`);
 
 		const message: string = Msg('update Departments').getAll;
 
@@ -362,6 +366,10 @@ export const createDepartment = async (
 		});
 
 		const message: string = Msg('department creado').getAll;
+
+		//logs
+		const { id: id_user }: any = req.headers.token;
+		await saveLogs(id_user, 'POST', req.url, `Creo el departamento:${department}`);
 
 		Resp(req, res, { message, info: newDep });
 	} catch (err) {

@@ -11,6 +11,8 @@ const Commerce: Router = Router();
 
 // Commerce
 //
+//Commerce.route('/app1000pagos/commerce/exist').post(existeCommerce);
+//
 Commerce.route('/app1000pagos/commerce').post(CreateCommerceData, createCommerce).put(editCommerce);
 //
 Commerce.route('/app1000pagos/abonoTms7').post(abono1000pagos);

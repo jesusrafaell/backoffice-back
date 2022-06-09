@@ -12,12 +12,14 @@ import {
 
 const Seguridad: Router = Router();
 //
-//Permisos
+
 Seguridad.route('/departments').get(getDepartments).put(updateDepartment);
 //
-Seguridad.route('/department/create').post(createDepartment);
-//
 Seguridad.route('/roles').get(getRoles);
+//
+//Permisos
+//
+Seguridad.route('/department/create').post(createDepartment);
 //
 Seguridad.route('/permissions/:id_dep/:id_rol').get(getPermissions).post(updatePermissions);
 //

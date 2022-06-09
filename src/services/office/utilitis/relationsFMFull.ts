@@ -1,4 +1,8 @@
 export const relationsFMFull = [
+	'status',
+	'status.id_department',
+	'status.id_status_request',
+	//
 	'id_client',
 	'id_client.id_location',
 	'id_client.id_location.id_direccion',
@@ -21,13 +25,12 @@ export const relationsFMFull = [
 	'rc_planilla',
 	'rc_planilla.id_photo',
 	'id_valid_request',
-	'pos',
-	'pos.id_location',
-	'pos.id_location.id_direccion',
-	//
 	//
 	'pos',
 	'pos.id_product',
+	'pos.id_location',
+	'pos.id_location.id_direccion',
+	//
 	'id_type_request',
 	'id_request_origin',
 	//
