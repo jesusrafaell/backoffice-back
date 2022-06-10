@@ -40,3 +40,7 @@ export interface Terminal {
 	register_date: string;
 	tecnology_type: number;
 }
+
+export interface TerminalPagina {
+	terminalId: string | any;
+}

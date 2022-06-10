@@ -419,6 +419,7 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 		}
 		//console.log('saveCom ', resCommerce.idCom);
 
+		console.log(dataPos);
 		const resPos: any = await fmCreateFM(dataPos, idClient, resCommerce.idCom);
 		if (!resPos.idFM) {
 			throw { message: resPos.message || 'Error: Creacion del Formulario' };

@@ -142,7 +142,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 		} else if (id_product.id_intermediario === 2) {
 			console.log('create in pagina de terminales');
 
-			await axios
+			const resTerminales: any = await axios
 				.post(
 					`${HOST}:${PORT_PROVIDERS}/app1000pagos/pagina_terminales`,
 					{ id_fm: FM.id, id_commerce, id_client },
@@ -154,6 +154,28 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 				});
 
 			console.log('creado en pagina de termianles');
+			if (!resTerminales.termianles.length) throw { message: 'Error al crear terminales en pagina de terminales' };
+
+			console.log('Terminales creadads', resTerminales.terminales);
+
+			const resAbono: any = await createAbono1000pagos(FM.id_commerce, token, resTerminales.terminals);
+			if (!resAbono.ok) {
+				throw { message: 'Error al crear Abono o asignar planes en 1000pagos' };
+			}
+
+			//guardar nro_terminal in pos
+			const { pos }: any = FM;
+			let aux = 0;
+			resTerminales.terminals.map(async (terminal: any) => {
+				for (let i = aux; i < pos.length; i++) {
+					if (pos[i].active === 1 && pos[i].terminal === null) {
+						await getRepository(fm_posXcommerce).update(pos[i].id, {
+							terminal: terminal.terminalId,
+						});
+						aux = i + 1;
+					}
+				}
+			});
 		}
 
 		//validate cliente y commerce

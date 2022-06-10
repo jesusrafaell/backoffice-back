@@ -9,8 +9,9 @@ import { Api } from '../../../../interfaces';
 import ComerciosXafiliado from '../../../../db/models/ComerciosXafliado';
 import fm_commerce from '../../../../db/models/fm_commerce';
 import Abonos from '../../../../db/models/Abonos';
-import { Terminal } from '../../../../interfaces/general';
+import { Terminal, TerminalPagina } from '../../../../interfaces/general';
 import PlanPago from '../../../../db/models/PlanPago';
+import { formatTerminals } from '../../../../utilis/formatTerminals';
 
 export const createCommerce = async (
 	req: Request<Api.params, Api.Resp, { id_fm: number; id_commerce: number; id_client: number }>,
@@ -185,7 +186,7 @@ export const createCommerce = async (
 };
 
 export const abono1000pagos = async (
-	req: Request<Api.params, Api.Resp, { commerce: any; terminals: Terminal[] }>,
+	req: Request<Api.params, Api.Resp, { commerce: any; terminals: Terminal[] | TerminalPagina[] }>,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
@@ -351,18 +352,18 @@ export const createTerminalInPagina = async (
 		const terminales = await getConnection().query(
 			`EXEC SP_new_terminal 
 			@Cant_Term = ${fm.number_post || 1},
-			@Afiliado = '720004108',
-			@NombreComercio = '${commerce.name}',
-			@Proveedor = 6,
-			@TipoPos = id_product,
+			@Afiliado = ${commerce.id_activity.id_afiliado},
+			@NombreComercio = ${commerce.name},
+			@Proveedor = ${id_product.proveedor},
+			@TipoPos = ${id_product.modelo},
 			@Modo = 'Comercio',
 			@TecladoAbierto = 0,
 			@Observaciones = '${'Terminal creado por el backoffice'}',
 			@UsuarioResponsable = 'backoffice'`
 		);
+		const nroTerminals = formatTerminals(terminales);
 
-		//console.log('abono lo que llego', terminals.length, commerce);
-		res.status(200).json({ message: 'Exec para crear en pagina de termianles' });
+		res.status(200).json({ message: 'Exec para crear en pagina de termianles', terminales: nroTerminals });
 	} catch (err) {
 		console.log('Error al crear terminales en pagina de terminales');
 		next(err);

@@ -111,9 +111,9 @@ export default class fm_request {
 	@JoinColumn({ name: 'pos' })
 	pos?: fm_posXcommerce[];
 
-	@CreateDateColumn({ select: false })
+	@CreateDateColumn()
 	createdAt?: Date;
 
-	@UpdateDateColumn({ select: false })
+	@UpdateDateColumn()
 	updatedAt?: Date;
 }
