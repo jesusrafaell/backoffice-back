@@ -62,6 +62,7 @@ export const register = async (
 		await mail.verify(req.body);
 
 		// Response
+		console.log('save in logx');
 		await saveLogs(id, 'POST', '/auth/register', `Registro de usuario: ${email}`);
 
 		res.status(200).json({

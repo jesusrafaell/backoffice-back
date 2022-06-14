@@ -107,3 +107,9 @@ export const validExistingCommerceDiferido: ValidationChain[] = [
 		.isNumeric()
 		.custom(NoSQL),
 ];
+
+export const pagoFormData = multer(options).fields([
+	{ name: 'imagen', maxCount: 20 },
+	{ name: 'id_fm' },
+	{ name: 'dataPago' },
+]);

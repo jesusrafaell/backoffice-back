@@ -780,3 +780,54 @@ const getImagen = (list: any[], op: string) => {
 	}
 	return null;
 };
+
+export const upRecaudoFM = async (file: any, id_client: number, id_commerce: number, id_fm: number) => {
+	try {
+		let info: any = {};
+
+		const description = ['rc_comp_dep'];
+
+		// validamos la lista de imagenes
+		const v_descript = description.includes(file.originalname);
+
+		if (v_descript) throw { message: `${v_descript} imagenen no tiene un nombre referente a un recaudo` };
+
+		file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
+		const descript: string = file.originalname.replace(/(.png$|.png$|.jpeg$|.pdf$|.jpg$)/g, '');
+
+		const createRoutes = (value: string) => {
+			switch (value) {
+				case 'rc_ident_card':
+					return `${id_client}`;
+				case 'rc_ref_bank':
+				case 'rc_comp_dep':
+					return `${id_client}/${id_commerce}/${id_fm}`;
+				default:
+					return `${id_client}/${id_commerce}`;
+			}
+		};
+
+		const route_ids: string = createRoutes(file.filename.split('@')[1].split('.')[0]);
+
+		await Doc.Move(file.filename, route_ids);
+		const path = `static/${route_ids}/${file.filename}`;
+
+		const data = getRepository(fm_photo).create({ name: file.filename, path, descript });
+		const save = await getRepository(fm_photo).save(data);
+
+		info[descript] = save.id;
+
+		if (info.rc_comp_dep) {
+			await getRepository(fm_request).update(id_fm, {
+				rc_comp_dep: info.rc_comp_dep,
+			});
+		}
+
+		return {
+			...info,
+			okey: true,
+		};
+	} catch (err) {
+		return err;
+	}
+};

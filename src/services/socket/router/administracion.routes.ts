@@ -14,7 +14,9 @@ const administra = (io: any) => {
 		//Devuelve
 		socket.on('cliente:administrWorking', async (user: any, id: any) => {
 			await listAdminisWorking(socket.id, user, id);
-			// console.log('Lista de Administracion', administra);
+
+			console.log('En espera Administracion', administracion.length);
+			console.log('Trabajando adminsitracion', listAdminisWorking.length);
 			io.emit('server:loadAdministra', administracion);
 		});
 

@@ -22,7 +22,6 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
-				'pos',
 				'id_commerce.id_activity',
 				'id_commerce.id_activity.id_afiliado',
 			],

@@ -13,7 +13,7 @@ import { saveLogs } from '../../../../utilis/logs';
 export const worker = async (req: Request<any, Api.Resp>, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id, idDep, idRol }: any = req.headers.token;
-		console.log('worker', idDep, idRol);
+		//console.log('worker', idDep, idRol);
 
 		if (!id) {
 			throw { mesage: 'Su usuario no existe' };
@@ -29,7 +29,7 @@ export const worker = async (req: Request<any, Api.Resp>, res: Response, next: N
 		const { id_department, id_rol: rol, ...worker }: any = resWorker;
 		const { access_views }: any = id_department;
 
-		console.log(id_department);
+		//console.log(id_department);
 		if (!id_department.active)
 			throw { message: `El departamento de ${id_department.name} esta Bloqueado`, code: 401 };
 		const views = getViews(access_views); //obtener lista de vistas

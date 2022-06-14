@@ -75,7 +75,7 @@ export const getPermissions = async (
 		await access_views.forEach((item: any) => {
 			//console.log(...item.id_views.actions);
 			const { actions: acc, ...vis }: any = item.id_views;
-			if (vis.id !== 1)
+			if (vis.id !== 1 && item.active)
 				item.id_views.actions.forEach((el: fm_actions) => {
 					actions.push({
 						...el,

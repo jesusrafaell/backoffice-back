@@ -7,6 +7,7 @@ import fm_request from '../../../../db/models/fm_request';
 import fm_status from '../../../../db/models/fm_status';
 import { comercioToProviders } from '../providers';
 import { saveLogs } from '../../../../utilis/logs';
+import { upRecaudoFM } from '../../../files/controllers/1000pagos.controllers';
 
 // responder FM por id
 export const getFmAdministration = async (
@@ -47,47 +48,46 @@ export const getFmAdministration = async (
 };
 
 export const editStatusByIdAdministration = async (
-	req: Request<
-		Api.params,
-		Api.Resp,
-		{ id_status_request: number; id_payment_method: number; id_type_payment: number }
-	>,
-	res: Response<Api.Resp>,
+	req: Request<any, Api.Resp, fm_request>,
+	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
 		const { id_FM }: any = req.params;
-		const { id_status_request, id_payment_method, id_type_payment } = req.body;
+		//
+		const { dataPago }: any = req.body;
+		//
+		const pago: any = JSON.parse(dataPago);
+
+		const files: any = req.files;
+		//
+		const { id_status_request, id_payment_method, id_type_payment } = pago;
 
 		const FM: any = await getRepository(fm_request).findOne(id_FM, {
-			relations: [
-				'id_valid_request',
-				'pos.',
-				'pos.id_product',
-				'id_client',
-				'id_commerce',
-				'id_commerce.id_ident_type',
-				'id_commerce.id_activity',
-				'id_commerce.id_activity.id_afiliado',
-			],
+			relations: ['id_valid_request'],
 		});
 		if (!FM) throw { message: 'FM no existe' };
 
-		const { pagadero, pos } = FM;
-		const { id_product }: any = pos[0];
+		const { pagadero } = FM;
 
 		if (!pagadero) {
 			const resProviders: any = await comercioToProviders(FM, req.headers.token_text);
 			if (!resProviders.ok) {
 				throw { message: resProviders.message || 'Error en API Providers' };
 			}
+		} else {
+			if (id_payment_method && id_type_payment) {
+				await getRepository(fm_request).update({ id: id_FM }, { id_payment_method, id_type_payment });
+			}
+
+			const resFiles: any = await upRecaudoFM(files.imagen[0], FM.id_client, FM.id_commerce, id_FM);
+			if (!resFiles.okey) {
+				throw { message: resFiles.message || 'Error: Guardar Imagen' };
+			}
 		}
 
-		if (id_payment_method && id_type_payment) {
-			await getRepository(fm_request).update({ id: id_FM }, { id_payment_method, id_type_payment });
-		}
-
-		await getRepository(fm_status).update({ id_request: id_FM, id_department: 7 }, { id_status_request });
+		if (id_status_request)
+			await getRepository(fm_status).update({ id_request: id_FM, id_department: 7 }, { id_status_request });
 
 		const message: string = Msg('Status del FM').edit;
 

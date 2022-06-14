@@ -19,6 +19,7 @@ import {
 	fmForDataDiferido,
 	fmForDataExtraPos,
 	fmFormData,
+	pagoFormData,
 	validExistingClientDiferido,
 	validExistingCommerceDiferido,
 } from '../../Middlewares/data/fm';
@@ -61,6 +62,6 @@ FM.route('/FM/admition/:id_FM/diferido').put(fmForDataDiferido, editStatusAdmiti
 //
 FM.route('/FM/administration').get(getFmAdministration);
 //
-FM.route('/FM/administration/:id_FM/status').put(editStatusByIdAdministration);
+FM.route('/FM/administration/:id_FM/status').put(pagoFormData, editStatusByIdAdministration);
 
 export default FM;

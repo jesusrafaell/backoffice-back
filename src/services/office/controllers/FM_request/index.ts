@@ -22,7 +22,7 @@ import fm_quotas_calculated from '../../../../db/models/fm_quotas_calculated';
 import fm_product from '../../../../db/models/fm_product';
 import fm_photo from '../../../../db/models/fm_photo';
 import { updateFilesRecaudosFM, upFilesRecaudosFM } from '../../../files/controllers/1000pagos.controllers';
-import { comercio1000pagos, comercioToProviders } from '../providers';
+import { comercioToProviders } from '../providers';
 import { relationsFMFull } from '../../utilitis/relationsFMFull';
 import fm_wallet_commerce from '../../../../db/models/fm_wallet_commerce';
 import { updateClient } from '../updateData/client';

@@ -41,9 +41,9 @@ const admitions = (io: any) => {
 			io.emit('server:dashdata', getDash());
 			io.emit('server:solicitudesTrabajando', solicitudesTrabajando);
 
-			console.log('En espera ', getDash());
-			console.log('En espera ', solicitudes.length);
-			console.log('Trabajando', solicitudesTrabajando.length);
+			//console.log('En espera admision ', getDash());
+			console.log('En espera Admision', solicitudes.length);
+			console.log('Trabajando Admision', solicitudesTrabajando.length);
 		});
 
 		socket.on('cliente:loadDiferidos', async () => {

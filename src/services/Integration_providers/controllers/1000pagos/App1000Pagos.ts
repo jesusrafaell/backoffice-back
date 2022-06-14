@@ -80,7 +80,7 @@ export const createCommerce = async (
 			comerModalidadGarantia: 1,
 			comerMontoGarFian: 7.77,
 			comerModalidadPos: 3,
-			comerTipoPos: id_product,
+			comerTipoPos: id_product.id,
 			comerRecaudos: null,
 			comerDireccion: addressCommerce,
 			//
