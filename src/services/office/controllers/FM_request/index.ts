@@ -438,7 +438,7 @@ export const FM_create = async (req: Request<any>, res: Response, next: NextFunc
 
 		//log
 		const { id }: any = req.headers.token;
-		await saveLogs(id, 'POST', req.url, `Creacion del FM: ${resPos.id_FM}`);
+		await saveLogs(id, 'POST', req.url, `Creacion del FM: ${resPos.idFM}`);
 
 		Resp(req, res, { message: 'FM creada', info: { id: resPos.idFM, code: resPos.codeFM } });
 	} catch (err) {
@@ -491,7 +491,7 @@ export const FM_extraPos = async (
 
 		//logs
 		const { id }: any = req.headers.token;
-		await saveLogs(id, 'POST', req.url, `Creacion del FMExtrapos: ${resPos.id_FM}`);
+		await saveLogs(id, 'POST', req.url, `Creacion del FMExtrapos: ${resPos.idFM}`);
 
 		Resp(req, res, { message: 'FM extrapos creada', info: { id: resPos.idFM, code: resPos.codeFM } });
 	} catch (err) {
