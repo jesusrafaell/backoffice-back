@@ -32,18 +32,16 @@ transporter.use(
 const mailConnection = async () => {
 	try {
 		// console.log('LLego');
-		/*
 		await transporter.verify().then(() => {
 			console.log('Listo para enviar');
 		});
-		*/
 	} catch (error) {
 		console.log(error);
 		throw new Error('Error a la hora de inicializar Mail');
 	}
 };
 
-module.exports = {
+export default module.exports = {
 	transporter,
 	mailConnection,
 };

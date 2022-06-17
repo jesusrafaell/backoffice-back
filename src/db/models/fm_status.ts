@@ -32,9 +32,9 @@ export default class fm_status {
 	@JoinColumn({ name: 'id_status_request' })
 	id_status_request!: number;
 
-	@CreateDateColumn({ select: false })
+	@CreateDateColumn()
 	createdAt?: Date;
 
-	@UpdateDateColumn({ select: false })
+	@UpdateDateColumn()
 	updatedAt?: Date;
 }

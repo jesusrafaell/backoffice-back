@@ -18,7 +18,7 @@ import generateToken from '../../../../utilis/generateToken';
 import { DataUser, dataWorker, getPermiss, getViews } from './utils.ts';
 import { saveLogs } from '../../../../utilis/logs';
 
-const { transporter } = require('../../mail/mail.js');
+import mailSend from '../../mail/mail';
 
 // getter a Client
 export const register = async (
@@ -299,7 +299,7 @@ export const getmail = async (
 		const link = URL_WEB + token;
 
 		// Step 3
-		const info = await transporter.sendMail({
+		const info = await mailSend.transporter.sendMail({
 			from: 'no-reply@1000pagos.com', // TODO: email sender
 			to: email, // TODO: email receiver
 			subject: 'Aldrin Informa',

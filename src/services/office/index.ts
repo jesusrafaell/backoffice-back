@@ -2,10 +2,14 @@
 import express, { Application, Request, Response } from 'express';
 import { posRoutes, preRoutes } from './Middlewares';
 import Routes from './router';
+import mail from '../office/mail/mail';
 
-const { mailConnection } = require('../office/mail/mail');
+//const { mailConnection } = require('../office/mail/mail');
 
 const app: any = express();
+
+// CorreoConexion
+mail.mailConnection();
 
 // middleware preRoutes
 preRoutes(app);
@@ -17,9 +21,6 @@ Routes(app);
 
 // meddleware posRutes
 posRoutes(app);
-
-// CorreoConexion
-mailConnection();
 
 // Settings
 
