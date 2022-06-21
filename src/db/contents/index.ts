@@ -1,14 +1,17 @@
 import { createConnection } from 'typeorm';
+import access_views from './access.views';
+import actions from './actions';
 import activity from './activity';
 import afiliados from './afiliados';
 import bank from './bank';
 import company from './company';
 import department from './department';
-import access_views from './access.views';
+import direccion from './direccion';
+import redes_tms7 from './fm_redes_tms7';
 import ger7_parametrization from './get7_parametrization';
 import ident_type from './ident_type';
+import intermediario from './intermediario';
 import payment_method from './payment_method';
-import actions from './actions';
 import permissions from './permissions';
 import Product from './product';
 import request_origin from './request_origin';
@@ -24,9 +27,6 @@ import type_telemarket from './type_telemarket';
 import views from './views';
 import wallet_bank from './wallet_bank';
 import worker from './worker';
-import redes_tms7 from './fm_redes_tms7';
-import direccion from './direccion';
-import intermediario from './intermediario';
 // init server
 
 createConnection().then(async () => {

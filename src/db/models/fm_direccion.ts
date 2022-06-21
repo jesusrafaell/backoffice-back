@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ synchronize: false })
+@Entity({ synchronize: true })
 export default class fm_direccion {
 	@PrimaryGeneratedColumn()
 	id?: number;
