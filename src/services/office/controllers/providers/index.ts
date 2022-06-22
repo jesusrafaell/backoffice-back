@@ -19,6 +19,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 				'id_valid_request',
 				'pos',
 				'pos.id_product',
+				'pos.id_product.id_intermediario',
 				'id_client',
 				'id_commerce',
 				'id_commerce.id_ident_type',
@@ -47,7 +48,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 
 		console.log('comercio creado 1000pagos');
 
-		if (id_product.id_intermediario === 1) {
+		if (id_product.id_intermediario.id === 1) {
 			console.log('Comenzar en Tms7', HOST, ':', PORT_PROVIDERS);
 			await axios
 				.post(
@@ -121,6 +122,8 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 			const resAbono: any = await createAbono1000pagos(FM.id_commerce, token, terminals);
 			if (!resAbono.ok) {
 				throw { message: 'Error al crear Abono o asignar planes en 1000pagos' };
+			} else {
+				console.log('Abono creado');
 			}
 
 			//guardar nro_terminal in pos
@@ -138,7 +141,7 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 					}
 				});
 			}
-		} else if (id_product.id_intermediario === 2) {
+		} else if (id_product.id_intermediario.id === 2) {
 			console.log('create in pagina de terminales');
 
 			const resTerminales: any = await axios
@@ -185,6 +188,8 @@ export const comercioToProviders = async (idFm: any, token: any) => {
 		if (FM.id_commerce.validate === 0) {
 			await getRepository(fm_commerce).update(id_commerce, { validate: 1 });
 		}
+
+		console.log('Fin provider comercio, terminales, abono');
 
 		return { ok: true };
 	} catch (err: any) {
