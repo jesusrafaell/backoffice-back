@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ synchronize: true })
 export default class fm_direccion {
@@ -22,4 +22,10 @@ export default class fm_direccion {
 
 	@Column()
 	codigoPostal!: string;
+
+	@CreateDateColumn({ select: false })
+	createdAt?: Date;
+
+	@UpdateDateColumn({ select: false })
+	updatedAt?: Date;
 }
