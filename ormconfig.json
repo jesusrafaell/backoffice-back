@@ -1,6 +1,6 @@
 {
 	"type": "mssql",
-	"host": "10.198.72.31",
+	"host": "10.198.72.60",
 	"username": "amendoza",
 	"password": "Am1523246.",
 	"database": "milpagos",
